@@ -34,8 +34,8 @@ EnemyManager.prototype.updateEnemy = function(){
 		}
 		else
 		{
-			this.enemys[i].setScale({ x:scale.x + 0.02, y:scale.y + 0.02});
-			this.enemys[i].updateFlip();
+			this.enemys[i].setScale({ x:scale.x + 0.01, y:scale.y + 0.01});
+			this.enemys[i].updateRotation();
 
 			// shoot bullet
 			if(Math.random() < this.enemyShootChance)
@@ -48,14 +48,15 @@ EnemyManager.prototype.updateEnemy = function(){
 
 EnemyManager.prototype.createBullet = function(enemy){
 	var bullet = enemy.createBullet();
-	this.bullets.push(bullet);
+	if(bullet != null)
+		this.bullets.push(bullet);
 }
 
 EnemyManager.prototype.updateBullets = function(){
 	for(var i=0;i<this.bullets.length;i++)
 	{
 		var scale = this.bullets[i].getScale();
-		if(scale.x > 2.5)
+		if(scale.x > 3.0)
 		{
 			var temp = this.bullets[i];
 			this.bullets[i] = this.bullets[this.bullets.length - 1];
@@ -64,6 +65,6 @@ EnemyManager.prototype.updateBullets = function(){
 			this.bullets.pop();
 		}
 		else
-			this.bullets[i].setScale({ x:scale.x + 0.04, y:scale.y + 0.04});
+			this.bullets[i].setScale({ x:scale.x + 0.1, y:scale.y + 0.1});
 	}
 }
