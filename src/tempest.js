@@ -38,7 +38,6 @@ Tempest.prototype.preload = function() {
 };
 
 Tempest.prototype.create = function() {
-
 	this.player = new Player(this.angles);
 	this.player.init();
 	this.enemyManager = new EnemyManager(this.angles);
@@ -51,11 +50,15 @@ Tempest.prototype.create = function() {
 };
 
 Tempest.prototype.update = function() {
-	 if (this.state != this.TempestState.GAME_RUNNING) {
-	 	return;
-	 }
+	if (this.state != this.TempestState.GAME_RUNNING) {
+		return;
+	}
 
-	 this.updateCursorKeys();
+	this.player.updateBullets();
+	this.enemyManager.updateEnemy();
+	this.enemyManager.updateBullets();
+
+	this.updateCursorKeys();
 };
 
 Tempest.prototype.init = function() {
@@ -120,10 +123,6 @@ Tempest.prototype.updateCursorKeys = function() {
 		}
 	}
 
-	this.player.updateBullets();
-	this.enemyManager.updateEnemy();
-	this.enemyManager.updateBullets();
-
 	// reset flag when all keys are released
 	if (this.leftKey.isUp && 
 		this.rightKey.isUp && 
@@ -148,7 +147,6 @@ Tempest.prototype.handleKeyRight = function() {
 
 Tempest.prototype.handleKeyUp = function() {
 	this.acceptKeys = false;
-	this.player.createBullet();
 	console.log("Up pressed...");
 };
 
@@ -160,5 +158,6 @@ Tempest.prototype.handleKeyDown = function() {
 
 Tempest.prototype.handleKeySpace = function() {
 	this.acceptKeys = false;
+	this.player.createBullet();
 	console.log("Space pressed...");
-};
+};  
