@@ -12,7 +12,11 @@ var Tempest = function() {
 
 	this.player = null;
 
-	this.cursorKeys = null;
+	this.leftKey = null;
+	this.rightKey = null;
+	this.upKey = null;
+	this.downKey = null;
+	this.spaceKey = null;
 	this.acceptKeys = false;
 };
 
@@ -33,8 +37,7 @@ Tempest.prototype.preload = function() {
 
 Tempest.prototype.create = function() {
 	this.createLevel();
-
-	this.cursorKeys = Game.input.keyboard.createCursorKeys();
+	this.createKeys();
 
 	this.startGame();
 };
@@ -79,36 +82,66 @@ Tempest.prototype.createLayers = function() {
 	}
 };
 
-Tempest.prototype.updateCursorKeys = function() {
-	if (this.cursorKeys == null) {
-		return;
-	}
+Tempest.prototype.createKeys = function() {
+	this.leftKey = Game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
+	this.rightKey = Game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+	this.upKey = Game.input.keyboard.addKey(Phaser.Keyboard.UP);
+	this.downKey = Game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
+	this.spaceKey = Game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+	Game.input.keyboard.addKeyCapture([ Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.UP, Phaser.Keyboard.SPACEBAR ]);
+};
 
+Tempest.prototype.updateCursorKeys = function() {
 	// this check prevents key event from being pushed repeatedly
 	if (this.acceptKeys) {
-		if (this.cursorKeys.left.isDown) {
-			this.acceptKeys = false;
-			console.log("Left pressed...");
+		if (this.leftKey.isDown) {
+			this.handleKeyLeft();
 		}
-		else if (this.cursorKeys.right.isDown) {
-			this.acceptKeys = false;
-			console.log("Right pressed...");
+		else if (this.rightKey.isDown) {
+			this.handleKeyRight();
 		}
-		else if (this.cursorKeys.up.isDown) {
-			this.acceptKeys = false;
-			console.log("Up pressed...");
+		else if (this.upKey.isDown) {
+			this.handleKeyUp();
 		}
-		else if (this.cursorKeys.down.isDown) {
-			this.acceptKeys = false;
-			console.log("Down pressed...");
+		else if (this.downKey.isDown) {
+			this.handleKeyDown();
+		}
+		else if (this.spaceKey.isDown) {
+			this.handleKeySpace();
 		}
 	}
 
 	// reset flag when all keys are released
-	if (this.cursorKeys.left.isUp && 
-		this.cursorKeys.right.isUp && 
-		this.cursorKeys.up.isUp && 
-		this.cursorKeys.down.isUp) {
+	if (this.leftKey.isUp && 
+		this.rightKey.isUp && 
+		this.upKey.isUp && 
+		this.downKey.isUp &&
+		this.spaceKey.isUp) {
 		this.acceptKeys = true;
 	}
+};
+
+Tempest.prototype.handleKeyLeft = function() {
+	this.acceptKeys = false;
+	console.log("Left pressed...");
+};
+
+Tempest.prototype.handleKeyRight = function() {
+	this.acceptKeys = false;
+	console.log("Right pressed...");
+};
+
+Tempest.prototype.handleKeyUp = function() {
+	this.acceptKeys = false;
+	console.log("Up pressed...");
+};
+
+Tempest.prototype.handleKeyDown = function() {
+	this.acceptKeys = false;
+	console.log("Down pressed...");
+};
+
+Tempest.prototype.handleKeySpace = function() {
+	this.acceptKeys = false;
+	console.log("Space pressed...");
 };
