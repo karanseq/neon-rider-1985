@@ -1,3 +1,5 @@
+var imageSet = [ { key: 'layer', src: 'images/Ring.png' } ];
+
 function getRegularPolygonVertices(numVertices, circumRadius, startAngle)
 {
 	var vertices = new Array();
