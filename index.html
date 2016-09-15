@@ -2,12 +2,27 @@
 <head>
 	<title>Team 10 Tempest</title>
 	<script type="text/javascript" src="lib/phaser.js"></script>
+	<script type="text/javascript" src="src/helper.js"></script>
+	<script type="text/javascript" src="src/layer.js"></script>
 	<script type="text/javascript" src="src/tempest.js"></script>
 </head>
 <body>
 	<script type="text/javascript">
-		var tempest = new Tempest();
-		tempest.init();
+		var Tempest = new Tempest();
+		Tempest.init();
+		var Game = new Phaser.Game(GAME_WIDTH, GAME_HEIGHT, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+
+		function preload() {
+			Tempest.preload();
+		}
+
+		function create() {
+			Tempest.create();
+		}
+
+		function update() {
+			Tempest.update();
+		}
 	</script>
 </body>
 </html>
