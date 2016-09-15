@@ -1,6 +1,8 @@
 var imageSet = [ { key: 'layer', src: 'images/Ring.png' }, 
 { key: 'player', src: 'images/Player.png'},
-{ key: 'bullet', src: 'images/Bullet.png'} ];
+{ key: 'bullet', src: 'images/Bullet.png'},
+{ key: 'enemy', src: 'images/Enemy.png'},
+{ key: 'enemybullet', src:'images/EnemyBullet.png'} ];
 
 function getRegularPolygonVertices(numVertices, circumRadius, startAngle)
 {

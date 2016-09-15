@@ -20,6 +20,7 @@ Player.prototype.init = function() {
 
 Player.prototype.createBullet = function(){
 	var bullet = new Bullet(true, this.angles,this.positionIndex);
+	bullet.setScale({x: 3.0, y: 3.0} )
 	this.bullets.push(bullet);
 }
 
@@ -29,9 +30,10 @@ Player.prototype.updateBullets = function(){
 		var scale = this.bullets[i].getScale();
 		if(scale.x < 0.1)
 		{
-			var temp = this.bullets[this.bullets.length - 1];
-			this.bullets[this.bullets.length - 1] = this.bullets[i];
-			this.bullets[i] = temp;
+			var temp = this.bullets[i];
+			this.bullets[i] = this.bullets[this.bullets.length - 1];
+			temp.destroy();
+			delete temp;
 			this.bullets.pop();
 		}
 		else

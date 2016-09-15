@@ -8,9 +8,10 @@ var Tempest = function() {
 
 	this.numLayersInLevel = 0;
 	this.numVisibleLayers = 0;
-	this.layers = null;
 
+	this.layers = null;
 	this.player = null;
+	this.enemyList = null;
 
 	this.cursorKeys = null;
 	this.acceptKeys = false;
@@ -34,9 +35,11 @@ Tempest.prototype.preload = function() {
 
 Tempest.prototype.create = function() {
 
-	
 	this.player = new Player(this.angles);
 	this.player.init();
+	this.enemyManager = new EnemyManager(this.angles);
+	this.enemyManager.init();
+
 	this.createLevel();
 
 	this.cursorKeys = Game.input.keyboard.createCursorKeys();
@@ -110,10 +113,14 @@ Tempest.prototype.updateCursorKeys = function() {
 		else if (this.cursorKeys.down.isDown) {
 			this.acceptKeys = false;
 			console.log("Down pressed...");
+
+			this.enemyManager.createEnemy(Math.round(Math.random() * 7.49));
 		}
 	}
 
 	this.player.updateBullets();
+	this.enemyManager.updateEnemy();
+	this.enemyManager.updateBullets();
 
 	// reset flag when all keys are released
 	if (this.cursorKeys.left.isUp && 
