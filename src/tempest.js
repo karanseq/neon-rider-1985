@@ -55,8 +55,7 @@ Tempest.prototype.update = function() {
 	}
 
 	this.player.updateBullets();
-	this.enemyManager.updateEnemy();
-	this.enemyManager.updateBullets();
+	this.enemyManager.update();
 
 	this.updateCursorKeys();
 };
@@ -70,6 +69,7 @@ Tempest.prototype.init = function() {
 Tempest.prototype.startGame = function() {
 	this.state = this.TempestState.GAME_RUNNING;
 	this.acceptKeys = true;
+	this.enemyManager.startFormations();
 };
 
 Tempest.prototype.createLevel = function() {
@@ -136,28 +136,23 @@ Tempest.prototype.updateCursorKeys = function() {
 Tempest.prototype.handleKeyLeft = function() {
 	this.acceptKeys = false;
 	this.player.setPositionIndex(this.player.getPositionIndex() + 1);
-	console.log("Left pressed...");
 };
 
 Tempest.prototype.handleKeyRight = function() {
 	this.acceptKeys = false;
 	this.player.setPositionIndex(this.player.getPositionIndex() - 1);
-	console.log("Right pressed...");
 };
 
 Tempest.prototype.handleKeyUp = function() {
 	this.acceptKeys = false;
-	console.log("Up pressed...");
 };
 
 Tempest.prototype.handleKeyDown = function() {
 	this.acceptKeys = false;
 	this.enemyManager.createEnemy(Math.round(Math.random() * 7.49));
-	console.log("Down pressed...");
 };
 
 Tempest.prototype.handleKeySpace = function() {
 	this.acceptKeys = false;
 	this.player.createBullet();
-	console.log("Space pressed...");
 };  
