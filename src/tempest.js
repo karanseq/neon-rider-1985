@@ -14,6 +14,7 @@ var Tempest = function() {
 
 	this.cursorKeys = null;
 	this.acceptKeys = false;
+	this.angles = [-180, -135, -90, -45, 0, 45, 90, 135];
 };
 
 Tempest.prototype.TempestState = {
@@ -32,6 +33,10 @@ Tempest.prototype.preload = function() {
 };
 
 Tempest.prototype.create = function() {
+
+	
+	this.player = new Player(this.angles);
+	this.player.init();
 	this.createLevel();
 
 	this.cursorKeys = Game.input.keyboard.createCursorKeys();
@@ -50,7 +55,8 @@ Tempest.prototype.update = function() {
 Tempest.prototype.init = function() {
 	this.state = this.TempestState.GAME_INIT;
 	this.layers = new Array();
-};
+	
+}
 
 Tempest.prototype.startGame = function() {
 	this.state = this.TempestState.GAME_RUNNING;
@@ -89,20 +95,25 @@ Tempest.prototype.updateCursorKeys = function() {
 		if (this.cursorKeys.left.isDown) {
 			this.acceptKeys = false;
 			console.log("Left pressed...");
+			this.player.setPositionIndex(this.player.getPositionIndex() + 1);
 		}
 		else if (this.cursorKeys.right.isDown) {
 			this.acceptKeys = false;
 			console.log("Right pressed...");
+			this.player.setPositionIndex(this.player.getPositionIndex() - 1);
 		}
 		else if (this.cursorKeys.up.isDown) {
 			this.acceptKeys = false;
 			console.log("Up pressed...");
+			this.player.createBullet();
 		}
 		else if (this.cursorKeys.down.isDown) {
 			this.acceptKeys = false;
 			console.log("Down pressed...");
 		}
 	}
+
+	this.player.updateBullets();
 
 	// reset flag when all keys are released
 	if (this.cursorKeys.left.isUp && 
