@@ -19,8 +19,8 @@ EnemyManager.prototype.init = function() {
 	this.bullets = new Array();
 	this.enemiesToSpawn = new Array();
 
-	this.formationDelay = 50;
-	this.enemySpawnDelay = 25;
+	this.formationDelay = 75;
+	this.enemySpawnDelay = 50;
 };
 
 EnemyManager.prototype.startFormations = function() {
@@ -28,7 +28,7 @@ EnemyManager.prototype.startFormations = function() {
 		return;
 	}
 	this.hasStartFormation = true;
-	this.formationCounter = this.formationDelay;
+	this.formationCounter = Math.round(this.formationDelay * 0.1);
 };
 
 EnemyManager.prototype.createEnemy = function(positionIndex) {
@@ -128,7 +128,7 @@ EnemyManager.prototype.createFormation = function() {
 };
 
 EnemyManager.prototype.getEnemyType = function () {
-	return EnemyType.ENEMY_SHOOTING;
+	return EnemyType.ENEMY_MOVING;
 
 	var randomIndex = Math.round(Math.random() * EnemyType.ENEMY_SHOOTING);
 	switch (randomIndex) {

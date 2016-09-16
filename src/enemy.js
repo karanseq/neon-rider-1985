@@ -85,7 +85,7 @@ Enemy.prototype.updateMovement = function() {
 	}
 	else
 	{
-		this.setScale({ x:scale.x + 0.01, y:scale.y + 0.01});
+		this.setScale({ x:scale.x + 0.005, y:scale.y + 0.005});
 	}
 };
 
