@@ -2,6 +2,16 @@
 
 var GAME_WIDTH = 800;
 var GAME_HEIGHT = 600;
+var RADIUS = 260;
+var ANGLES = [-180, -135, -90, -45, 0, 45, 90, 135];
+var MAX_ANGLE_INDEX = ANGLES.length;
+
+
+var caculatePosition = function(radius, angle)
+{
+	var pos = {x: GAME_WIDTH / 2 + radius * Math.sin(angle / 180 * Math.PI), y: GAME_HEIGHT / 2 + radius * Math.cos(angle / 180 * Math.PI)};
+	return pos;
+}
 
 var Tempest = function() {
 	this.state = null;
@@ -19,7 +29,6 @@ var Tempest = function() {
 	this.downKey = null;
 	this.spaceKey = null;
 	this.acceptKeys = false;
-	this.angles = [-180, -135, -90, -45, 0, 45, 90, 135];
 };
 
 Tempest.prototype.TempestState = {
@@ -120,6 +129,7 @@ Tempest.prototype.updateCursorKeys = function() {
 		}
 	}
 
+	this.player.updateSprite();
 	this.player.updateBullets();
 	this.enemyManager.updateEnemy();
 	this.enemyManager.updateBullets();
@@ -136,13 +146,13 @@ Tempest.prototype.updateCursorKeys = function() {
 
 Tempest.prototype.handleKeyLeft = function() {
 	this.acceptKeys = false;
-	this.player.setPositionIndex(this.player.getPositionIndex() + 1);
+	this.player.setAngleIndex(this.player.getAngleIndex() - 1);
 	console.log("Left pressed...");
 };
 
 Tempest.prototype.handleKeyRight = function() {
 	this.acceptKeys = false;
-	this.player.setPositionIndex(this.player.getPositionIndex() - 1);
+	this.player.setAngleIndex(this.player.getAngleIndex() + 1);
 	console.log("Right pressed...");
 };
 

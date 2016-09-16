@@ -1,34 +1,37 @@
-var Player = function(angles) {
+var INIT_ANGLE_INDEX = 4;
+
+var Player = function() {
 	this.sprite = null;
+	this.angleIndex = INIT_ANGLE_INDEX;
 	
-	this.angles = angles;
-	this.maxPositionIndex = this.angles.length;
-	this.positionIndex = Math.round(this.maxPositionIndex / 2 - 0.25);
-	// this.graphics = null;
+	this.radius = RADIUS;
+	this.angle = ANGLES[this.angleIndex];
+	this.position = caculatePosition(RADIUS, this.angle);
+	this.scale = {x:1, y:1};
+
 	this.bullets = null;
+
+	this.bulletMoveSpeed = 5;
+	this.bulletScaleSpeed = 0.02;
 };
 
 Player.prototype.init = function() {
 	this.sprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'player');
 	this.sprite.anchor = { x: 0.5, y: 0.5 };
 	this.sprite.visible = true;
-	this.setScale( {x:2.0, y:2.0} );
-	this.setAngle(this.angles[this.positionIndex]);
 
-	this.bullets = new Array()
+	this.bullets = new Array();
 };
 
 Player.prototype.createBullet = function(){
-	var bullet = new Bullet(true, this.angles,this.positionIndex);
-	bullet.setScale({x: 3.0, y: 3.0} )
+	var bullet = new Bullet(true, this.radius, this.angleIndex);
 	this.bullets.push(bullet);
 }
 
 Player.prototype.updateBullets = function(){
 	for(var i=0;i<this.bullets.length;i++)
-	{
-		var scale = this.bullets[i].getScale();
-		if(scale.x < 0.1)
+	{	
+		if(this.bullets[i].radius < this.bulletMoveSpeed * 2)
 		{
 			var temp = this.bullets[i];
 			this.bullets[i] = this.bullets[this.bullets.length - 1];
@@ -37,26 +40,20 @@ Player.prototype.updateBullets = function(){
 			this.bullets.pop();
 		}
 		else
-			this.bullets[i].setScale({ x:scale.x - 0.1, y:scale.y - 0.1});
+		{
+			this.bullets[i].radius -= this.bulletMoveSpeed;
+			this.bullets[i].scale = { x:this.bullets[i].scale.x - this.bulletScaleSpeed, y:this.bullets[i].scale.y - this.bulletScaleSpeed};
+			this.bullets[i].updateSprite();
+		}
 	}
 }
 
-Player.prototype.setScale = function(newScale) {
-	this.sprite.scale = newScale;
-};
-
-Player.prototype.getScale = function() {
-	return this.sprite.scale;
-};
-
-Player.prototype.setAngle = function(newAngle) {
-	this.sprite.angle = newAngle;
+Player.prototype.updateSprite = function(){
+	this.sprite.scale = this.scale;
+	this.sprite.angle = -this.angle;
+	this.position = caculatePosition(this.radius, this.angle);
+	this.sprite.position = this.position;
 }
-
-Player.prototype.scaleUp = function(scaleTo) {
-	// var newScale = { x: this.sprite.scale.x + scaleTo, y: this.sprite.scale.y + scaleTo };
-	// Game.add.tween(this.sprite.scale).to(newScale, 1000, Phaser.Easing.Linear.None, true);	
-};
 
 Player.prototype.setVisible = function(visibility) {
 	this.sprite.visible = visibility;
@@ -66,15 +63,15 @@ Player.prototype.isVisible = function() {
 	return this.sprite.visible;
 };
 
-Player.prototype.setPositionIndex = function(index)
+Player.prototype.setAngleIndex = function(index)
 {
-	if(index < 0) index += this.maxPositionIndex;
-	else index = (index % this.maxPositionIndex);
-	this.positionIndex = index;
-	this.setAngle(this.angles[this.positionIndex]);
+	if(index < 0) index += MAX_ANGLE_INDEX;
+	else index = (index % MAX_ANGLE_INDEX);
+	this.angleIndex = index;
+	this.angle = ANGLES[this.angleIndex];
 }
 
-Player.prototype.getPositionIndex = function()
+Player.prototype.getAngleIndex = function()
 {
-	return this.positionIndex;
+	return this.angleIndex;
 }

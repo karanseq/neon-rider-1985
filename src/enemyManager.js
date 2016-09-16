@@ -1,21 +1,22 @@
-var EnemyManager = function(angles){
-	this.angles = angles;
-	this.maxPositionIndex = this.angles.length;
-	// this.graphics = null;
+var EnemyManager = function(){
 	this.enemys = null;
 	this.bullets = null;
 	this.enemyShootChance = 0.01;
+
+	this.enemyMoveSpeed = 1;
+	this.enemyScaleSpeed = 0.002;
+	this.enemyBulletMoveSpeed = 2;
+	this.enemyBulletScaleSpeed = 0.005;
 }
 
 
 EnemyManager.prototype.init = function() {
-
 	this.enemys = new Array();
 	this.bullets = new Array();
 };
 
-EnemyManager.prototype.createEnemy = function(positionIndex){
-	var enemy = new Enemy(this.angles, positionIndex);
+EnemyManager.prototype.createEnemy = function(angleIndex){
+	var enemy = new Enemy(angleIndex);
 	this.enemys.push(enemy);
 }
 
@@ -23,8 +24,7 @@ EnemyManager.prototype.createEnemy = function(positionIndex){
 EnemyManager.prototype.updateEnemy = function(){
 	for(var i=0;i<this.enemys.length;i++)
 	{
-		var scale = this.enemys[i].getScale();
-		if(scale.x > 1.7)
+		if(this.enemys[i].radius > RADIUS)
 		{
 			var temp = this.enemys[i];
 			this.enemys[i] = this.enemys[this.enemys.length - 1];
@@ -34,13 +34,17 @@ EnemyManager.prototype.updateEnemy = function(){
 		}
 		else
 		{
-			this.enemys[i].setScale({ x:scale.x + 0.01, y:scale.y + 0.01});
+			this.enemys[i].radius += this.enemyMoveSpeed;
+			this.enemys[i].scale = { x:this.enemys[i].scale.x + this.enemyScaleSpeed, y:this.enemys[i].scale.y + this.enemyScaleSpeed};
 			this.enemys[i].updateRotation();
+			this.enemys[i].updateSprite();
 
 			// shoot bullet
 			if(Math.random() < this.enemyShootChance)
 			{
-				this.createBullet(this.enemys[i]);
+				//enemy can not create bullet when they are roatating
+				if(!this.enemys[i].isRotate)
+					this.createBullet(this.enemys[i]);
 			}
 		}
 	}
@@ -48,15 +52,13 @@ EnemyManager.prototype.updateEnemy = function(){
 
 EnemyManager.prototype.createBullet = function(enemy){
 	var bullet = enemy.createBullet();
-	if(bullet != null)
 		this.bullets.push(bullet);
 }
 
 EnemyManager.prototype.updateBullets = function(){
 	for(var i=0;i<this.bullets.length;i++)
 	{
-		var scale = this.bullets[i].getScale();
-		if(scale.x > 3.0)
+		if(this.bullets[i].radius > RADIUS)
 		{
 			var temp = this.bullets[i];
 			this.bullets[i] = this.bullets[this.bullets.length - 1];
@@ -65,6 +67,10 @@ EnemyManager.prototype.updateBullets = function(){
 			this.bullets.pop();
 		}
 		else
-			this.bullets[i].setScale({ x:scale.x + 0.1, y:scale.y + 0.1});
+		{
+			this.bullets[i].radius += this.enemyBulletMoveSpeed;
+			this.bullets[i].scale = { x:this.bullets[i].scale.x + this.enemyBulletScaleSpeed, y:this.bullets[i].scale.y + this.enemyBulletScaleSpeed};
+			this.bullets[i].updateSprite();
+		}
 	}
 }

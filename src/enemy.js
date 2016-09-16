@@ -1,34 +1,36 @@
-var Enemy = function(angles, positionIndex) {
-	this.sprite = null;
-	
-	this.angles = angles;
-	this.maxPositionIndex = this.angles.length;
-	this.positionIndex = positionIndex;
+var ENEMY_SPAWN_RADIUS = 10;
+var ENEMY_SPAWN_SCALE = { x:0.1, y:0.1 };
 
+
+
+var Enemy = function(angleIndex) {
+	this.angleIndex = angleIndex;
 	this.sprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'enemy');
 	this.sprite.anchor = { x: 0.5, y: 0.5 };
 	this.sprite.visible = true;
-	this.setScale( {x:0.1, y:0.1} );
-	this.setAngle(this.angles[this.positionIndex]);
+
+	this.radius = ENEMY_SPAWN_RADIUS;
+	this.angle = ANGLES[this.angleIndex]
+	this.scale = ENEMY_SPAWN_SCALE;
+	this.position = caculatePosition(this.radius, this.angle);
 
 	if(Math.random() < 0.5)
 		this.rotateLeft = true;
 	else
 		this.rotateLeft = false;
-	this.rotateInterval = 40;
+	this.rotateInterval = 50;
 	this.rotateTimer = Math.round(Math.random() * this.rotateInterval);
 
 	this.isRotate = false;
-	this.rotateLasting = 10;
+	this.rotateLasting = 5;
 
 	this.previousAngle =0;
 };
 
 
 Enemy.prototype.createBullet = function(){
-	if(this.isRotate) return null;
-	var bullet = new Bullet(false, this.angles, this.positionIndex);
-	bullet.setScale({x: this.sprite.scale.x + 0.8, y: this.sprite.scale.y + 0.8});
+	var bullet = new Bullet(false, this.radius, this.angleIndex);
+	bullet.scale = this.scale;
 	return bullet;
 }
 
@@ -38,23 +40,23 @@ Enemy.prototype.updateRotation = function(){
 	{
 		if(this.rotateTimer >= this.rotateInterval)
 		{	
-			this.previousAngle = this.angles[this.positionIndex];
+			this.previousAngle = ANGLES[this.angleIndex];
 			if(this.rotateLeft)
 			{
-				this.positionIndex++;
-				if(this.positionIndex >= this.maxPositionIndex)
+				this.angleIndex++;
+				if(this.angleIndex >= MAX_ANGLE_INDEX)
 				{
-					this.positionIndex -= this.maxPositionIndex;
-					this.previousAngle = this.angles[this.maxPositionIndex - 1] - 360;
+					this.angleIndex -= this.MAX_ANGLE_INDEX;
+					this.previousAngle = ANGLES[MAX_ANGLE_INDEX - 1] - 360;
 				}
 			}
 			else
 			{
-				this.positionIndex--;
-				if(this.positionIndex < 0)
+				this.angleIndex--;
+				if(this.angleIndex < 0)
 				{
-					this.positionIndex += this.maxPositionIndex;
-					this.previousAngle = this.angles[0] + 360;
+					this.angleIndex += MAX_ANGLE_INDEX;
+					this.previousAngle = ANGLES[0] + 360;
 				}
 			}
 
@@ -66,37 +68,27 @@ Enemy.prototype.updateRotation = function(){
 	{
 		if(this.rotateTimer >= this.rotateLasting)
 		{
-			this.setAngle(this.angles[this.positionIndex]);
+			this.angle = ANGLES[this.angleIndex];
 			this.isRotate = false;
 			rotateTimer = 0;
 		}
 		else
 		{
-			this.setAngle(this.previousAngle + (this.angles[this.positionIndex] - this.previousAngle) * this.rotateTimer / this.rotateLasting);
+			this.angle = this.previousAngle + (ANGLES[this.angleIndex] - this.previousAngle) * this.rotateTimer / this.rotateLasting;
 		}
 	}
+}
+
+Enemy.prototype.updateSprite = function(){
+	this.sprite.scale = this.scale;
+	this.sprite.angle = -this.angle;
+	this.position = caculatePosition(this.radius, this.angle);
+	this.sprite.position = this.position;
 }
 
 Enemy.prototype.destroy = function(){
 	this.sprite.destroy();
 }
-
-Enemy.prototype.setScale = function(newScale) {
-	this.sprite.scale = newScale;
-};
-
-Enemy.prototype.getScale = function() {
-	return this.sprite.scale;
-};
-
-Enemy.prototype.setAngle = function(newAngle) {
-	this.sprite.angle = newAngle;
-}
-
-Enemy.prototype.scaleUp = function(scaleTo) {
-	// var newScale = { x: this.sprite.scale.x + scaleTo, y: this.sprite.scale.y + scaleTo };
-	// Game.add.tween(this.sprite.scale).to(newScale, 1000, Phaser.Easing.Linear.None, true);	
-};
 
 Enemy.prototype.setVisible = function(visibility) {
 	this.sprite.visible = visibility;
