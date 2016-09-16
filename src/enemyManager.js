@@ -19,7 +19,7 @@ EnemyManager.prototype.init = function() {
 	this.bullets = new Array();
 	this.enemiesToSpawn = new Array();
 
-	this.formationDelay = 100;
+	this.formationDelay = 50;
 	this.enemySpawnDelay = 25;
 };
 
@@ -43,27 +43,19 @@ EnemyManager.prototype.update = function() {
 };
 
 EnemyManager.prototype.updateEnemy = function() {
-	for(var i=0;i<this.enemys.length;i++)
-	{
-		var scale = this.enemys[i].getScale();
-		if(scale.x > 1.7)
-		{
+	for (var i = 0; i < this.enemys.length; i++) {
+		this.enemys[i].update();
+
+		if (this.enemys[i].type == EnemyType.ENEMY_SHOOTING && this.enemys[i].isReadyToFire == true) {
+			this.createBullet(this.enemys[i]);
+		}
+
+		if (this.enemys[i].hasFinishedDying == true) {
 			var temp = this.enemys[i];
 			this.enemys[i] = this.enemys[this.enemys.length - 1];
 			temp.destroy();
 			delete temp;
 			this.enemys.pop();
-		}
-		else
-		{
-			this.enemys[i].setScale({ x:scale.x + 0.01, y:scale.y + 0.01});
-			// this.enemys[i].updateRotation();
-
-			// shoot bullet
-			if(Math.random() < this.enemyShootChance)
-			{
-				this.createBullet(this.enemys[i]);
-			}
 		}
 	}
 };
@@ -129,8 +121,24 @@ EnemyManager.prototype.createFormation = function() {
 	var numEnemiesInFormation = 1 + Math.round(Math.random() * 5);
 
 	for (var i = 0; i < numEnemiesInFormation; ++i) {
-		var enemy = new Enemy(this.angles, positionIndex);
+		var enemy = new Enemy(this.getEnemyType(), this.angles, positionIndex);
 		enemy.setVisible(false);
 		this.enemiesToSpawn.push(enemy);
+	}
+};
+
+EnemyManager.prototype.getEnemyType = function () {
+	return EnemyType.ENEMY_SHOOTING;
+
+	var randomIndex = Math.round(Math.random() * EnemyType.ENEMY_SHOOTING);
+	switch (randomIndex) {
+		case 0:
+		return EnemyType.ENEMY_SIMPLE;
+		case 1:
+		return EnemyType.ENEMY_ROTATING;
+		case 2:
+		return EnemyType.ENEMY_MOVING;
+		case 3:
+		return EnemyType.ENEMY_SHOOTING;
 	}
 };

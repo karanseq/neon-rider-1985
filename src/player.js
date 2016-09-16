@@ -70,6 +70,7 @@ Player.prototype.setPositionIndex = function(index)
 {
 	if(index < 0) index += this.maxPositionIndex;
 	else index = (index % this.maxPositionIndex);
+
 	this.positionIndex = index;
 	this.setAngle(this.angles[this.positionIndex]);
 }
