@@ -1,5 +1,5 @@
 var ENEMY_SPAWN_RADIUS = 10;
-var ENEMY_SPAWN_SCALE = { x:0.1, y:0.1 };
+var ENEMY_SPAWN_SCALE = { x:0.02, y:0.02 };
 
 
 
@@ -13,6 +13,7 @@ var Enemy = function(angleIndex) {
 	this.angle = ANGLES[this.angleIndex]
 	this.scale = ENEMY_SPAWN_SCALE;
 	this.position = caculatePosition(this.radius, this.angle);
+	this.updateSprite();
 
 	if(Math.random() < 0.5)
 		this.rotateLeft = true;
@@ -30,7 +31,8 @@ var Enemy = function(angleIndex) {
 
 Enemy.prototype.createBullet = function(){
 	var bullet = new Bullet(false, this.radius, this.angleIndex);
-	bullet.scale = this.scale;
+	bullet.scale = {x: this.scale.x * 0.1, y: this.scale.y * 0.1};
+	bullet.updateSprite();
 	return bullet;
 }
 

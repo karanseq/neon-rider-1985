@@ -2,10 +2,21 @@
 
 var GAME_WIDTH = 800;
 var GAME_HEIGHT = 600;
-var RADIUS = 260;
+var RADIUS = 275;
 var ANGLES = [-180, -135, -90, -45, 0, 45, 90, 135];
 var MAX_ANGLE_INDEX = ANGLES.length;
 
+var BULLET_COLLISION_DISTANCE = 10;
+var ENEMY_COLLISION_DISTANCE = 30;
+var PLAYER_COLLISION_DISTANCE = 20;
+
+var BULLET_SCALE = {x:0.1, y:0.1};
+var PLAYER_SCALE = {x:0.3, y:0.3};
+var PLAYER_EXPLOSION_SCALE = {x: 0.1, y: 0.1};
+
+var WAVE_INTERVAL = 100;
+var ENEMY_INTERVAL = 30;
+var WAVE_COUNT = 4;
 
 var caculatePosition = function(radius, angle)
 {
@@ -29,6 +40,10 @@ var Tempest = function() {
 	this.downKey = null;
 	this.spaceKey = null;
 	this.acceptKeys = false;
+
+	this.generateTimer = 0;
+	this.generateCount = 0;
+	this.isGenerate = false;
 };
 
 Tempest.prototype.TempestState = {
@@ -53,29 +68,12 @@ Tempest.prototype.create = function() {
 	this.enemyManager = new EnemyManager(this.angles);
 	this.enemyManager.init();
 
-	this.createLevel();
+	//this.createLevel();
+	this.backgroundSprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'circle');
+	this.backgroundSprite.anchor = { x: 0.5, y: 0.5 };
+	this.backgroundSprite.scale = {x: 0.5, y: 0.5};
 	this.createKeys();
-
 	this.startGame();
-};
-
-Tempest.prototype.update = function() {
-	 if (this.state != this.TempestState.GAME_RUNNING) {
-	 	return;
-	 }
-
-	 this.updateCursorKeys();
-};
-
-Tempest.prototype.init = function() {
-	this.state = this.TempestState.GAME_INIT;
-	this.layers = new Array();
-	
-}
-
-Tempest.prototype.startGame = function() {
-	this.state = this.TempestState.GAME_RUNNING;
-	this.acceptKeys = true;
 };
 
 Tempest.prototype.createLevel = function() {
@@ -109,6 +107,34 @@ Tempest.prototype.createKeys = function() {
 	Game.input.keyboard.addKeyCapture([ Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.UP, Phaser.Keyboard.SPACEBAR ]);
 };
 
+Tempest.prototype.init = function() {
+	this.state = this.TempestState.GAME_INIT;
+	this.layers = new Array();
+}
+
+Tempest.prototype.startGame = function() {
+	this.state = this.TempestState.GAME_RUNNING;
+	this.acceptKeys = true;
+};
+
+Tempest.prototype.update = function() {
+	 if (this.state == this.TempestState.GAME_RUNNING) {
+	 	this.updateCursorKeys();
+		this.player.updateBullets();
+		this.enemyManager.updateEnemy();
+		this.enemyManager.updateBullets();
+
+		this.playerBulletCollide();
+		this.playerCollide();
+		this.generateEnemy();
+     }
+     else if(this.state == this.TempestState.GAME_OVER)
+     {
+     	this.player.updateExplosion();
+     }
+     this.player.updateSprite();
+};
+
 Tempest.prototype.updateCursorKeys = function() {
 	// this check prevents key event from being pushed repeatedly
 	if (this.acceptKeys) {
@@ -128,12 +154,7 @@ Tempest.prototype.updateCursorKeys = function() {
 			this.handleKeySpace();
 		}
 	}
-
-	this.player.updateSprite();
-	this.player.updateBullets();
-	this.enemyManager.updateEnemy();
-	this.enemyManager.updateBullets();
-
+	// handle collision between player's bullet with enemy's bullet or enemy's body
 	// reset flag when all keys are released
 	if (this.leftKey.isUp && 
 		this.rightKey.isUp && 
@@ -164,7 +185,6 @@ Tempest.prototype.handleKeyUp = function() {
 
 Tempest.prototype.handleKeyDown = function() {
 	this.acceptKeys = false;
-	this.enemyManager.createEnemy(Math.round(Math.random() * 7.49));
 	console.log("Down pressed...");
 };
 
@@ -172,3 +192,93 @@ Tempest.prototype.handleKeySpace = function() {
 	this.acceptKeys = false;
 	console.log("Space pressed...");
 };
+
+Tempest.prototype.playerBulletCollide = function(){
+	for(var i = 0; i < this.player.bullets.length; i++)
+	{
+		var mark = false;
+		for(var j = 0; j< this.enemyManager.bullets.length; j++)
+		{
+			if(this.player.bullets[i].angleIndex == this.enemyManager.bullets[j].angleIndex &&
+				Math.abs(this.player.bullets[i].radius - this.enemyManager.bullets[j].radius) < BULLET_COLLISION_DISTANCE)
+			{
+				this.player.deleteBullet(i);
+				this.enemyManager.deleteBullet(j);
+				mark = true;
+				break;
+			}
+		}
+		if(!mark)
+		{
+			for(var j = 0; j < this.enemyManager.enemys.length; j++)
+			{
+				if(this.player.bullets[i].angleIndex == this.enemyManager.enemys[j].angleIndex &&
+				Math.abs(this.player.bullets[i].radius - this.enemyManager.enemys[j].radius) < ENEMY_COLLISION_DISTANCE)
+				{
+					this.player.deleteBullet(i);
+					this.enemyManager.deleteEnemy(j);
+					break;
+				}
+			}
+		}
+	}
+};
+
+Tempest.prototype.playerCollide = function(){
+	var mark = false;
+	for(var i = 0; i < this.enemyManager.bullets.length; i++)
+	{	
+		if(this.player.angleIndex == this.enemyManager.bullets[i].angleIndex &&
+			Math.abs(this.player.radius - this.enemyManager.bullets[i].radius) < PLAYER_COLLISION_DISTANCE)
+		{
+			this.player.destroy();
+			this.enemyManager.deleteBullet(i);
+			mark = true;
+			this.state = this.TempestState.GAME_OVER;
+			break;
+		}
+	}
+
+	if(!mark);
+	{
+		for(var i = 0; i < this.enemyManager.enemys.length; i++)
+		{	
+			if(this.player.angleIndex == this.enemyManager.enemys[i].angleIndex &&
+				Math.abs(this.player.radius - this.enemyManager.enemys[i].radius) < PLAYER_COLLISION_DISTANCE)
+			{
+				this.player.destroy();
+				this.enemyManager.deleteEnemy(i);
+				this.state = this.TempestState.GAME_OVER;
+				break;
+			}
+		}
+	}
+};
+
+Tempest.prototype.generateEnemy = function(){
+	this.generateTimer++;
+	if(!this.isGenerate)
+	{
+		if(this.generateTimer > WAVE_INTERVAL)
+		{
+			this.isGenerate = true;
+			this.generateTimer = 0;
+			this.generateCount = 0;
+		}
+	}
+	else
+	{
+		if(this.generateTimer > ENEMY_INTERVAL)
+		{
+			this.enemyManager.createEnemy(Math.round(Math.random() * 7.49));
+			this.generateCount++;
+			this.generateTimer = 0;
+			if(this.generateCount >= 4)
+			{
+				this.isGenerate = false;
+			}
+		}
+	}
+};
+
+	

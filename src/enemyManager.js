@@ -4,9 +4,9 @@ var EnemyManager = function(){
 	this.enemyShootChance = 0.01;
 
 	this.enemyMoveSpeed = 1;
-	this.enemyScaleSpeed = 0.002;
+	this.enemyScaleSpeed = 0.001;
 	this.enemyBulletMoveSpeed = 2;
-	this.enemyBulletScaleSpeed = 0.005;
+	this.enemyBulletScaleSpeed = 0.001;
 }
 
 
@@ -24,13 +24,9 @@ EnemyManager.prototype.createEnemy = function(angleIndex){
 EnemyManager.prototype.updateEnemy = function(){
 	for(var i=0;i<this.enemys.length;i++)
 	{
-		if(this.enemys[i].radius > RADIUS)
+		if(this.enemys[i].radius > RADIUS - 15)
 		{
-			var temp = this.enemys[i];
-			this.enemys[i] = this.enemys[this.enemys.length - 1];
-			temp.destroy();
-			delete temp;
-			this.enemys.pop();
+			this.deleteEnemy(i);
 		}
 		else
 		{
@@ -43,11 +39,19 @@ EnemyManager.prototype.updateEnemy = function(){
 			if(Math.random() < this.enemyShootChance)
 			{
 				//enemy can not create bullet when they are roatating
-				if(!this.enemys[i].isRotate)
+				if(!this.enemys[i].isRotate && this.enemys[i].radius < RADIUS / 2)
 					this.createBullet(this.enemys[i]);
 			}
 		}
 	}
+}
+
+EnemyManager.prototype.deleteEnemy = function(enemyIndex){
+	var temp = this.enemys[enemyIndex];
+	this.enemys[enemyIndex] = this.enemys[this.enemys.length - 1];
+	temp.destroy();
+	delete temp;
+	this.enemys.pop();
 }
 
 EnemyManager.prototype.createBullet = function(enemy){
@@ -58,13 +62,9 @@ EnemyManager.prototype.createBullet = function(enemy){
 EnemyManager.prototype.updateBullets = function(){
 	for(var i=0;i<this.bullets.length;i++)
 	{
-		if(this.bullets[i].radius > RADIUS)
+		if(this.bullets[i].radius > RADIUS - 15)
 		{
-			var temp = this.bullets[i];
-			this.bullets[i] = this.bullets[this.bullets.length - 1];
-			temp.destroy();
-			delete temp;
-			this.bullets.pop();
+			this.deleteBullet(i);
 		}
 		else
 		{
@@ -73,4 +73,12 @@ EnemyManager.prototype.updateBullets = function(){
 			this.bullets[i].updateSprite();
 		}
 	}
+}
+
+EnemyManager.prototype.deleteBullet = function(bulletIndex){
+	var temp = this.bullets[bulletIndex];
+	this.bullets[bulletIndex] = this.bullets[this.bullets.length - 1];
+	temp.destroy();
+	delete temp;
+	this.bullets.pop();
 }
