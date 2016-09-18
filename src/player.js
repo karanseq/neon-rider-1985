@@ -31,6 +31,15 @@ Player.prototype.init = function() {
 	this.bullets = new Array();
 };
 
+Player.prototype.reset = function() {
+	this.sprite.destroy();
+
+	while (this.bullets.length > 0) {
+		var bullet = this.bullets.pop();
+		bullet.destroy();
+	}
+};
+
 Player.prototype.createBullet = function(){
 	var bullet = new Bullet(true, this.radius, this.angleIndex);
 	bullet.scale = BULLET_SCALE;

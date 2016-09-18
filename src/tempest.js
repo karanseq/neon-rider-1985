@@ -1,7 +1,7 @@
 // URL: http://localhost/projects/team-10-tempest
 
 var GAME_WIDTH = 800;
-var GAME_HEIGHT = 600;
+var GAME_HEIGHT = 800;
 var RADIUS = 275;
 var ANGLES = [-180, -135, -90, -45, 0, 45, 90, 135];
 var MAX_ANGLE_INDEX = ANGLES.length;
@@ -62,18 +62,41 @@ Tempest.prototype.preload = function() {
 };
 
 Tempest.prototype.create = function() {
+	this.init();
+	this.backgroundSprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'circle');
+	this.backgroundSprite.anchor = { x: 0.5, y: 0.5 };
+	this.backgroundSprite.scale = {x: 0.5, y: 0.5};
+	this.createKeys();
+};
+
+Tempest.prototype.init = function() {
+	this.state = this.TempestState.GAME_INIT;
 
 	this.player = new Player(this.angles);
 	this.player.init();
 	this.enemyManager = new EnemyManager(this.angles);
 	this.enemyManager.init();
 
+	this.layers = new Array();
 	//this.createLevel();
-	this.backgroundSprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'circle');
-	this.backgroundSprite.anchor = { x: 0.5, y: 0.5 };
-	this.backgroundSprite.scale = {x: 0.5, y: 0.5};
-	this.createKeys();
+	
 	this.startGame();
+};
+
+Tempest.prototype.reset = function() {
+	if (this.state != this.TempestState.GAME_OVER) {
+		return;
+	}
+
+	this.player.reset();
+	this.player = null;
+	this.enemyManager.reset();
+	this.enemyManager = null;
+};
+
+Tempest.prototype.startGame = function() {
+	this.state = this.TempestState.GAME_RUNNING;
+	this.acceptKeys = true;
 };
 
 Tempest.prototype.createLevel = function() {
@@ -104,22 +127,11 @@ Tempest.prototype.createKeys = function() {
 	this.upKey = Game.input.keyboard.addKey(Phaser.Keyboard.UP);
 	this.downKey = Game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
 	this.spaceKey = Game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-	Game.input.keyboard.addKeyCapture([ Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.UP, Phaser.Keyboard.SPACEBAR ]);
-};
-
-Tempest.prototype.init = function() {
-	this.state = this.TempestState.GAME_INIT;
-	this.layers = new Array();
-}
-
-Tempest.prototype.startGame = function() {
-	this.state = this.TempestState.GAME_RUNNING;
-	this.acceptKeys = true;
+	Game.input.keyboard.addKeyCapture([ Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.UP, Phaser.Keyboard.DOWN, Phaser.Keyboard.SPACEBAR ]);
 };
 
 Tempest.prototype.update = function() {
 	 if (this.state == this.TempestState.GAME_RUNNING) {
-	 	this.updateCursorKeys();
 		this.player.updateBullets();
 		this.enemyManager.updateEnemy();
 		this.enemyManager.updateBullets();
@@ -133,6 +145,8 @@ Tempest.prototype.update = function() {
      	this.player.updateExplosion();
      }
      this.player.updateSprite();
+
+ 	 this.updateCursorKeys();
 };
 
 Tempest.prototype.updateCursorKeys = function() {
@@ -168,29 +182,31 @@ Tempest.prototype.updateCursorKeys = function() {
 Tempest.prototype.handleKeyLeft = function() {
 	this.acceptKeys = false;
 	this.player.setAngleIndex(this.player.getAngleIndex() - 1);
-	console.log("Left pressed...");
 };
 
 Tempest.prototype.handleKeyRight = function() {
 	this.acceptKeys = false;
 	this.player.setAngleIndex(this.player.getAngleIndex() + 1);
-	console.log("Right pressed...");
 };
 
 Tempest.prototype.handleKeyUp = function() {
 	this.acceptKeys = false;
-	this.player.createBullet();
-	console.log("Up pressed...");
 };
 
 Tempest.prototype.handleKeyDown = function() {
 	this.acceptKeys = false;
-	console.log("Down pressed...");
 };
 
 Tempest.prototype.handleKeySpace = function() {
 	this.acceptKeys = false;
-	console.log("Space pressed...");
+
+	if (this.state == this.TempestState.GAME_RUNNING) {
+		this.player.createBullet();
+	}
+	else if (this.state == this.TempestState.GAME_OVER) {
+		this.reset();
+		this.init();
+	}
 };
 
 Tempest.prototype.playerBulletCollide = function(){
