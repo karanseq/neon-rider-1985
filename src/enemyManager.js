@@ -15,11 +15,22 @@ EnemyManager.prototype.init = function() {
 	this.bullets = new Array();
 };
 
+EnemyManager.prototype.reset = function() {
+	while (this.enemys.length > 0) {
+		var enemy = this.enemys.pop();
+		enemy.destroy();
+	}
+
+	while (this.bullets.length > 0) {
+		var bullet = this.bullets.pop();
+		bullet.destroy();
+	}
+};
+
 EnemyManager.prototype.createEnemy = function(angleIndex){
 	var enemy = new Enemy(angleIndex);
 	this.enemys.push(enemy);
-}
-
+};
 
 EnemyManager.prototype.updateEnemy = function(){
 	for(var i=0;i<this.enemys.length;i++)
