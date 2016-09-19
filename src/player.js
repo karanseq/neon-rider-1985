@@ -1,6 +1,6 @@
 var INIT_ANGLE_INDEX = 4;
-var EXPLOSION_INTERVAL = 10;
-var EXPLOSION_REVERSE_COUNTER = 3;
+var EXPLOSION_INTERVAL = 15;
+var EXPLOSION_REVERSE_COUNTER = 2;
 
 var Player = function() {
 	this.sprite = null;
@@ -19,7 +19,7 @@ var Player = function() {
 	this.isExplosionLarge = true;
 	this.explosionTimer = 0;
 	this.explosionReverseCounter = 0;
-	this.explosionScaleChange = 0.08;
+	this.explosionScaleChange = 0.1;
 };
 
 Player.prototype.init = function() {
@@ -87,6 +87,36 @@ Player.prototype.destroy = function(){
 
 Player.prototype.updateExplosion = function(){
 	this.explosionTimer++;
+	// if(this.isExplosionLarge)
+	// {
+	// 	if(this.explosionTimer >= EXPLOSION_INTERVAL)
+	// 	{
+	// 		this.explosionReverseCounter++;
+	// 		this.scale = {x: this.scale.x + this.explosionScaleChange, y: this.scale.y + this.explosionScaleChange};
+	// 		this.explosionTimer = 0;
+	// 	}
+	// 	if(this.explosionReverseCounter >= EXPLOSION_REVERSE_COUNTER)
+	// 	{
+	// 		this.isExplosionLarge = false;
+	// 		this.explosionReverseCounter = 0;
+	// 	}
+	// }
+	// else
+	// {
+	// 	if(this.explosionTimer >= EXPLOSION_INTERVAL)
+	// 	{
+	// 		this.explosionReverseCounter++;
+	// 		this.scale = {x: this.scale.x - this.explosionScaleChange, y: this.scale.y - this.explosionScaleChange};
+	// 		this.explosionTimer = 0;
+	// 	}
+	// 	if(this.explosionReverseCounter >= EXPLOSION_REVERSE_COUNTER)
+	// 	{
+	// 		this.isExplosionLarge = true;
+	// 		this.explosionReverseCounter = 0;
+	// 	}
+	// }
+
+	
 	if(this.isExplosionLarge)
 	{
 		if(this.explosionTimer >= EXPLOSION_INTERVAL)
@@ -103,18 +133,15 @@ Player.prototype.updateExplosion = function(){
 	}
 	else
 	{
-		if(this.explosionTimer >= EXPLOSION_INTERVAL)
+		if(this.explosionTimer >= EXPLOSION_INTERVAL / 2)
 		{
-			this.explosionReverseCounter++;
-			this.scale = {x: this.scale.x - this.explosionScaleChange, y: this.scale.y - this.explosionScaleChange};
+			
+			this.scale = PLAYER_EXPLOSION_SCALE;
 			this.explosionTimer = 0;
-		}
-		if(this.explosionReverseCounter >= EXPLOSION_REVERSE_COUNTER)
-		{
+		
 			this.isExplosionLarge = true;
-			this.explosionReverseCounter = 0;
 		}
-	}	
+	}
 }
 
 Player.prototype.setAngleIndex = function(index)
