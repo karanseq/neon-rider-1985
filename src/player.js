@@ -2,6 +2,8 @@ var INIT_ANGLE_INDEX = 4;
 var EXPLOSION_INTERVAL = 15;
 var EXPLOSION_REVERSE_COUNTER = 2;
 
+var PLAYER_ROTATE_LASTING = 5;
+
 var Player = function() {
 	this.sprite = null;
 	this.angleIndex = INIT_ANGLE_INDEX;
@@ -20,6 +22,10 @@ var Player = function() {
 	this.explosionTimer = 0;
 	this.explosionReverseCounter = 0;
 	this.explosionScaleChange = 0.1;
+
+	this.isRotate = false;
+	this.previousAngle =0;
+	this.rotateTimer = 0;
 
 	this.lives = 3;
 };
@@ -54,9 +60,38 @@ Player.prototype.reset = function() {
 	}
 };
 
+Player.prototype.beginRotation = function(rotateLeft){
+	if(!this.isRotate)
+	{
+		this.previousAngle = ANGLES[this.angleIndex];
+		if(!rotateLeft)
+		{
+			this.angleIndex++;
+			if(this.angleIndex >= MAX_ANGLE_INDEX)
+			{
+				this.angleIndex -= MAX_ANGLE_INDEX;
+				this.previousAngle = ANGLES[MAX_ANGLE_INDEX - 1] - 360;
+			}
+		}
+		else
+		{
+			this.angleIndex--;
+			if(this.angleIndex < 0)
+			{
+				this.angleIndex += MAX_ANGLE_INDEX;
+				this.previousAngle = ANGLES[0] + 360;
+			}
+		}
+
+		this.isRotate = true;
+		this.rotateTimer = 0;
+	}
+}
+
+
+
 Player.prototype.createBullet = function(){
-	var bullet = new Bullet(true, this.radius, this.angleIndex);
-	bullet.scale = BULLET_SCALE;
+	var bullet = new Bullet(0, this.radius, this.angleIndex);
 	bullet.updateSprite();
 	this.bullets.push(bullet);
 }
@@ -65,15 +100,9 @@ Player.prototype.updateBullets = function(){
 	for(var i=0;i<this.bullets.length;i++)
 	{	
 		if(this.bullets[i].radius < this.bulletMoveSpeed * 2)
-		{
 			this.deleteBullet(i);
-		}
 		else
-		{
-			this.bullets[i].radius -= this.bulletMoveSpeed;
-			this.bullets[i].scale = { x:this.bullets[i].scale.x - this.bulletScaleSpeed, y:this.bullets[i].scale.y - this.bulletScaleSpeed};
-			this.bullets[i].updateSprite();
-		}
+			this.bullets[i].update();
 	}
 }
 
@@ -83,6 +112,22 @@ Player.prototype.deleteBullet = function(bulletIndex){
 	temp.destroy();
 	delete temp;
 	this.bullets.pop();
+}
+
+Player.prototype.updateRotation = function(){
+	if(this.isRotate)
+	{
+		this.rotateTimer++;
+		if(this.rotateTimer >= PLAYER_ROTATE_LASTING)
+		{
+			this.angle = ANGLES[this.angleIndex];
+			this.isRotate = false;
+		}
+		else
+		{
+			this.angle = this.previousAngle + (ANGLES[this.angleIndex] - this.previousAngle) * this.rotateTimer / ROTATE_LASTING;
+		}
+	}
 }
 
 Player.prototype.updateSprite = function(){
@@ -179,15 +224,15 @@ Player.prototype.updateExplosion = function(){
 	}
 }
 
-Player.prototype.setAngleIndex = function(index)
-{
-	if(index < 0) index += MAX_ANGLE_INDEX;
-	else index = (index % MAX_ANGLE_INDEX);
-	this.angleIndex = index;
-	this.angle = ANGLES[this.angleIndex];
-}
+// Player.prototype.setAngleIndex = function(index)
+// {
+// 	if(index < 0) index += MAX_ANGLE_INDEX;
+// 	else index = (index % MAX_ANGLE_INDEX);
+// 	this.angleIndex = index;
+// 	this.angle = ANGLES[this.angleIndex];
+// }
 
-Player.prototype.getAngleIndex = function()
-{
-	return this.angleIndex;
-}
+// Player.prototype.getAngleIndex = function()
+// {
+// 	return this.angleIndex;
+// }
