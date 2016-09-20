@@ -1,0 +1,111 @@
+{
+	"lanes": 8,
+	"color": "0xaabbcc",
+	"img": "images/Ring.png",
+	"layers": [
+		{
+			"enemies": {
+				"min": 0,
+				"max": 0,
+				"types": []
+			},
+			"covers": []
+		},
+		{
+			"enemies": {
+				"min": 0,
+				"max": 0,
+				"types": []
+			},
+			"covers": []
+		},
+		{
+			"enemies": {
+				"min": 0,
+				"max": 0,
+				"types": []
+			},
+			"covers": []
+		},
+		{
+			"enemies": {
+				"min": 0,
+				"max": 0,
+				"types": []
+			},
+			"covers": []
+		},
+		{
+			"enemies": {
+				"min": 0,
+				"max": 0,
+				"types": []
+			},
+			"covers": []
+		},
+		{
+			"enemies": {
+				"min": 0,
+				"max": 0,
+				"types": []
+			},
+			"covers": []
+		},
+		{
+			"enemies": {
+				"min": 0,
+				"max": 0,
+				"types": []
+			},
+			"covers": []
+		},
+		{
+			"enemies": {
+				"min": 0,
+				"max": 0,
+				"types": []
+			},
+			"covers": []
+		},
+		{
+			"enemies": {
+				"min": 0,
+				"max": 0,
+				"types": []
+			},
+			"covers": []
+		},
+		{
+			"enemies": {
+				"min": 0,
+				"max": 0,
+				"types": []
+			},
+			"covers": []
+		},
+		{
+			"enemies": {
+				"min": 0,
+				"max": 0,
+				"types": []
+			},
+			"covers": []
+		},
+		{
+			"enemies": {
+				"min": 0,
+				"max": 0,
+				"types": []
+			},
+			"covers": []
+		},
+		{
+			"enemies": {
+				"min": 0,
+				"max": 0,
+				"types": []
+			},
+			"covers": []
+		}
+	]
+}
