@@ -386,7 +386,7 @@ Tempest.prototype.generateEnemy = function(){
 	{
 		if(this.generateTimer > ENEMY_INTERVAL)
 		{
-			this.enemyManager.createEnemy(Math.round(Math.random() * 7.49));
+			this.enemyManager.createEnemy(Math.round(Math.random() * 7.49), 2);
 			this.generateCount++;
 			this.generateTimer = 0;
 			if(this.generateCount >= 4)

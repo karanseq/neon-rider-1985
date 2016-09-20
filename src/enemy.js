@@ -1,9 +1,12 @@
 var ENEMY_SPAWN_RADIUS = 10;
 var ENEMY_SPAWN_SCALE = { x:0.02, y:0.02 };
+var ROTATE_INTERVAL = 50;
+var ROTATE_LASTING = 5;
+var SHOOT_INTERVAL = 80;
+var MOVE_SPEED = 1;
+var SCALE_SPEED = 0.001;
 
-
-
-var Enemy = function(angleIndex) {
+var Enemy = function(angleIndex, enemyType) {
 	this.angleIndex = angleIndex;
 	this.sprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'enemy');
 	this.sprite.anchor = { x: 0.5, y: 0.5 };
@@ -15,19 +18,26 @@ var Enemy = function(angleIndex) {
 	this.position = caculatePosition(this.radius, this.angle);
 	this.updateSprite();
 
+	this.type = enemyType;
+
 	if(Math.random() < 0.5)
 		this.rotateLeft = true;
 	else
 		this.rotateLeft = false;
-	this.rotateInterval = 50;
-	this.rotateTimer = Math.round(Math.random() * this.rotateInterval);
 
+	this.rotateTimer = Math.round(Math.random() * ROTATE_INTERVAL);
 	this.isRotate = false;
-	this.rotateLasting = 5;
-
 	this.previousAngle =0;
+
+	this.shootTimer = Math.round(Math.random() * SHOOT_INTERVAL);
+	this.shootFlag = false;
 };
 
+Enemy.prototype.EnemyType = {
+	ENEMY_SIMPLE: 0,
+	ENEMY_ROTATING: 1,
+ 	ENEMY_SHOOTING: 2,
+ };
 
 Enemy.prototype.createBullet = function(){
 	var bullet = new Bullet(false, this.radius, this.angleIndex);
@@ -36,11 +46,42 @@ Enemy.prototype.createBullet = function(){
 	return bullet;
 }
 
+Enemy.prototype.update = function(){
+	this.updateMovement();
+
+	switch (this.type) {
+ 		case this.EnemyType.ENEMY_SIMPLE:
+ 			break;
+ 		case this.EnemyType.ENEMY_ROTATING:
+ 			this.updateRotation();
+ 			break;
+ 		case this.EnemyType.ENEMY_SHOOTING:
+ 			this.updateShooting();
+			break;
+ 	}
+ 	this.updateSprite();
+}
+
+
+Enemy.prototype.updateMovement = function(){
+	this.radius += MOVE_SPEED;
+	this.scale = { x:this.scale.x + SCALE_SPEED, y:this.scale.y + SCALE_SPEED};
+}
+
+Enemy.prototype.updateShooting = function(){
+	this.shootTimer++;
+	if(this.shootTimer >= SHOOT_INTERVAL)
+	{
+		this.shootFlag = true;
+		this.shootTimer -= SHOOT_INTERVAL;
+	}
+}
+
 Enemy.prototype.updateRotation = function(){
 	this.rotateTimer++;
 	if(!this.isRotate)
 	{
-		if(this.rotateTimer >= this.rotateInterval)
+		if(this.rotateTimer >= ROTATE_INTERVAL)
 		{	
 			this.previousAngle = ANGLES[this.angleIndex];
 			if(this.rotateLeft)
@@ -48,7 +89,7 @@ Enemy.prototype.updateRotation = function(){
 				this.angleIndex++;
 				if(this.angleIndex >= MAX_ANGLE_INDEX)
 				{
-					this.angleIndex -= this.MAX_ANGLE_INDEX;
+					this.angleIndex -= MAX_ANGLE_INDEX;
 					this.previousAngle = ANGLES[MAX_ANGLE_INDEX - 1] - 360;
 				}
 			}
@@ -68,7 +109,7 @@ Enemy.prototype.updateRotation = function(){
 	}
 	else
 	{
-		if(this.rotateTimer >= this.rotateLasting)
+		if(this.rotateTimer >= ROTATE_LASTING)
 		{
 			this.angle = ANGLES[this.angleIndex];
 			this.isRotate = false;
@@ -76,7 +117,7 @@ Enemy.prototype.updateRotation = function(){
 		}
 		else
 		{
-			this.angle = this.previousAngle + (ANGLES[this.angleIndex] - this.previousAngle) * this.rotateTimer / this.rotateLasting;
+			this.angle = this.previousAngle + (ANGLES[this.angleIndex] - this.previousAngle) * this.rotateTimer / ROTATE_LASTING;
 		}
 	}
 }

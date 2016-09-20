@@ -3,8 +3,7 @@ var EnemyManager = function(){
 	this.bullets = null;
 	this.enemyShootChance = 0.01;
 
-	this.enemyMoveSpeed = 1;
-	this.enemyScaleSpeed = 0.001;
+	
 	this.enemyBulletMoveSpeed = 2;
 	this.enemyBulletScaleSpeed = 0.001;
 }
@@ -27,8 +26,8 @@ EnemyManager.prototype.reset = function() {
 	}
 };
 
-EnemyManager.prototype.createEnemy = function(angleIndex){
-	var enemy = new Enemy(angleIndex);
+EnemyManager.prototype.createEnemy = function(angleIndex, enemyType){
+	var enemy = new Enemy(angleIndex, enemyType);
 	this.enemys.push(enemy);
 };
 
@@ -41,17 +40,15 @@ EnemyManager.prototype.updateEnemy = function(){
 		}
 		else
 		{
-			this.enemys[i].radius += this.enemyMoveSpeed;
-			this.enemys[i].scale = { x:this.enemys[i].scale.x + this.enemyScaleSpeed, y:this.enemys[i].scale.y + this.enemyScaleSpeed};
-			this.enemys[i].updateRotation();
-			this.enemys[i].updateSprite();
-
+			this.enemys[i].update();
+	
 			// shoot bullet
-			if(Math.random() < this.enemyShootChance)
+			if(this.enemys[i].type == 2 && this.enemys[i].shootFlag)
 			{
 				//enemy can not create bullet when they are roatating
-				if(!this.enemys[i].isRotate && this.enemys[i].radius < RADIUS / 2)
+				if(!this.enemys[i].isRotate && this.enemys[i].radius < RADIUS * 0.5)
 					this.createBullet(this.enemys[i]);
+				this.enemys[i].shootFlag = false;
 			}
 		}
 	}
