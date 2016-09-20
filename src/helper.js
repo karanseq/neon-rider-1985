@@ -8,6 +8,12 @@ var imageSet = [ { key: 'layer', src: 'images/Ring.png' },
 
 var fontSet = [ { key: 'carrier_command', img: 'fonts/carrier_command.png', data: 'fonts/carrier_command.xml' } ];
 
+var levelSet = [
+{ enemyTypes: [0, 1], minEnemiesInFormation: 2, maxEnemiesInFormation: 5 },
+{ enemyTypes: [0, 1, 2], minEnemiesInFormation: 3, maxEnemiesInFormation: 7 },
+{ enemyTypes: [0, 1, 2], minEnemiesInFormation: 4, maxEnemiesInFormation: 10 }
+];
+
 function getRegularPolygonVertices(numVertices, circumRadius, startAngle)
 {
 	var vertices = new Array();

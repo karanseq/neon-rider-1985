@@ -89,6 +89,7 @@ Tempest.prototype.init = function() {
 
 	this.enemyManager = new EnemyManager(this.angles);
 	this.enemyManager.init();
+	this.enemyManager.levelIndex = 1;
 
 	this.layers = new Array();
 	//this.createLevel();

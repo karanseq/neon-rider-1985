@@ -14,6 +14,8 @@ var EnemyManager = function(){
 	this.enemySpawnDelay = 0;
 	this.enemySpawnDelayCounter = 0;
 	this.enemiesToSpawn = null;
+
+	this.levelIndex = 0;
 };
 
 EnemyManager.prototype.init = function() {
@@ -154,12 +156,14 @@ EnemyManager.prototype.updateFormation = function() {
 EnemyManager.prototype.createFormation = function() {
 	// pick an angle index
 	var angleIndex = Math.round(Math.random() * ANGLES.length);
-	// get number of enemies for this formation
-	var numEnemiesInFormation = this.getNumEnemiesInFormation();
+
+	// get the formation pattern
+	var formationPattern = this.getFormationPattern();
+	console.log("Spawning enemy types:" + formationPattern);
 
 	// create enemies and add them to a spawning list
-	for (var i = 0; i < numEnemiesInFormation; ++i) {
-		var enemy = new Enemy(angleIndex, 2);
+	for (var i = 0; i < formationPattern.length; ++i) {
+		var enemy = new Enemy(angleIndex, formationPattern[i]);
 		enemy.setVisible(false);
 		this.enemiesToSpawn.push(enemy);
 	}
@@ -168,7 +172,29 @@ EnemyManager.prototype.createFormation = function() {
 	this.enemySpawnDelayCounter = this.enemySpawnDelay;
 };
 
-EnemyManager.prototype.getNumEnemiesInFormation = function() {
-	// TODO: replace with actual logic
-	return Math.round(Math.random() * 5);
+EnemyManager.prototype.getFormationPattern = function() {
+	var count = 0;
+	var formationPattern = [];
+
+	// get the required number of enemies for this formation
+	var numEnemiesInFormation = levelSet[this.levelIndex].minEnemiesInFormation + Math.floor(Math.random() * (levelSet[this.levelIndex].maxEnemiesInFormation - levelSet[this.levelIndex].minEnemiesInFormation));
+
+	// get the maximum types of enemies for this formation
+	var enemyTypesInFormation = levelSet[this.levelIndex].enemyTypes;
+
+	// randomly pick one or more of the enemy types
+	var actualEnemyTypes = enemyTypesInFormation.slice(0, Math.ceil(Math.random() * enemyTypesInFormation.length));
+
+	// keep filling enemy types till we're full
+	while (formationPattern.length < numEnemiesInFormation) {
+		// fill one of each type
+		for (var i = 0; i < actualEnemyTypes.length; ++i) {
+			formationPattern.push(actualEnemyTypes[i]);
+		}
+	}
+
+	// trim excess
+	formationPattern = formationPattern.slice(0, numEnemiesInFormation);
+
+	return formationPattern;
 };
