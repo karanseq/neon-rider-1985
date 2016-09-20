@@ -215,7 +215,9 @@ Tempest.prototype.createKeys = function() {
 };
 
 Tempest.prototype.update = function() {
-	 if (this.state == this.TempestState.GAME_RUNNING) {
+	this.updateCursorKeys();
+
+	if (this.state == this.TempestState.GAME_RUNNING) {
 		this.player.updateBullets();
 		this.enemyManager.updateEnemy();
 		this.enemyManager.updateBullets();
@@ -229,8 +231,6 @@ Tempest.prototype.update = function() {
      	this.player.updateExplosion();
      }
      this.player.updateSprite();
-
- 	 this.updateCursorKeys();
 };
 
 Tempest.prototype.updateCursorKeys = function() {

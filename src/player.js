@@ -20,15 +20,38 @@ var Player = function() {
 	this.explosionTimer = 0;
 	this.explosionReverseCounter = 0;
 	this.explosionScaleChange = 0.1;
+
+	this.lives = 3;
 };
 
 Player.prototype.init = function() {
+	// reset player position
+	this.angleIndex = INIT_ANGLE_INDEX;
+	this.angle = ANGLES[this.angleIndex];
+
+	// initialize player sprite
 	this.sprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'player');
 	this.sprite.anchor = { x: 0.5, y: 0.5 };
+	this.sprite.scale = PLAYER_SCALE;
 	this.sprite.visible = true;
+
+	// call update to set default position
 	this.updateSprite();
 
+	this.scale = PLAYER_SCALE;
+
 	this.bullets = new Array();
+};
+
+Player.prototype.reset = function() {
+	// remove the sprite
+	this.destroy();
+
+	// remove all bullets
+	while (this.bullets.length > 0) {
+		var bullet = this.bullets.pop();
+		bullet.destroy();
+	}
 };
 
 Player.prototype.createBullet = function(){
@@ -79,11 +102,23 @@ Player.prototype.isVisible = function() {
 
 Player.prototype.destroy = function(){
 	this.sprite.destroy();
+	this.sprite = null;
+}
+
+Player.prototype.die = function() {	
+	// remove old sprite
+	this.destroy();
+
+	// add explosion
 	this.sprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'playerExplosion');
 	this.sprite.anchor = { x: 0.5, y: 0.5 };
-	this.sprite.scale = PLAYER_EXPLOSION_SCALE;
 	this.sprite.visible = true;
-}
+	this.sprite.scale = PLAYER_EXPLOSION_SCALE;
+	this.scale = PLAYER_EXPLOSION_SCALE;
+
+	// reduce number of lives
+	--this.lives;
+};
 
 Player.prototype.updateExplosion = function(){
 	this.explosionTimer++;
