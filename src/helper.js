@@ -1,7 +1,6 @@
 var imageSet = [ { key: 'layer', src: 'images/Ring.png' },
 { key: 'circle', src: 'images/Circle.png'}, 
 { key: 'player', src: 'images/Player01.png'},
-{ key: 'player02', src: 'images/Player02.png'},
 { key: 'playerbullet', src: 'images/PlayerBullet01.png'},
 { key: 'enemy', src: 'images/Enemy01.png'},
 { key: 'enemybullet', src:'images/EnemyBullet01.png'},

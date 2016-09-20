@@ -7,12 +7,23 @@ var EnemyManager = function(){
 	this.enemyScaleSpeed = 0.001;
 	this.enemyBulletMoveSpeed = 2;
 	this.enemyBulletScaleSpeed = 0.001;
-}
 
+	this.hasStartFormation = false;
+	this.formationDelay = 0;
+	this.formationDelayCounter = 0;
+
+	this.enemySpawnDelay = 0;
+	this.enemySpawnDelayCounter = 0;
+	this.enemiesToSpawn = null;
+};
 
 EnemyManager.prototype.init = function() {
 	this.enemys = new Array();
 	this.bullets = new Array();
+
+	this.enemiesToSpawn = new Array();
+	this.formationDelay = 100;
+	this.enemySpawnDelay = 25;
 };
 
 EnemyManager.prototype.reset = function() {
@@ -27,9 +38,23 @@ EnemyManager.prototype.reset = function() {
 	}
 };
 
+EnemyManager.prototype.startFormations = function() {
+	if (this.hasStartFormation == true) {
+		return;
+	}
+	this.hasStartFormation = true;
+	this.createFormation();
+};
+
 EnemyManager.prototype.createEnemy = function(angleIndex){
 	var enemy = new Enemy(angleIndex);
 	this.enemys.push(enemy);
+};
+
+EnemyManager.prototype.update = function() {
+	this.updateEnemy();
+	this.updateBullets();
+	this.updateFormation();
 };
 
 EnemyManager.prototype.updateEnemy = function(){
@@ -55,7 +80,7 @@ EnemyManager.prototype.updateEnemy = function(){
 			}
 		}
 	}
-}
+};
 
 EnemyManager.prototype.deleteEnemy = function(enemyIndex){
 	var temp = this.enemys[enemyIndex];
@@ -63,12 +88,12 @@ EnemyManager.prototype.deleteEnemy = function(enemyIndex){
 	temp.destroy();
 	delete temp;
 	this.enemys.pop();
-}
+};
 
 EnemyManager.prototype.createBullet = function(enemy){
 	var bullet = enemy.createBullet();
 		this.bullets.push(bullet);
-}
+};
 
 EnemyManager.prototype.updateBullets = function(){
 	for(var i=0;i<this.bullets.length;i++)
@@ -84,7 +109,7 @@ EnemyManager.prototype.updateBullets = function(){
 			this.bullets[i].updateSprite();
 		}
 	}
-}
+};
 
 EnemyManager.prototype.deleteBullet = function(bulletIndex){
 	var temp = this.bullets[bulletIndex];
@@ -92,4 +117,58 @@ EnemyManager.prototype.deleteBullet = function(bulletIndex){
 	temp.destroy();
 	delete temp;
 	this.bullets.pop();
-}
+};
+
+EnemyManager.prototype.updateFormation = function() {
+
+	// update formation counter
+	if (this.formationDelayCounter > 0) {
+		--this.formationDelayCounter;
+
+		// check if a new formation is required
+		if (this.formationDelayCounter == 0) {
+			this.createFormation();
+		}
+	}
+
+	// check if there are any enemies left to spawn
+	if (this.enemiesToSpawn.length > 0) {
+		// update enemy spawn counter
+		if (this.enemySpawnDelayCounter > 0) {
+			--this.enemySpawnDelayCounter;
+
+			// check if the counter has elapsed
+			if (this.enemySpawnDelayCounter == 0) {
+				this.enemySpawnDelayCounter = this.enemySpawnDelay;
+				var enemy = this.enemiesToSpawn.pop();
+				enemy.setVisible(true);
+				this.enemys.push(enemy);
+			}
+		}
+
+		// check if all enemies have spawned
+		if (this.enemiesToSpawn.length == 0) {
+			// spawn the next formation
+			this.formationDelayCounter = this.formationDelay;
+		}
+	}
+};
+
+EnemyManager.prototype.createFormation = function() {
+	var numEnemiesInFormation = this.getNumEnemiesInFormation();
+
+	// create enemies and add them to a spawning list
+	for (var i = 0; i < numEnemiesInFormation; ++i) {
+		var enemy = new Enemy();
+		enemy.setVisible(false);
+		this.enemiesToSpawn.push(enemy);
+	}
+
+	// start spawning enemies
+	this.enemySpawnDelayCounter = this.enemySpawnDelay;
+};
+
+EnemyManager.prototype.getNumEnemiesInFormation = function() {
+	// TODO: replace with actual logic
+	return 5;
+};

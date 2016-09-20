@@ -108,7 +108,7 @@ Tempest.prototype.initHUD = function() {
 
 	this.lifeSprites = new Array();
 	for (var i = 0; i < this.player.lives; ++i) {
-		var lifeSprite = this.hudGroup.create(GAME_WIDTH - 50 - (i * 50), GAME_HEIGHT * 0.05, 'player02');
+		var lifeSprite = this.hudGroup.create(GAME_WIDTH - 50 - (i * 50), GAME_HEIGHT * 0.05, 'player');
 		lifeSprite.anchor = { x: 0.5, y: 0.5 };
 		lifeSprite.scale = { x: 0.15, y: 0.15 };
 		this.lifeSprites.push(lifeSprite);
@@ -168,6 +168,7 @@ Tempest.prototype.playAgain = function() {
 Tempest.prototype.startGame = function() {
 	this.state = this.TempestState.GAME_RUNNING;
 	this.acceptKeys = true;
+	this.enemyManager.startFormations();
 };
 
 Tempest.prototype.endGame = function() {
@@ -219,15 +220,13 @@ Tempest.prototype.update = function() {
 
 	if (this.state == this.TempestState.GAME_RUNNING) {
 		this.player.updateBullets();
-		this.enemyManager.updateEnemy();
-		this.enemyManager.updateBullets();
+		this.enemyManager.update();
 
 		this.playerBulletCollide();
 		this.playerCollide();
-		this.generateEnemy();
+		// this.generateEnemy();
      }
-     else if (this.state == this.TempestState.GAME_PLAYER_DIED || this.state == this.TempestState.GAME_OVER)
-     {
+     else if (this.state == this.TempestState.GAME_PLAYER_DIED || this.state == this.TempestState.GAME_OVER) {
      	this.player.updateExplosion();
      }
      this.player.updateSprite();
@@ -371,31 +370,31 @@ Tempest.prototype.playerCollide = function(){
 	}
 };
 
-Tempest.prototype.generateEnemy = function(){
-	this.generateTimer++;
-	if(!this.isGenerate)
-	{
-		if(this.generateTimer > WAVE_INTERVAL)
-		{
-			this.isGenerate = true;
-			this.generateTimer = 0;
-			this.generateCount = 0;
-		}
-	}
-	else
-	{
-		if(this.generateTimer > ENEMY_INTERVAL)
-		{
-			this.enemyManager.createEnemy(Math.round(Math.random() * 7.49));
-			this.generateCount++;
-			this.generateTimer = 0;
-			if(this.generateCount >= 4)
-			{
-				this.isGenerate = false;
-			}
-		}
-	}
-};
+// Tempest.prototype.generateEnemy = function(){
+// 	this.generateTimer++;
+// 	if(!this.isGenerate)
+// 	{
+// 		if(this.generateTimer > WAVE_INTERVAL)
+// 		{
+// 			this.isGenerate = true;
+// 			this.generateTimer = 0;
+// 			this.generateCount = 0;
+// 		}
+// 	}
+// 	else
+// 	{
+// 		if(this.generateTimer > ENEMY_INTERVAL)
+// 		{
+// 			this.enemyManager.createEnemy(Math.round(Math.random() * 7.49));
+// 			this.generateCount++;
+// 			this.generateTimer = 0;
+// 			if(this.generateCount >= 4)
+// 			{
+// 				this.isGenerate = false;
+// 			}
+// 		}
+// 	}
+// };
 
 Tempest.prototype.updateScore = function(delta) {
 	this.score += delta;
