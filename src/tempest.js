@@ -1,7 +1,7 @@
 // URL: http://localhost/projects/team-10-tempest
 
-var GAME_WIDTH = 800;
-var GAME_HEIGHT = 800;
+var GAME_WIDTH = 1280;
+var GAME_HEIGHT = 720;
 var RADIUS = 275;
 var ANGLES = [-180, -135, -90, -45, 0, 45, 90, 135];
 var MAX_ANGLE_INDEX = ANGLES.length;
@@ -27,10 +27,7 @@ var caculatePosition = function(radius, angle)
 var Tempest = function() {
 	this.state = null;
 
-	this.numLayersInLevel = 0;
-	this.numVisibleLayers = 0;
-
-	this.layers = null;	
+	this.layerManager = null;
 	this.player = null;
 	this.enemyList = null;
 
@@ -71,28 +68,33 @@ Tempest.prototype.preload = function() {
 	for (var i = 0; i < fontSet.length; ++i) {
 		Game.load.bitmapFont(fontSet[i].key, fontSet[i].img, fontSet[i].data);
 	}
+
+	// load levels
+	for (var i = 0; i < levelFileSet.length; ++i) {
+		Game.load.json(levelFileSet[i].key, levelFileSet[i].src);
+	}
 };
 
 Tempest.prototype.create = function() {
 	this.init();
-	this.backgroundSprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'circle');
-	this.backgroundSprite.anchor = { x: 0.5, y: 0.5 };
-	this.backgroundSprite.scale = {x: 0.5, y: 0.5};
+	// this.backgroundSprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'circle');
+	// this.backgroundSprite.anchor = { x: 0.5, y: 0.5 };
+	// this.backgroundSprite.scale = {x: 0.5, y: 0.5};
 	this.createKeys();
 };
 
 Tempest.prototype.init = function() {
 	this.state = this.TempestState.GAME_INIT;
 
+	this.layerManager = new LayerManager();
+	this.layerManager.init();
+
 	this.player = new Player(this.angles);
 	this.player.init();
 
-	this.enemyManager = new EnemyManager(this.angles);
-	this.enemyManager.init();
-	this.enemyManager.levelIndex = 1;
-
-	this.layers = new Array();
-	//this.createLevel();
+	// this.enemyManager = new EnemyManager(this.angles);
+	// this.enemyManager.init();
+	// this.enemyManager.levelIndex = 1;
 
 	this.initHUD();
 
@@ -118,7 +120,7 @@ Tempest.prototype.initHUD = function() {
 
 Tempest.prototype.reset = function() {
 	this.player.reset();
-	this.enemyManager.reset();
+	// this.enemyManager.reset();
 
 	if (this.gameOverText != null) {
 		this.gameOverText.destroy();
@@ -169,7 +171,7 @@ Tempest.prototype.playAgain = function() {
 Tempest.prototype.startGame = function() {
 	this.state = this.TempestState.GAME_RUNNING;
 	this.acceptKeys = true;
-	this.enemyManager.startFormations();
+	// this.enemyManager.startFormations();
 };
 
 Tempest.prototype.endGame = function() {
@@ -185,28 +187,6 @@ Tempest.prototype.endGame = function() {
 	this.scoreText.position = { x: GAME_WIDTH * 0.5, y: GAME_WIDTH * 0.5 };
 }
 
-Tempest.prototype.createLevel = function() {
-	this.numLayersInLevel = 20;
-	this.numVisibleLayers = 5;
-
-	this.createLayers();
-};
-
-Tempest.prototype.createLayers = function() {
-	var numLayersCreated = 0;
-	for (var i = 0; i < this.numLayersInLevel; ++i) {
-		var layer = new Layer();
-		layer.init(0);
-
-		if (++numLayersCreated <= this.numVisibleLayers) {
-			layer.setScale({ x: MAX_LAYER_SCALE - i * 0.1, y: MAX_LAYER_SCALE - i * 0.1 });			
-			layer.setVisible(true);
-		}
-
-		this.layers.push(layer);
-	}
-};
-
 Tempest.prototype.createKeys = function() {
 	this.leftKey = Game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
 	this.rightKey = Game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
@@ -221,11 +201,10 @@ Tempest.prototype.update = function() {
 
 	if (this.state == this.TempestState.GAME_RUNNING) {
 		this.player.updateBullets();
-		this.enemyManager.update();
+		// this.enemyManager.update();
 
-		this.playerBulletCollide();
-		this.playerCollide();
-		// this.generateEnemy();
+		// this.playerBulletCollide();
+		// this.playerCollide();
      }
      else if (this.state == this.TempestState.GAME_PLAYER_DIED || this.state == this.TempestState.GAME_OVER) {
      	this.player.updateExplosion();
@@ -285,6 +264,7 @@ Tempest.prototype.handleKeyRight = function() {
 
 Tempest.prototype.handleKeyUp = function() {
 	this.acceptKeys = false;
+	this.layerManager.moveUp();
 };
 
 Tempest.prototype.handleKeyDown = function() {

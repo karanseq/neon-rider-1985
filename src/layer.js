@@ -1,10 +1,8 @@
-var MAX_LAYER_SCALE = 0.5;
+var LAYER_SCALE_DURATION = 500;
 
 var Layer = function() {
 	this.sprite = null;
-	this.numSides = 0;
-
-	// this.graphics = null;
+	this.lanes = 0;
 };
 
 Layer.prototype.init = function(numSides) {
@@ -12,6 +10,11 @@ Layer.prototype.init = function(numSides) {
 	this.sprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'layer');
 	this.sprite.anchor = { x: 0.5, y: 0.5 };
 	this.sprite.visible = false;
+};
+
+Layer.prototype.destroy = function() {
+	this.sprite.destroy();
+	this.sprite = null;
 };
 
 Layer.prototype.setScale = function(newScale) {
@@ -22,9 +25,23 @@ Layer.prototype.getScale = function() {
 	return this.sprite.scale;
 };
 
-Layer.prototype.scaleUp = function(scaleTo) {
-	var newScale = { x: this.sprite.scale.x + scaleTo, y: this.sprite.scale.y + scaleTo };
-	Game.add.tween(this.sprite.scale).to(newScale, 1000, Phaser.Easing.Linear.None, true);	
+Layer.prototype.spawn = function(layerIndex) {	
+	this.sprite.scale = { x: layerScale[layerIndex + 1], y: layerScale[layerIndex + 1] };
+	this.sprite.visible = true;
+	this.sprite.alpha = 0;
+
+	var newScale = { x: layerScale[layerIndex], y: layerScale[layerIndex] };
+	Game.add.tween(this.sprite.scale).to(newScale, LAYER_SCALE_DURATION, Phaser.Easing.Linear.None, true);
+	Game.add.tween(this.sprite).to( { alpha: 1 }, LAYER_SCALE_DURATION, Phaser.Easing.Linear.None, true);
+};
+
+Layer.prototype.scaleUp = function(layerIndex) {
+	var newScale = { x: layerScale[layerIndex], y: layerScale[layerIndex] };
+	Game.add.tween(this.sprite.scale).to(newScale, LAYER_SCALE_DURATION, Phaser.Easing.Linear.None, true);
+};
+
+Layer.prototype.die = function() {
+	Game.add.tween(this.sprite).to( { alpha: 0 }, LAYER_SCALE_DURATION, Phaser.Easing.Linear.None, true);
 };
 
 Layer.prototype.setVisible = function(visibility) {

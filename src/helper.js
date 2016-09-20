@@ -1,5 +1,4 @@
 var imageSet = [ { key: 'layer', src: 'images/Ring.png' },
-{ key: 'circle', src: 'images/Circle.png'}, 
 { key: 'player', src: 'images/Player01.png'},
 { key: 'playerbullet', src: 'images/PlayerBullet01.png'},
 { key: 'enemy', src: 'images/Enemy01.png'},
@@ -13,6 +12,12 @@ var levelSet = [
 { enemyTypes: [0, 1, 2], minEnemiesInFormation: 3, maxEnemiesInFormation: 7 },
 { enemyTypes: [0, 1, 2], minEnemiesInFormation: 4, maxEnemiesInFormation: 10 }
 ];
+
+var levelFileSet = [
+	{ key: 'level_template', src: 'data/level_template.json' }
+];
+
+var layerScale = [0.9, 0.725, 0.575, 0.455, 0.36, 0.285];
 
 function getRegularPolygonVertices(numVertices, circumRadius, startAngle)
 {
