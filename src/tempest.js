@@ -370,32 +370,6 @@ Tempest.prototype.playerCollide = function(){
 	}
 };
 
-// Tempest.prototype.generateEnemy = function(){
-// 	this.generateTimer++;
-// 	if(!this.isGenerate)
-// 	{
-// 		if(this.generateTimer > WAVE_INTERVAL)
-// 		{
-// 			this.isGenerate = true;
-// 			this.generateTimer = 0;
-// 			this.generateCount = 0;
-// 		}
-// 	}
-// 	else
-// 	{
-// 		if(this.generateTimer > ENEMY_INTERVAL)
-// 		{
-// 			this.enemyManager.createEnemy(Math.round(Math.random() * 7.49));
-// 			this.generateCount++;
-// 			this.generateTimer = 0;
-// 			if(this.generateCount >= 4)
-// 			{
-// 				this.isGenerate = false;
-// 			}
-// 		}
-// 	}
-// };
-
 Tempest.prototype.updateScore = function(delta) {
 	this.score += delta;
 	this.scoreText.setText("Score: " + this.score);	
