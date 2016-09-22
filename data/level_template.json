@@ -2,7 +2,6 @@
 	"lanes": 8,
 	"color": "0x3366ff",
 	"waitBeforeOuterLayerBreak": 3000,
-	"durationOuterLayerBreak": 2500,
 	"layers": [
 		{
 			"enemies": {

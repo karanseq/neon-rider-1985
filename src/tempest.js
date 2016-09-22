@@ -131,6 +131,9 @@ Tempest.prototype.onPlayerDeath = function() {
 	}
 	console.log("Player died...lives left:" + this.player.lives);
 
+	// stop any layer blink alerts that may be going on
+	this.layerManager.resetAllAlertEvents();
+
 	// remove life sprite
 	var lifeSprite = this.lifeSprites.pop();
 	lifeSprite.destroy();
@@ -154,6 +157,10 @@ Tempest.prototype.playAgain = function() {
 		this.startGame();
 	}
 	else if (this.state == this.TempestState.GAME_OVER) {
+		// clear all layers
+		this.layerManager.reset();
+		this.layerManager = null;
+
 		// delete the objects since its a new game
 		this.player = null;
 		this.enemyManager = null;

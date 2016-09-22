@@ -15,6 +15,7 @@ Layer.prototype.init = function(numSides, color) {
 };
 
 Layer.prototype.destroy = function() {
+	this.stopBlinking();
 	this.sprite.destroy();
 	this.sprite = null;
 };
@@ -90,6 +91,10 @@ Layer.prototype.setVisible = function(visibility) {
 
 Layer.prototype.isVisible = function() {
 	return this.sprite.visible;
+};
+
+Layer.prototype.resetAlpha = function() {
+	this.sprite.alpha = 1;
 };
 
 Layer.prototype.fadeTween = function(sprite, toAlpha, duration) {

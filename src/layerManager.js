@@ -26,10 +26,25 @@ LayerManager.prototype.init = function(levelNumber) {
 	
 	this.isAnimating = false;
 
-	this.startShowingAlertEvent = Game.time.events.add(this.layerData.waitBeforeOuterLayerBreak * 2, this.startShowingAlert, this);
+	this.startShowingAlertEvent = Game.time.events.add(this.layerData.waitBeforeOuterLayerBreak, this.startShowingAlert, this);
 };
 
 LayerManager.prototype.reset = function() {
+	this.resetAllAlertEvents();
+
+	// destroy all layers
+	while (this.layers.length) {
+		var layer = this.layers.pop();
+		layer.destroy();
+		layer = null;
+	}
+
+	// reset data
+	this.numLayersInLevel = 0;
+	this.layerData = null;
+};
+
+LayerManager.prototype.resetAllAlertEvents = function() {
 	// if an alert has been scheduled to start, remove it
 	if (this.startShowingAlertEvent != null) {
 		Game.time.events.remove(this.startShowingAlertEvent);
@@ -45,14 +60,8 @@ LayerManager.prototype.reset = function() {
 	// if an alert is being shown, stop it
 	this.stopShowingAlert();
 
-	// destroy all layers
-	while (this.layers.length) {
-		var layer = this.layers.pop();
-		layer.destroy();
-		layer = null;
-	}
-	this.numLayersInLevel = 0;
-	this.layerData = null;
+	// reset the alpha on the outer most layer
+	this.layers[this.indexLayerFront].resetAlpha();
 };
 
 LayerManager.prototype.loadLevel = function(levelNumber) {
@@ -93,21 +102,7 @@ LayerManager.prototype.moveUp = function() {
 
 	this.isAnimating = true;
 
-	// if an alert has been scheduled to start, stop it
-	if (this.startShowingAlertEvent != null) {
-		Game.time.events.remove(this.startShowingAlertEvent);
-		this.startShowingAlertEvent = null;
-		console.log("Removed start showing alert event...");
-	}
-
-	// if an alert has been scheduled to finish, remove it
-	if (this.finishShowingAlertEvent != null) {
-		Game.time.events.remove(this.finishShowingAlertEvent);
-		this.finishShowingAlertEvent = null;
-	}
-
-	// if an alert is being shown, stop it
-	this.stopShowingAlert();
+	this.resetAllAlertEvents();
 
 	// scale up all the visible layers
 	for (var i = this.indexLayerFront; i < this.indexLayerBack; ++i) {
@@ -125,9 +120,16 @@ LayerManager.prototype.moveUp = function() {
 
 	Game.time.events.add(LAYER_SCALE_DURATION, this.onAnimationFinished, this);
 	this.startShowingAlertEvent = Game.time.events.add(this.layerData.waitBeforeOuterLayerBreak, this.startShowingAlert, this);
+
+	console.log("LayerManager moveUp says front=" + this.indexLayerFront + " & back=" + this.indexLayerBack);
 };
 
 LayerManager.prototype.startShowingAlert = function() {
+	// check if there are any layers to blink
+	if (this.indexLayerFront >= this.numLayersInLevel) {
+		return;
+	}
+
 	// start blinking the outermost layer
 	var blinkDuration = this.layers[this.indexLayerFront].startBlinking();
 
@@ -136,6 +138,12 @@ LayerManager.prototype.startShowingAlert = function() {
 };
 
 LayerManager.prototype.stopShowingAlert = function() {
+	// check if there are any layers to blink
+	if (this.indexLayerFront >= this.numLayersInLevel) {
+		return;
+	}
+
+	// stop blinking the outermost layer
 	this.layers[this.indexLayerFront].stopBlinking();
 };
 
