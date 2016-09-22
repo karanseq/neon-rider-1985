@@ -71,7 +71,6 @@ Tempest.prototype.create = function() {
 	background.anchor = { x: 0.5, y: 0.5 };
 
 	this.init();
-	this.createKeys();	
 };
 
 Tempest.prototype.init = function() {
@@ -108,7 +107,16 @@ Tempest.prototype.initHUD = function() {
 	}
 };
 
+Tempest.prototype.createKeys = function() {
+	this.leftKey = Game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
+	this.rightKey = Game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+	this.upKey = Game.input.keyboard.addKey(Phaser.Keyboard.UP);
+	this.downKey = Game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
+	this.spaceKey = Game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+};
+
 Tempest.prototype.reset = function() {
+	this.removeKeys();
 	this.player.reset();
 	this.enemyManager.reset();
 
@@ -116,6 +124,15 @@ Tempest.prototype.reset = function() {
 		this.gameOverText.destroy();
 		this.gameOverText = null;
 	}
+};
+
+Tempest.prototype.removeKeys = function() {
+	Game.input.keyboard.removeKey(Phaser.Keyboard.LEFT);
+	Game.input.keyboard.removeKey(Phaser.Keyboard.RIGHT);
+	Game.input.keyboard.removeKey(Phaser.Keyboard.UP);
+	Game.input.keyboard.removeKey(Phaser.Keyboard.DOWN);
+	Game.input.keyboard.removeKey(Phaser.Keyboard.SPACEBAR);
+	this.leftKey = this.rightKey = this.upKey = this.downKey = this.spaceKey = null;
 };
 
 Tempest.prototype.onPlayerDeath = function() {
@@ -177,6 +194,8 @@ Tempest.prototype.playAgain = function() {
 };
 
 Tempest.prototype.startGame = function() {
+	this.createKeys();
+
 	this.state = this.TempestState.GAME_RUNNING;
 
 	this.enemyManager.createFormation(this.layerManager.getEnemiesForBottomLayer());
@@ -196,17 +215,8 @@ Tempest.prototype.endGame = function() {
 	this.scoreText.position = { x: GAME_WIDTH * 0.5, y: GAME_HEIGHT * 0.55 };
 }
 
-Tempest.prototype.createKeys = function() {
-	this.leftKey = Game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
-	this.rightKey = Game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-	this.upKey = Game.input.keyboard.addKey(Phaser.Keyboard.UP);
-	this.downKey = Game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
-	this.spaceKey = Game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-	Game.input.keyboard.addKeyCapture([ Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.UP, Phaser.Keyboard.DOWN, Phaser.Keyboard.SPACEBAR ]);
-};
-
 Tempest.prototype.update = function() {
-	this.updateCursorKeys();
+	this.updateKeys();
 
 	if (this.state == this.TempestState.GAME_RUNNING) {
 		this.player.updateBullets();
@@ -236,7 +246,7 @@ Tempest.prototype.update = function() {
      this.player.updateSprite();
 };
 
-Tempest.prototype.updateCursorKeys = function() {
+Tempest.prototype.updateKeys = function() {
 	if (this.leftKey.isDown) {
 		this.handleKeyLeft();
 	}
