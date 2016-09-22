@@ -31,13 +31,6 @@ var Tempest = function() {
 	this.player = null;
 	this.enemyList = null;
 
-	this.leftKey = null;
-	this.rightKey = null;
-	this.upKey = null;
-	this.downKey = null;
-	this.spaceKey = null;
-	this.acceptKeys = false;
-
 	this.generateTimer = 0;
 	this.generateCount = 0;
 	this.isGenerate = false;
@@ -77,21 +70,20 @@ Tempest.prototype.preload = function() {
 
 Tempest.prototype.create = function() {
 	this.init();
-	this.createKeys();
-	
+	this.createKeys();	
 };
 
 Tempest.prototype.init = function() {
 	this.state = this.TempestState.GAME_INIT;
+
+	this.layerManager = new LayerManager();
+	this.layerManager.init();
 
 	this.player = new Player();
 	this.player.init();
 
 	this.enemyManager = new EnemyManager();
 	this.enemyManager.init();
-
-	this.layerManager = new LayerManager();
-	this.layerManager.init();
 
 	this.initHUD();
 
@@ -153,6 +145,14 @@ Tempest.prototype.playAgain = function() {
 	this.reset();
 
 	if (this.state == this.TempestState.GAME_PLAYER_DIED) {
+		// ask the layer manager to move all layers up
+		var wasMoveSuccessful = this.layerManager.moveUp();
+
+		// if the layers were moved successfully, add a new formation of enemies
+		if (wasMoveSuccessful) {
+			this.enemyManager.createFormation(this.layerManager.getEnemiesForBottomLayer());		
+		}
+
 		this.player.init();
 		this.startGame();
 	}
@@ -174,8 +174,8 @@ Tempest.prototype.playAgain = function() {
 
 Tempest.prototype.startGame = function() {
 	this.state = this.TempestState.GAME_RUNNING;
-	this.acceptKeys = true;
-	this.enemyManager.startFormations(this.layerManager.getEnemiesForBottomLayer());
+
+	this.enemyManager.createFormation(this.layerManager.getEnemiesForBottomLayer());
 };
 
 Tempest.prototype.endGame = function() {
@@ -211,6 +211,15 @@ Tempest.prototype.update = function() {
 		
 		this.playerBulletCollide();
 		this.playerCollide();
+
+		// ask the layer manager if the player must be killed
+		if (this.layerManager.mustKillPlayer) {
+			this.layerManager.mustKillPlayer = false;
+
+			this.player.die();
+			this.state = this.TempestState.GAME_PLAYER_DIED;
+			this.onPlayerDeath();
+		}
      }
      else if (this.state == this.TempestState.GAME_PLAYER_DIED || this.state == this.TempestState.GAME_OVER) {
      	this.player.updateExplosion();
@@ -219,38 +228,28 @@ Tempest.prototype.update = function() {
 };
 
 Tempest.prototype.updateCursorKeys = function() {
-	// this check prevents key event from being pushed repeatedly
-	if (this.acceptKeys) {
-		if (this.leftKey.isDown) {
-			this.handleKeyLeft();
-		}
-		else if (this.rightKey.isDown) {
-			this.handleKeyRight();
-		}
-		else if (this.upKey.isDown) {
-			this.handleKeyUp();
-		}
-		else if (this.downKey.isDown) {
-			this.handleKeyDown();
-		}
-		else if (this.spaceKey.isDown) {
-			this.handleKeySpace();
-		}
+	if (this.leftKey.isDown) {
+		this.handleKeyLeft();
 	}
-	// handle collision between player's bullet with enemy's bullet or enemy's body
-	// reset flag when all keys are released
-	if (this.leftKey.isUp && 
-		this.rightKey.isUp && 
-		this.upKey.isUp && 
-		this.downKey.isUp &&
-		this.spaceKey.isUp) {
-		this.acceptKeys = true;
+	
+	if (this.rightKey.isDown) {
+		this.handleKeyRight();
+	}
+	
+	if (this.upKey.isDown) {
+		this.handleKeyUp();
+	}
+	
+	if (this.downKey.isDown) {
+		this.handleKeyDown();
+	}
+	
+	if (this.spaceKey.isDown) {
+		this.handleKeySpace();
 	}
 };
 
 Tempest.prototype.handleKeyLeft = function() {
-	this.acceptKeys = false;
-	
 	if (this.state != this.TempestState.GAME_RUNNING) {
 		return;
 	}
@@ -259,29 +258,31 @@ Tempest.prototype.handleKeyLeft = function() {
 };
 
 Tempest.prototype.handleKeyRight = function() {
-	this.acceptKeys = false;
-	
 	if (this.state != this.TempestState.GAME_RUNNING) {
 		return;
 	}
 
 	this.player.beginRotation(false);
-	// this.player.setAngleIndex(this.player.getAngleIndex() + 1);
 };
 
 Tempest.prototype.handleKeyUp = function() {
-	this.acceptKeys = false;
-	this.layerManager.moveUp();
-	this.enemyManager.createFormation(this.layerManager.getEnemiesForBottomLayer());
+	if (this.state != this.TempestState.GAME_RUNNING) {
+		return;
+	}
+
+	// ask the layer manager to move all layers up
+	var wasMoveSuccessful = this.layerManager.moveUp();
+
+	// if the layers were moved successfully, add a new formation of enemies
+	if (wasMoveSuccessful) {
+		this.enemyManager.createFormation(this.layerManager.getEnemiesForBottomLayer());		
+	}
 };
 
 Tempest.prototype.handleKeyDown = function() {
-	this.acceptKeys = false;
 };
 
 Tempest.prototype.handleKeySpace = function() {
-	this.acceptKeys = false;
-
 	switch (this.state) {
 		case this.TempestState.GAME_RUNNING:
 			if(!this.player.isRotate)

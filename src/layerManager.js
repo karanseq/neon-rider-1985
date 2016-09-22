@@ -11,6 +11,7 @@ var LayerManager = function() {
 	this.layers = null;
 
 	this.isAnimating = false;
+	this.mustKillPlayer = false;
 	this.startShowingAlertEvent = null;
 	this.finishShowingAlertEvent = null;
 };
@@ -25,6 +26,7 @@ LayerManager.prototype.init = function(levelNumber) {
 	this.createLayers();
 	
 	this.isAnimating = false;
+	this.mustKillPlayer = false;
 
 	this.startShowingAlertEvent = Game.time.events.add(this.layerData.waitBeforeOuterLayerBreak, this.startShowingAlert, this);
 };
@@ -92,12 +94,12 @@ LayerManager.prototype.createLayers = function() {
 LayerManager.prototype.moveUp = function() {
 	// only animate if we're not already animating
 	if (this.isAnimating) {
-		return;
+		return false;
 	}
 
 	// bounds checking
 	if (this.indexLayerFront == this.indexLayerBack) {
-		return;
+		return false;
 	}
 
 	this.isAnimating = true;
@@ -122,6 +124,7 @@ LayerManager.prototype.moveUp = function() {
 	this.startShowingAlertEvent = Game.time.events.add(this.layerData.waitBeforeOuterLayerBreak, this.startShowingAlert, this);
 
 	console.log("LayerManager moveUp says front=" + this.indexLayerFront + " & back=" + this.indexLayerBack);
+	return true;
 };
 
 LayerManager.prototype.startShowingAlert = function() {
@@ -150,6 +153,7 @@ LayerManager.prototype.stopShowingAlert = function() {
 LayerManager.prototype.finishedShowingAlert = function() {
 	console.log("Finished showing alert...kill layer and player!");
 	this.finishShowingAlertEvent = null;
+	this.mustKillPlayer = true;
 };
 
 LayerManager.prototype.getEnemiesForBottomLayer = function() {

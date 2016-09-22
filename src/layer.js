@@ -66,6 +66,7 @@ Layer.prototype.startBlinking = function(duration) {
 	duration += 1500;
 
 	this.blinkTweens.push(Game.add.tween(this.sprite).to({ alpha: 0.25 }, 125, Phaser.Easing.Linear.None, true, duration, 3, true));
+	duration += 1000;
 
 	// return total blink duration to layer manager
 	return duration;
