@@ -78,19 +78,20 @@ Tempest.prototype.preload = function() {
 Tempest.prototype.create = function() {
 	this.init();
 	this.createKeys();
+	
 };
 
 Tempest.prototype.init = function() {
 	this.state = this.TempestState.GAME_INIT;
 
-	this.layerManager = new LayerManager();
-	this.layerManager.init();
-
-	this.player = new Player(this.angles);
+	this.player = new Player();
 	this.player.init();
 
-	this.enemyManager = new EnemyManager(this.angles);
+	this.enemyManager = new EnemyManager();
 	this.enemyManager.init();
+
+	this.layerManager = new LayerManager();
+	this.layerManager.init();
 
 	this.initHUD();
 
@@ -197,8 +198,10 @@ Tempest.prototype.update = function() {
 
 	if (this.state == this.TempestState.GAME_RUNNING) {
 		this.player.updateBullets();
-		this.enemyManager.update();
+		this.player.updateRotation();
 
+		this.enemyManager.update();
+		
 		this.playerBulletCollide();
 		this.playerCollide();
      }
@@ -245,7 +248,7 @@ Tempest.prototype.handleKeyLeft = function() {
 		return;
 	}
 
-	this.player.setAngleIndex(this.player.getAngleIndex() - 1);
+	this.player.beginRotation(true);
 };
 
 Tempest.prototype.handleKeyRight = function() {
@@ -255,7 +258,8 @@ Tempest.prototype.handleKeyRight = function() {
 		return;
 	}
 
-	this.player.setAngleIndex(this.player.getAngleIndex() + 1);
+	this.player.beginRotation(false);
+	// this.player.setAngleIndex(this.player.getAngleIndex() + 1);
 };
 
 Tempest.prototype.handleKeyUp = function() {
@@ -273,13 +277,14 @@ Tempest.prototype.handleKeySpace = function() {
 
 	switch (this.state) {
 		case this.TempestState.GAME_RUNNING:
-		this.player.createBullet();
-		break;
+			if(!this.player.isRotate)
+				this.player.createBullet();
+			break;
 
 		case this.TempestState.GAME_PLAYER_DIED:
 		case this.TempestState.GAME_OVER:
-		this.playAgain();
-		break;
+			this.playAgain();
+			break;
 	}
 };
 
@@ -306,7 +311,7 @@ Tempest.prototype.playerBulletCollide = function(){
 				Math.abs(this.player.bullets[i].radius - this.enemyManager.enemys[j].radius) < ENEMY_COLLISION_DISTANCE)
 				{
 					this.player.deleteBullet(i);
-					this.enemyManager.deleteEnemy(j);
+					this.enemyManager.hitEnemy(j);
 					this.updateScore(150);
 					break;
 				}

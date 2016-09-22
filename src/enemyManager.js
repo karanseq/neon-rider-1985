@@ -3,10 +3,6 @@ var EnemyManager = function(){
 	this.bullets = null;
 	this.enemyShootChance = 0.01;
 
-	
-	this.enemyBulletMoveSpeed = 2;
-	this.enemyBulletScaleSpeed = 0.001;
-
 	this.hasStartFormation = false;
 	this.formationDelay = 0;
 	this.formationDelayCounter = 0;
@@ -14,8 +10,6 @@ var EnemyManager = function(){
 	this.enemySpawnDelay = 0;
 	this.enemySpawnDelayCounter = 0;
 	this.enemiesToSpawn = null;
-
-	this.levelIndex = 0;
 };
 
 EnemyManager.prototype.init = function() {
@@ -70,7 +64,7 @@ EnemyManager.prototype.updateEnemy = function(){
 			this.enemys[i].update();
 	
 			// shoot bullet
-			if(this.enemys[i].type == 2 && this.enemys[i].shootFlag)
+			if(this.enemys[i].type == 4 && this.enemys[i].shootFlag)
 			{
 				//enemy can not create bullet when they are roatating
 				if(!this.enemys[i].isRotate && this.enemys[i].radius < RADIUS * 0.5)
@@ -80,6 +74,12 @@ EnemyManager.prototype.updateEnemy = function(){
 		}
 	}
 };
+
+EnemyManager.prototype.hitEnemy = function(enemyIndex){
+	this.enemys[enemyIndex].health--;
+	if(this.enemys[enemyIndex].health == 0)
+		this.deleteEnemy(enemyIndex);
+}
 
 EnemyManager.prototype.deleteEnemy = function(enemyIndex){
 	var temp = this.enemys[enemyIndex];
@@ -91,22 +91,16 @@ EnemyManager.prototype.deleteEnemy = function(enemyIndex){
 
 EnemyManager.prototype.createBullet = function(enemy){
 	var bullet = enemy.createBullet();
-		this.bullets.push(bullet);
+	this.bullets.push(bullet);
 };
 
 EnemyManager.prototype.updateBullets = function(){
 	for(var i=0;i<this.bullets.length;i++)
 	{
 		if(this.bullets[i].radius > RADIUS - 15)
-		{
 			this.deleteBullet(i);
-		}
 		else
-		{
-			this.bullets[i].radius += this.enemyBulletMoveSpeed;
-			this.bullets[i].scale = { x:this.bullets[i].scale.x + this.enemyBulletScaleSpeed, y:this.bullets[i].scale.y + this.enemyBulletScaleSpeed};
-			this.bullets[i].updateSprite();
-		}
+			this.bullets[i].update();
 	}
 };
 
