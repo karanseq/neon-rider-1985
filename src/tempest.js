@@ -29,17 +29,15 @@ var Tempest = function() {
 
 	this.layerManager = null;
 	this.player = null;
-	this.enemyList = null;
-
-	this.generateTimer = 0;
-	this.generateCount = 0;
-	this.isGenerate = false;
 
 	this.hudGroup = null;
 	this.score = 0;
 	this.scoreText = null;
 	this.lifeSprites = null;
 	this.gameOverText = null;
+
+	this.restartWait = 75;
+	this.restartWaitCounter = 0;
 };
 
 Tempest.prototype.TempestState = {
@@ -69,6 +67,9 @@ Tempest.prototype.preload = function() {
 };
 
 Tempest.prototype.create = function() {
+	var background = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'background');
+	background.anchor = { x: 0.5, y: 0.5 };
+
 	this.init();
 	this.createKeys();	
 };
@@ -94,8 +95,8 @@ Tempest.prototype.initHUD = function() {
 	this.hudGroup = Game.add.group();
 
 	this.score = 0;
-	this.scoreText = Game.add.bitmapText(GAME_WIDTH * 0.2, GAME_HEIGHT * 0.05, 'carrier_command', 'Score: 0', 24);
-	this.scoreText.anchor.set(0.5);
+	this.scoreText = Game.add.bitmapText(GAME_WIDTH * 0.025, GAME_HEIGHT * 0.05, 'carrier_command', 'Score:0', 24);
+	this.scoreText.anchor.set(0);
 	this.hudGroup.add(this.scoreText);
 
 	this.lifeSprites = new Array();
@@ -122,6 +123,9 @@ Tempest.prototype.onPlayerDeath = function() {
 		return;
 	}
 	console.log("Player died...lives left:" + this.player.lives);
+
+	// prevent the player from restarting immediately
+	this.restartWaitCounter = this.restartWait;
 
 	// stop any layer blink alerts that may be going on
 	this.layerManager.resetAllAlertEvents();
@@ -183,12 +187,13 @@ Tempest.prototype.endGame = function() {
 	console.log("Game over...");
 
 	// TODO: display game over text and player score here...
-	this.gameOverText = Game.add.bitmapText(GAME_WIDTH * 0.5, GAME_WIDTH * 0.3, 'carrier_command', 'Game Over!', 34);
+	this.gameOverText = Game.add.bitmapText(GAME_WIDTH * 0.5, GAME_HEIGHT * 0.45, 'carrier_command', 'Game Over!', 34);
 	this.gameOverText.anchor.set(0.5);
 	this.hudGroup.add(this.gameOverText);
 	Game.world.bringToTop(this.hudGroup);
 
-	this.scoreText.position = { x: GAME_WIDTH * 0.5, y: GAME_WIDTH * 0.5 };
+	this.scoreText.anchor.set(0.5);
+	this.scoreText.position = { x: GAME_WIDTH * 0.5, y: GAME_HEIGHT * 0.55 };
 }
 
 Tempest.prototype.createKeys = function() {
@@ -222,6 +227,10 @@ Tempest.prototype.update = function() {
 		}
      }
      else if (this.state == this.TempestState.GAME_PLAYER_DIED || this.state == this.TempestState.GAME_OVER) {
+     	if (this.restartWaitCounter > 0) {
+     		--this.restartWaitCounter;
+     	}
+
      	this.player.updateExplosion();
      }
      this.player.updateSprite();
@@ -291,7 +300,9 @@ Tempest.prototype.handleKeySpace = function() {
 
 		case this.TempestState.GAME_PLAYER_DIED:
 		case this.TempestState.GAME_OVER:
-			this.playAgain();
+			if (this.restartWaitCounter <= 0) {
+				this.playAgain();
+			}
 			break;
 	}
 };
@@ -363,6 +374,6 @@ Tempest.prototype.playerCollide = function(){
 
 Tempest.prototype.updateScore = function(delta) {
 	this.score += delta;
-	this.scoreText.setText("Score: " + this.score);	
+	this.scoreText.setText("Score:" + this.score);	
 };
 	

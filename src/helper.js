@@ -5,7 +5,8 @@ var imageSet = [ { key: 'layer', src: 'images/Ring.png' },
 { key: 'enemy2', src: 'images/Enemy2.png'},
 { key: 'enemy3', src: 'images/Enemy3.png'},
 { key: 'enemybullet', src:'images/EnemyBullet01.png'},
-{ key: 'playerExplosion', src:'images/PlayerExplosion.png'} ];
+{ key: 'playerExplosion', src:'images/PlayerExplosion.png'},
+{ key: 'background', src: 'images/Tempest_Background.png' } ];
 
 var fontSet = [ { key: 'carrier_command', img: 'fonts/carrier_command.png', data: 'fonts/carrier_command.xml' } ];
 
