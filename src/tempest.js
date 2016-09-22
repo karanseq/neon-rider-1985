@@ -73,6 +73,7 @@ Tempest.prototype.preload = function() {
 Tempest.prototype.create = function() {
 	var background = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'background');
 	background.anchor = { x: 0.5, y: 0.5 };
+	background.scale = { x: 0.66667, y: 0.66667 };
 
 	this.init();
 };
@@ -300,6 +301,7 @@ Tempest.prototype.handleKeyUp = function() {
 
 	// if the layers were moved successfully, add a new formation of enemies
 	if (wasMoveSuccessful) {
+		console.log("LayerManager said moveUp was successfull...");
 		this.enemyManager.createFormation(this.layerManager.getEnemiesForBottomLayer());		
 	}
 };
