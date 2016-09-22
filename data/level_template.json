@@ -1,7 +1,8 @@
 {
 	"lanes": 8,
-	"color": "0xaabbcc",
-	"img": "images/Ring.png",
+	"color": "0x3366ff",
+	"waitBeforeOuterLayerBreak": 3000,
+	"durationOuterLayerBreak": 2500,
 	"layers": [
 		{
 			"enemies": {
@@ -29,81 +30,81 @@
 		},
 		{
 			"enemies": {
-				"min": 0,
-				"max": 0,
-				"types": []
+				"min": 2,
+				"max": 4,
+				"types": [0]
 			},
 			"covers": []
 		},
 		{
 			"enemies": {
-				"min": 0,
-				"max": 0,
-				"types": []
+				"min": 2,
+				"max": 6,
+				"types": [0, 1]
 			},
 			"covers": []
 		},
 		{
 			"enemies": {
-				"min": 0,
-				"max": 0,
-				"types": []
+				"min": 2,
+				"max": 8,
+				"types": [0]
 			},
 			"covers": []
 		},
 		{
 			"enemies": {
-				"min": 0,
-				"max": 0,
-				"types": []
+				"min": 3,
+				"max": 6,
+				"types": [0, 1]
 			},
 			"covers": []
 		},
 		{
 			"enemies": {
-				"min": 0,
-				"max": 0,
-				"types": []
+				"min": 3,
+				"max": 6,
+				"types": [0, 1]
 			},
 			"covers": []
 		},
 		{
 			"enemies": {
-				"min": 0,
-				"max": 0,
-				"types": []
+				"min": 3,
+				"max": 6,
+				"types": [0, 1, 2]
 			},
 			"covers": []
 		},
 		{
 			"enemies": {
-				"min": 0,
-				"max": 0,
-				"types": []
+				"min": 3,
+				"max": 8,
+				"types": [0, 1, 2]
 			},
 			"covers": []
 		},
 		{
 			"enemies": {
-				"min": 0,
-				"max": 0,
-				"types": []
+				"min": 3,
+				"max": 8,
+				"types": [0, 1, 2]
 			},
 			"covers": []
 		},
 		{
 			"enemies": {
-				"min": 0,
-				"max": 0,
-				"types": []
+				"min": 4,
+				"max": 8,
+				"types": [0, 1, 2, 3]
 			},
 			"covers": []
 		},
 		{
 			"enemies": {
-				"min": 0,
-				"max": 0,
-				"types": []
+				"min": 4,
+				"max": 8,
+				"types": [0, 1, 2, 3]
 			},
 			"covers": []
 		}

@@ -39,12 +39,12 @@ EnemyManager.prototype.reset = function() {
 	}
 };
 
-EnemyManager.prototype.startFormations = function() {
+EnemyManager.prototype.startFormations = function(enemies) {
 	if (this.hasStartFormation == true) {
 		return;
 	}
 	this.hasStartFormation = true;
-	this.createFormation();
+	this.createFormation(enemies);
 };
 
 EnemyManager.prototype.createEnemy = function(angleIndex, enemyType){
@@ -153,12 +153,17 @@ EnemyManager.prototype.updateFormation = function() {
 	}
 };
 
-EnemyManager.prototype.createFormation = function() {
+EnemyManager.prototype.createFormation = function(enemies) {
+	// check if there are any enemies to spawn
+	if (enemies == null) {
+		return;
+	}
+
 	// pick an angle index
 	var angleIndex = Math.round(Math.random() * ANGLES.length);
 
 	// get the formation pattern
-	var formationPattern = this.getFormationPattern();
+	var formationPattern = this.getFormationPattern(enemies);
 	console.log("Spawning enemy types:" + formationPattern);
 
 	// create enemies and add them to a spawning list
@@ -172,18 +177,18 @@ EnemyManager.prototype.createFormation = function() {
 	this.enemySpawnDelayCounter = this.enemySpawnDelay;
 };
 
-EnemyManager.prototype.getFormationPattern = function() {
+EnemyManager.prototype.getFormationPattern = function(enemies) {
 	var count = 0;
 	var formationPattern = [];
 
 	// get the required number of enemies for this formation
-	var numEnemiesInFormation = levelSet[this.levelIndex].minEnemiesInFormation + Math.floor(Math.random() * (levelSet[this.levelIndex].maxEnemiesInFormation - levelSet[this.levelIndex].minEnemiesInFormation));
+	var numEnemiesInFormation = enemies.min + Math.floor(Math.random() * (enemies.max - enemies.min));
 
 	// get the maximum types of enemies for this formation
-	var enemyTypesInFormation = levelSet[this.levelIndex].enemyTypes;
+	var enemyTypesInFormation = enemies.types;
 
 	// randomly pick one or more of the enemy types
-	var actualEnemyTypes = enemyTypesInFormation.slice(0, Math.ceil(Math.random() * enemyTypesInFormation.length));
+	var actualEnemyTypes = enemyTypesInFormation;//.slice(0, Math.ceil(Math.random() * enemyTypesInFormation.length));
 
 	// keep filling enemy types till we're full
 	while (formationPattern.length < numEnemiesInFormation) {

@@ -77,9 +77,6 @@ Tempest.prototype.preload = function() {
 
 Tempest.prototype.create = function() {
 	this.init();
-	// this.backgroundSprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'circle');
-	// this.backgroundSprite.anchor = { x: 0.5, y: 0.5 };
-	// this.backgroundSprite.scale = {x: 0.5, y: 0.5};
 	this.createKeys();
 };
 
@@ -92,9 +89,8 @@ Tempest.prototype.init = function() {
 	this.player = new Player(this.angles);
 	this.player.init();
 
-	// this.enemyManager = new EnemyManager(this.angles);
-	// this.enemyManager.init();
-	// this.enemyManager.levelIndex = 1;
+	this.enemyManager = new EnemyManager(this.angles);
+	this.enemyManager.init();
 
 	this.initHUD();
 
@@ -120,7 +116,7 @@ Tempest.prototype.initHUD = function() {
 
 Tempest.prototype.reset = function() {
 	this.player.reset();
-	// this.enemyManager.reset();
+	this.enemyManager.reset();
 
 	if (this.gameOverText != null) {
 		this.gameOverText.destroy();
@@ -171,7 +167,7 @@ Tempest.prototype.playAgain = function() {
 Tempest.prototype.startGame = function() {
 	this.state = this.TempestState.GAME_RUNNING;
 	this.acceptKeys = true;
-	// this.enemyManager.startFormations();
+	this.enemyManager.startFormations(this.layerManager.getEnemiesForBottomLayer());
 };
 
 Tempest.prototype.endGame = function() {
@@ -201,10 +197,10 @@ Tempest.prototype.update = function() {
 
 	if (this.state == this.TempestState.GAME_RUNNING) {
 		this.player.updateBullets();
-		// this.enemyManager.update();
+		this.enemyManager.update();
 
-		// this.playerBulletCollide();
-		// this.playerCollide();
+		this.playerBulletCollide();
+		this.playerCollide();
      }
      else if (this.state == this.TempestState.GAME_PLAYER_DIED || this.state == this.TempestState.GAME_OVER) {
      	this.player.updateExplosion();
@@ -265,6 +261,7 @@ Tempest.prototype.handleKeyRight = function() {
 Tempest.prototype.handleKeyUp = function() {
 	this.acceptKeys = false;
 	this.layerManager.moveUp();
+	this.enemyManager.createFormation(this.layerManager.getEnemiesForBottomLayer());
 };
 
 Tempest.prototype.handleKeyDown = function() {

@@ -17,10 +17,10 @@ var levelFileSet = [
 	{ key: 'level_template', src: 'data/level_template.json' }
 ];
 
-var layerScale = [0.9, 0.725, 0.575, 0.455, 0.36, 0.285];
+// we should have one more value than the number of visible layers
+var layerScale = [0.725, 0.575, 0.455, 0.36, 0.285, 0.2275, 0.18, 0.15, 0.12];
 
-function getRegularPolygonVertices(numVertices, circumRadius, startAngle)
-{
+function getRegularPolygonVertices(numVertices, circumRadius, startAngle) {
 	var vertices = new Array();
 	var deltaTheta = 2 * Math.PI / numVertices;
 	var theta = startAngle;
