@@ -12,7 +12,9 @@ var PLAYER_COLLISION_DISTANCE = 20;
 
 var BULLET_SCALE = {x:0.1, y:0.1};
 var PLAYER_SCALE = {x:0.3, y:0.3};
-var PLAYER_EXPLOSION_SCALE = {x: 0.1, y: 0.1};
+var PLAYER_EXPLOSION_SCALE = { x: 0.1, y: 0.1 };
+
+var MAX_PARTICLES = 1000;
 
 var WAVE_INTERVAL = 100;
 var ENEMY_INTERVAL = 30;
@@ -35,6 +37,8 @@ var Tempest = function() {
 	this.scoreText = null;
 	this.lifeSprites = null;
 	this.gameOverText = null;
+
+	this.numParticles = 0;
 
 	this.restartWait = 75;
 	this.restartWaitCounter = 0;
@@ -86,6 +90,8 @@ Tempest.prototype.init = function() {
 	this.enemyManager.init();
 
 	this.initHUD();
+
+	createTestParticleSystem();
 
 	this.startGame();
 };
