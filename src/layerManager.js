@@ -89,6 +89,8 @@ LayerManager.prototype.createLayers = function() {
 
 		this.layers.push(layer);
 	}
+
+	console.log("Created " + this.layers.length + " layers...");
 };
 
 LayerManager.prototype.moveUp = function() {

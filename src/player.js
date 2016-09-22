@@ -136,7 +136,6 @@ Player.prototype.updateRotation = function(){
 		{
 			this.angle = this.previousAngle + (ANGLES[this.angleIndex] - this.previousAngle) * this.rotateTimer / ROTATE_LASTING;
 		}
-		console.log("Angle:" + this.angle);
 	}
 }
 
