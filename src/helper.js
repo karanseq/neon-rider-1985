@@ -2,10 +2,11 @@ var imageSet = [ { key: 'layer', src: 'images/Ring.png' },
 { key: 'player', src: 'images/Player01.png'},
 { key: 'playerbullet', src: 'images/PlayerBullet01.png'},
 { key: 'enemy1', src: 'images/Enemy01.png'},
-{ key: 'enemy2', src: 'images/Enemy2.png'},
-{ key: 'enemy3', src: 'images/Enemy3.png'},
+{ key: 'enemy2', src: 'images/Enemy01.png'},
+{ key: 'enemy3', src: 'images/Enemy01.png'},
 { key: 'enemybullet', src:'images/EnemyBullet01.png'},
-{ key: 'playerExplosion', src:'images/PlayerExplosion.png'} ];
+{ key: 'playerExplosion', src:'images/PlayerExplosion.png'},
+{ key: 'background', src: 'images/Tempest_Background.png' } ];
 
 var fontSet = [ { key: 'carrier_command', img: 'fonts/carrier_command.png', data: 'fonts/carrier_command.xml' } ];
 
@@ -19,10 +20,10 @@ var levelFileSet = [
 	{ key: 'level_template', src: 'data/level_template.json' }
 ];
 
-var layerScale = [0.9, 0.725, 0.575, 0.455, 0.36, 0.285];
+// we should have one more value than the number of visible layers
+var layerScale = [0.725, 0.575, 0.455, 0.36, 0.285, 0.2275, 0.18, 0.15, 0.12];
 
-function getRegularPolygonVertices(numVertices, circumRadius, startAngle)
-{
+function getRegularPolygonVertices(numVertices, circumRadius, startAngle) {
 	var vertices = new Array();
 	var deltaTheta = 2 * Math.PI / numVertices;
 	var theta = startAngle;

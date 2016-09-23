@@ -17,6 +17,8 @@ var Player = function() {
 
 	this.bulletMoveSpeed = 5;
 	this.bulletScaleSpeed = 0.001;
+	this.fireRate = 7;
+	this.fireRateCounter = 0;
 
 	this.isExplosionLarge = true;
 	this.explosionTimer = 0;
@@ -47,6 +49,7 @@ Player.prototype.init = function() {
 	this.scale = PLAYER_SCALE;
 
 	this.bullets = new Array();
+	this.fireRateCounter = 0;
 };
 
 Player.prototype.reset = function() {
@@ -90,7 +93,13 @@ Player.prototype.beginRotation = function(rotateLeft){
 
 
 
-Player.prototype.createBullet = function(){
+Player.prototype.createBullet = function() {
+	// this condition prevents multiple bullets from sticking together
+	if (this.fireRateCounter > 0) {
+		return;
+	}
+	this.fireRateCounter = this.fireRate;
+
 	var bullet = new Bullet(0, this.radius, this.angleIndex);
 	bullet.updateSprite();
 	this.bullets.push(bullet);
@@ -135,6 +144,10 @@ Player.prototype.updateSprite = function(){
 	this.sprite.angle = -this.angle;
 	this.position = caculatePosition(this.radius, this.angle);
 	this.sprite.position = this.position;
+
+	if (this.fireRateCounter > 0) {
+		--this.fireRateCounter;
+	}
 }
 
 Player.prototype.setVisible = function(visibility) {

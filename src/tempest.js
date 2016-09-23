@@ -12,7 +12,9 @@ var PLAYER_COLLISION_DISTANCE = 20;
 
 var BULLET_SCALE = {x:0.1, y:0.1};
 var PLAYER_SCALE = {x:0.3, y:0.3};
-var PLAYER_EXPLOSION_SCALE = {x: 0.1, y: 0.1};
+var PLAYER_EXPLOSION_SCALE = { x: 0.1, y: 0.1 };
+
+var MAX_PARTICLES = 1000;
 
 var WAVE_INTERVAL = 100;
 var ENEMY_INTERVAL = 30;
@@ -29,24 +31,17 @@ var Tempest = function() {
 
 	this.layerManager = null;
 	this.player = null;
-	this.enemyList = null;
-
-	this.leftKey = null;
-	this.rightKey = null;
-	this.upKey = null;
-	this.downKey = null;
-	this.spaceKey = null;
-	this.acceptKeys = false;
-
-	this.generateTimer = 0;
-	this.generateCount = 0;
-	this.isGenerate = false;
 
 	this.hudGroup = null;
 	this.score = 0;
 	this.scoreText = null;
 	this.lifeSprites = null;
 	this.gameOverText = null;
+
+	this.numParticles = 0;
+
+	this.restartWait = 75;
+	this.restartWaitCounter = 0;
 };
 
 Tempest.prototype.TempestState = {
@@ -76,28 +71,28 @@ Tempest.prototype.preload = function() {
 };
 
 Tempest.prototype.create = function() {
+	var background = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'background');
+	background.anchor = { x: 0.5, y: 0.5 };
+	background.scale = { x: 0.66667, y: 0.66667 };
+
 	this.init();
-	// this.backgroundSprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'circle');
-	// this.backgroundSprite.anchor = { x: 0.5, y: 0.5 };
-	// this.backgroundSprite.scale = {x: 0.5, y: 0.5};
-	this.createKeys();
-	
 };
 
 Tempest.prototype.init = function() {
 	this.state = this.TempestState.GAME_INIT;
+
+	this.layerManager = new LayerManager();
+	this.layerManager.init();
 
 	this.player = new Player();
 	this.player.init();
 
 	this.enemyManager = new EnemyManager();
 	this.enemyManager.init();
-	this.enemyManager.levelIndex = 1;
-
-	this.layerManager = new LayerManager();
-	this.layerManager.init();
 
 	this.initHUD();
+
+	createTestParticleSystem();
 
 	this.startGame();
 };
@@ -106,8 +101,8 @@ Tempest.prototype.initHUD = function() {
 	this.hudGroup = Game.add.group();
 
 	this.score = 0;
-	this.scoreText = Game.add.bitmapText(GAME_WIDTH * 0.2, GAME_HEIGHT * 0.05, 'carrier_command', 'Score: 0', 24);
-	this.scoreText.anchor.set(0.5);
+	this.scoreText = Game.add.bitmapText(GAME_WIDTH * 0.025, GAME_HEIGHT * 0.05, 'carrier_command', 'Score:0', 24);
+	this.scoreText.anchor.set(0);
 	this.hudGroup.add(this.scoreText);
 
 	this.lifeSprites = new Array();
@@ -119,7 +114,16 @@ Tempest.prototype.initHUD = function() {
 	}
 };
 
+Tempest.prototype.createKeys = function() {
+	this.leftKey = Game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
+	this.rightKey = Game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+	this.upKey = Game.input.keyboard.addKey(Phaser.Keyboard.UP);
+	this.downKey = Game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
+	this.spaceKey = Game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+};
+
 Tempest.prototype.reset = function() {
+	this.removeKeys();
 	this.player.reset();
 	this.enemyManager.reset();
 
@@ -129,11 +133,26 @@ Tempest.prototype.reset = function() {
 	}
 };
 
+Tempest.prototype.removeKeys = function() {
+	Game.input.keyboard.removeKey(Phaser.Keyboard.LEFT);
+	Game.input.keyboard.removeKey(Phaser.Keyboard.RIGHT);
+	Game.input.keyboard.removeKey(Phaser.Keyboard.UP);
+	Game.input.keyboard.removeKey(Phaser.Keyboard.DOWN);
+	Game.input.keyboard.removeKey(Phaser.Keyboard.SPACEBAR);
+	this.leftKey = this.rightKey = this.upKey = this.downKey = this.spaceKey = null;
+};
+
 Tempest.prototype.onPlayerDeath = function() {
 	if (this.state != this.TempestState.GAME_PLAYER_DIED) {
 		return;
 	}
 	console.log("Player died...lives left:" + this.player.lives);
+
+	// prevent the player from restarting immediately
+	this.restartWaitCounter = this.restartWait;
+
+	// stop any layer blink alerts that may be going on
+	this.layerManager.resetAllAlertEvents();
 
 	// remove life sprite
 	var lifeSprite = this.lifeSprites.pop();
@@ -154,10 +173,22 @@ Tempest.prototype.playAgain = function() {
 	this.reset();
 
 	if (this.state == this.TempestState.GAME_PLAYER_DIED) {
+		// ask the layer manager to move all layers up
+		var wasMoveSuccessful = this.layerManager.moveUp();
+
+		// if the layers were moved successfully, add a new formation of enemies
+		if (wasMoveSuccessful) {
+			this.enemyManager.createFormation(this.layerManager.getEnemiesForBottomLayer());		
+		}
+
 		this.player.init();
 		this.startGame();
 	}
 	else if (this.state == this.TempestState.GAME_OVER) {
+		// clear all layers
+		this.layerManager.reset();
+		this.layerManager = null;
+
 		// delete the objects since its a new game
 		this.player = null;
 		this.enemyManager = null;
@@ -170,9 +201,11 @@ Tempest.prototype.playAgain = function() {
 };
 
 Tempest.prototype.startGame = function() {
+	this.createKeys();
+
 	this.state = this.TempestState.GAME_RUNNING;
-	this.acceptKeys = true;
-	// this.enemyManager.startFormations();
+
+	this.enemyManager.createFormation(this.layerManager.getEnemiesForBottomLayer());
 };
 
 Tempest.prototype.endGame = function() {
@@ -180,25 +213,17 @@ Tempest.prototype.endGame = function() {
 	console.log("Game over...");
 
 	// TODO: display game over text and player score here...
-	this.gameOverText = Game.add.bitmapText(GAME_WIDTH * 0.5, GAME_WIDTH * 0.3, 'carrier_command', 'Game Over!', 34);
+	this.gameOverText = Game.add.bitmapText(GAME_WIDTH * 0.5, GAME_HEIGHT * 0.45, 'carrier_command', 'Game Over!', 34);
 	this.gameOverText.anchor.set(0.5);
 	this.hudGroup.add(this.gameOverText);
 	Game.world.bringToTop(this.hudGroup);
 
-	this.scoreText.position = { x: GAME_WIDTH * 0.5, y: GAME_WIDTH * 0.5 };
+	this.scoreText.anchor.set(0.5);
+	this.scoreText.position = { x: GAME_WIDTH * 0.5, y: GAME_HEIGHT * 0.55 };
 }
 
-Tempest.prototype.createKeys = function() {
-	this.leftKey = Game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
-	this.rightKey = Game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-	this.upKey = Game.input.keyboard.addKey(Phaser.Keyboard.UP);
-	this.downKey = Game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
-	this.spaceKey = Game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-	Game.input.keyboard.addKeyCapture([ Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.UP, Phaser.Keyboard.DOWN, Phaser.Keyboard.SPACEBAR ]);
-};
-
 Tempest.prototype.update = function() {
-	this.updateCursorKeys();
+	this.updateKeys();
 
 	if (this.state == this.TempestState.GAME_RUNNING) {
 		this.player.updateBullets();
@@ -208,46 +233,49 @@ Tempest.prototype.update = function() {
 		
 		this.playerBulletCollide();
 		this.playerCollide();
+
+		// ask the layer manager if the player must be killed
+		if (this.layerManager.mustKillPlayer) {
+			this.layerManager.mustKillPlayer = false;
+
+			this.player.die();
+			this.state = this.TempestState.GAME_PLAYER_DIED;
+			this.onPlayerDeath();
+		}
      }
      else if (this.state == this.TempestState.GAME_PLAYER_DIED || this.state == this.TempestState.GAME_OVER) {
+     	if (this.restartWaitCounter > 0) {
+     		--this.restartWaitCounter;
+     	}
+
      	this.player.updateExplosion();
      }
      this.player.updateSprite();
 };
 
-Tempest.prototype.updateCursorKeys = function() {
-	// this check prevents key event from being pushed repeatedly
-	if (this.acceptKeys) {
-		if (this.leftKey.isDown) {
-			this.handleKeyLeft();
-		}
-		else if (this.rightKey.isDown) {
-			this.handleKeyRight();
-		}
-		else if (this.upKey.isDown) {
-			this.handleKeyUp();
-		}
-		else if (this.downKey.isDown) {
-			this.handleKeyDown();
-		}
-		else if (this.spaceKey.isDown) {
-			this.handleKeySpace();
-		}
+Tempest.prototype.updateKeys = function() {
+	if (this.leftKey.isDown) {
+		this.handleKeyLeft();
 	}
-	// handle collision between player's bullet with enemy's bullet or enemy's body
-	// reset flag when all keys are released
-	if (this.leftKey.isUp && 
-		this.rightKey.isUp && 
-		this.upKey.isUp && 
-		this.downKey.isUp &&
-		this.spaceKey.isUp) {
-		this.acceptKeys = true;
+	
+	if (this.rightKey.isDown) {
+		this.handleKeyRight();
+	}
+	
+	if (this.upKey.isDown) {
+		this.handleKeyUp();
+	}
+	
+	if (this.downKey.isDown) {
+		this.handleKeyDown();
+	}
+	
+	if (this.spaceKey.isDown) {
+		this.handleKeySpace();
 	}
 };
 
 Tempest.prototype.handleKeyLeft = function() {
-	this.acceptKeys = false;
-	
 	if (this.state != this.TempestState.GAME_RUNNING) {
 		return;
 	}
@@ -256,28 +284,32 @@ Tempest.prototype.handleKeyLeft = function() {
 };
 
 Tempest.prototype.handleKeyRight = function() {
-	this.acceptKeys = false;
-	
 	if (this.state != this.TempestState.GAME_RUNNING) {
 		return;
 	}
 
 	this.player.beginRotation(false);
-	// this.player.setAngleIndex(this.player.getAngleIndex() + 1);
 };
 
 Tempest.prototype.handleKeyUp = function() {
-	this.acceptKeys = false;
-	this.layerManager.moveUp();
+	if (this.state != this.TempestState.GAME_RUNNING) {
+		return;
+	}
+
+	// ask the layer manager to move all layers up
+	var wasMoveSuccessful = this.layerManager.moveUp();
+
+	// if the layers were moved successfully, add a new formation of enemies
+	if (wasMoveSuccessful) {
+		console.log("LayerManager said moveUp was successfull...");
+		this.enemyManager.createFormation(this.layerManager.getEnemiesForBottomLayer());		
+	}
 };
 
 Tempest.prototype.handleKeyDown = function() {
-	this.acceptKeys = false;
 };
 
 Tempest.prototype.handleKeySpace = function() {
-	this.acceptKeys = false;
-
 	switch (this.state) {
 		case this.TempestState.GAME_RUNNING:
 			if(!this.player.isRotate)
@@ -286,7 +318,9 @@ Tempest.prototype.handleKeySpace = function() {
 
 		case this.TempestState.GAME_PLAYER_DIED:
 		case this.TempestState.GAME_OVER:
-			this.playAgain();
+			if (this.restartWaitCounter <= 0) {
+				this.playAgain();
+			}
 			break;
 	}
 };
@@ -358,6 +392,6 @@ Tempest.prototype.playerCollide = function(){
 
 Tempest.prototype.updateScore = function(delta) {
 	this.score += delta;
-	this.scoreText.setText("Score: " + this.score);	
+	this.scoreText.setText("Score:" + this.score);	
 };
 	
