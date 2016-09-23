@@ -1,11 +1,13 @@
 var ENEMY_SPAWN_RADIUS = 10;
-var ENEMY_ADJUST_SCALE = { x:0.6, y:0.6 };
+var ENEMY_ADJUST_SCALE = [{ x:0.6, y:0.6 }, { x: 1.0, y: 0.3}, {x: 1.0, y: 0.3 }];
 var ROTATE_INTERVAL = 50;
 var ROTATE_LASTING = 5;
 var SHOOT_INTERVAL = 80;
 var MOVE_SPEED = 1;
+var ACCELERATE_SPEED = 3;
 
 var BLOCK_HEALTH = 5;
+
 
 var Enemy = function(angleIndex, enemyType) {
 	this.angleIndex = angleIndex;
@@ -31,13 +33,16 @@ var Enemy = function(angleIndex, enemyType) {
 	
 	this.sprite.anchor = { x: 0.5, y: 0.5 };
 	this.sprite.visible = true;
+	this.layerIndex = RADIUS.length - 3;
+	this.layerAnimation = false;
+	this.layerAnimationTimer = 0;
 
 	if(this.type == this.EnemyType.STRAIGHT_FORWARD || this.type == this.EnemyType.ROTATE_FORWARD)
 		this.radius = ENEMY_SPAWN_RADIUS;
 	else
-		this.radius = RADIUS * 0.4;
+		this.radius = RADIUS[this.layerIndex];
 	this.angle = ANGLES[this.angleIndex];
-	this.scale = { x:this.radius / RADIUS * ENEMY_ADJUST_SCALE.x, y: this.radius / RADIUS * ENEMY_ADJUST_SCALE.y };
+	this.scale = { x:this.radius / RADIUS[0] * ENEMY_ADJUST_SCALE[Math.floor(this.type / 2)].x, y: this.radius / RADIUS[0] * ENEMY_ADJUST_SCALE[Math.floor(this.type / 2)].y };
 	this.position = caculatePosition(this.radius, this.angle);
 	this.updateSprite();
 
@@ -75,19 +80,49 @@ Enemy.prototype.createBullet = function(){
 
 Enemy.prototype.update = function(){
 
+	// update Layer Anmiation mark
+		if(this.layerAnimation)
+	{
+		this.layerAnimationTimer++;
+		if(this.layerAnimationTimer > LAYER_ANIMATION_TIMER)
+		{
+			this.layerAnimation = false;
+		}
+	}
+	else
+	{
+		if(this.layerAnimationTimer > LAYER_ANIMATION_TIMER)
+		{
+			this.layerAnimationTimer++;
+			if(this.layerAnimationTimer >= PROTECT_LAYER_ANIMATION_TIMER)
+			{
+				this.layerAnimationTimer = 0;
+				this.layerIndex--;
+			}
+		}
+		else if(LAYER_IS_ANIMATION)
+		{	
+			this.layerAnimation = true;
+			
+		}
+	}
+
 	switch (this.type) {
  		case this.EnemyType.STRAIGHT_FORWARD:
-			this.updateMovement();
+			this.updateMove();
  			break;
  		case this.EnemyType.ROTATE_FORWARD:
-			this.updateMovement();
+			this.updateMove();
  			this.updateRotation();
  			break;
  		case this.EnemyType.ROTATE_STABLE:
+ 			this.updateLayerMove();
  			this.updateRotation();
  		case this.EnemyType.BLOCK:
+ 			this.updateLayerMove();
 			break;
 		case this.EnemyType.GUN:
+			this.updateLayerMove();
 			this.updateShooting();
 			break;
 		default:
@@ -97,9 +132,11 @@ Enemy.prototype.update = function(){
 }
 
 
-Enemy.prototype.updateMovement = function(){
-	this.radius += MOVE_SPEED;
-	this.scale = { x: this.radius / RADIUS * ENEMY_ADJUST_SCALE.x, y: this.radius / RADIUS * ENEMY_ADJUST_SCALE.y };
+Enemy.prototype.updateMove = function(){
+	if(this.layerAnimation)
+		this.radius += ACCELERATE_SPEED;
+	else	
+		this.radius += MOVE_SPEED;
 
 	// this.scale = { x:this.scale.x + SCALE_SPEED, y:this.scale.y + SCALE_SPEED};
 }
@@ -110,6 +147,13 @@ Enemy.prototype.updateShooting = function(){
 	{
 		this.shootFlag = true;
 		this.shootTimer -= SHOOT_INTERVAL;
+	}
+}
+
+Enemy.prototype.updateLayerMove = function(){
+	if(this.layerAnimation)
+	{
+		this.radius = RADIUS[this.layerIndex] + (RADIUS[this.layerIndex - 1] - RADIUS[this.layerIndex]) * this.layerAnimationTimer / LAYER_ANIMATION_TIMER;
 	}
 }
 
@@ -159,6 +203,7 @@ Enemy.prototype.updateRotation = function(){
 }
 
 Enemy.prototype.updateSprite = function(){
+	this.scale = { x:this.radius / RADIUS[0] * ENEMY_ADJUST_SCALE[Math.floor(this.type / 2)].x, y: this.radius / RADIUS[0] * ENEMY_ADJUST_SCALE[Math.floor(this.type / 2)].y };
 	this.sprite.scale = this.scale;
 	this.sprite.angle = -this.angle;
 	this.position = caculatePosition(this.radius, this.angle);

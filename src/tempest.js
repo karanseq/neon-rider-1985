@@ -2,9 +2,6 @@
 
 var GAME_WIDTH = 1280;
 var GAME_HEIGHT = 720;
-var RADIUS = 275;
-var ANGLES = [-180, -135, -90, -45, 0, 45, 90, 135];
-var MAX_ANGLE_INDEX = ANGLES.length;
 
 var BULLET_COLLISION_DISTANCE = 10;
 var ENEMY_COLLISION_DISTANCE = 30;
@@ -16,9 +13,10 @@ var PLAYER_EXPLOSION_SCALE = { x: 0.1, y: 0.1 };
 
 var MAX_PARTICLES = 1000;
 
-var WAVE_INTERVAL = 100;
-var ENEMY_INTERVAL = 30;
-var WAVE_COUNT = 4;
+var LAYER_IS_ANIMATION = false;
+
+var LAYER_ANIMATION_TIMER = 30;
+var PROTECT_LAYER_ANIMATION_TIMER = 31;
 
 var caculatePosition = function(radius, angle)
 {
@@ -42,6 +40,9 @@ var Tempest = function() {
 
 	this.restartWait = 75;
 	this.restartWaitCounter = 0;
+
+	this.layerAnimation = false;
+	this.layerAnimationTimer = 0;
 };
 
 Tempest.prototype.TempestState = {
@@ -223,7 +224,19 @@ Tempest.prototype.endGame = function() {
 }
 
 Tempest.prototype.update = function() {
+	// Game.debug.text(Game.time.fps, GAME_WIDTH/2, GAME_HEIGHT/2, 0xffff22);
+
+	if(this.layerAnimation)
+	{
+		this.layerAnimationTimer++;
+		if(this.layerAnimationTimer > PROTECT_LAYER_ANIMATION_TIMER)
+		{
+			this.layerAnimationTimer = 0;
+			this.layerAnimation = false;
+		}
+	}
 	this.updateKeys();
+	LAYER_IS_ANIMATION = this.layerManager.isAnimating;
 
 	if (this.state == this.TempestState.GAME_RUNNING) {
 		this.player.updateBullets();
@@ -258,6 +271,7 @@ Tempest.prototype.updateKeys = function() {
 		this.handleKeyLeft();
 	}
 	
+
 	if (this.rightKey.isDown) {
 		this.handleKeyRight();
 	}
@@ -295,14 +309,18 @@ Tempest.prototype.handleKeyUp = function() {
 	if (this.state != this.TempestState.GAME_RUNNING) {
 		return;
 	}
+	
+	if(!this.layerAnimation)
+	{
+		// ask the layer manager to move all layers up
+		var wasMoveSuccessful = this.layerManager.moveUp();
 
-	// ask the layer manager to move all layers up
-	var wasMoveSuccessful = this.layerManager.moveUp();
-
-	// if the layers were moved successfully, add a new formation of enemies
-	if (wasMoveSuccessful) {
-		console.log("LayerManager said moveUp was successfull...");
-		this.enemyManager.createFormation(this.layerManager.getEnemiesForBottomLayer());		
+		// if the layers were moved successfully, add a new formation of enemies
+		if (wasMoveSuccessful) {
+			console.log("LayerManager said moveUp was successfull...");
+			this.enemyManager.createFormation(this.layerManager.getEnemiesForBottomLayer());		
+		}
+		this.layerAnimation = true;
 	}
 };
 

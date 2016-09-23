@@ -8,9 +8,9 @@ var Player = function() {
 	this.sprite = null;
 	this.angleIndex = INIT_ANGLE_INDEX;
 	
-	this.radius = RADIUS;
+	this.radius = RADIUS[1];
 	this.angle = ANGLES[this.angleIndex];
-	this.position = caculatePosition(RADIUS, this.angle);
+	this.position = caculatePosition(this.radius, this.angle);
 	this.scale = PLAYER_SCALE;
 
 	this.bullets = null;
@@ -178,6 +178,7 @@ Player.prototype.die = function() {
 	--this.lives;
 };
 
+// player explosion animation
 Player.prototype.updateExplosion = function(){
 	this.explosionTimer++;
 	// if(this.isExplosionLarge)

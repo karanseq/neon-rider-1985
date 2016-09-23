@@ -41,10 +41,10 @@ EnemyManager.prototype.startFormations = function(enemies) {
 	this.createFormation(enemies);
 };
 
-EnemyManager.prototype.createEnemy = function(angleIndex, enemyType){
-	var enemy = new Enemy(angleIndex, enemyType);
-	this.enemys.push(enemy);
-};
+// EnemyManager.prototype.createEnemy = function(angleIndex, enemyType){
+// 	var enemy = new Enemy(angleIndex, enemyType);
+// 	this.enemys.push(enemy);
+// };
 
 EnemyManager.prototype.update = function() {
 	this.updateEnemy();
@@ -55,7 +55,7 @@ EnemyManager.prototype.update = function() {
 EnemyManager.prototype.updateEnemy = function(){
 	for(var i=0;i<this.enemys.length;i++)
 	{
-		if(this.enemys[i].radius > RADIUS - 15)
+		if(this.enemys[i].radius > RADIUS[1] - 15 || this.enemys[i].layerIndex < 0)
 		{
 			this.deleteEnemy(i);
 		}
@@ -63,14 +63,28 @@ EnemyManager.prototype.updateEnemy = function(){
 		{
 			this.enemys[i].update();
 	
+			if(this.enemys[i].type == 2 )
+			{
+				for(var j=0;j<this.enemys.length;j++)
+				{
+					if((this.enemys[j].type == 3 || this.enemys[j].type == 4) && this.enemys[i].layerIndex == this.enemys[j].layerIndex)
+					{
+						if(this.enemys[i].rotateLeft && (this.enemys[j].angleIndex + 1) % MAX_ANGLE_INDEX == this.enemys[i].angleIndex)
+							this.enemys[i].rotateLeft = false;
+						else if(!this.enemys[i].rotateLeft && (this.enemys[i].angleIndex + 1) % MAX_ANGLE_INDEX == this.enemys[j].angleIndex)
+						 	this.enemys[i].rotateLeft = true;
+					}
+				}
+			}
 			// shoot bullet
 			if(this.enemys[i].type == 4 && this.enemys[i].shootFlag)
 			{
 				//enemy can not create bullet when they are roatating
-				if(!this.enemys[i].isRotate && this.enemys[i].radius < RADIUS * 0.5)
+				if(!this.enemys[i].isRotate && this.enemys[i].radius < RADIUS[0] * 0.5)
 					this.createBullet(this.enemys[i]);
 				this.enemys[i].shootFlag = false;
 			}
+
 		}
 	}
 };
@@ -97,7 +111,7 @@ EnemyManager.prototype.createBullet = function(enemy){
 EnemyManager.prototype.updateBullets = function(){
 	for(var i=0;i<this.bullets.length;i++)
 	{
-		if(this.bullets[i].radius > RADIUS - 15)
+		if(this.bullets[i].radius > RADIUS[1] - 15)
 			this.deleteBullet(i);
 		else
 			this.bullets[i].update();
@@ -154,7 +168,7 @@ EnemyManager.prototype.createFormation = function(enemies) {
 	}
 
 	// pick an angle index
-	var angleIndex = Math.round(Math.random() * ANGLES.length);
+	var angleIndex = Math.floor(Math.random() * ANGLES.length);
 
 	// get the formation pattern
 	var formationPattern = this.getFormationPattern(enemies);

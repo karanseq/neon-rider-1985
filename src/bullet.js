@@ -16,7 +16,7 @@ var Bullet = function(type, radius, angleIndex){
 	
 	this.radius = radius;
 	this.angle = ANGLES[this.angleIndex];
-	this.scale = { x:this.radius / RADIUS * BULLET_ADJUST_SCALE.x, y: this.radius / RADIUS * BULLET_ADJUST_SCALE.y };
+	this.scale = { x:this.radius / RADIUS[0] * BULLET_ADJUST_SCALE.x, y: this.radius / RADIUS[0] * BULLET_ADJUST_SCALE.y };
 	this.position = caculatePosition(this.radius, this.angle);
 }
 
@@ -34,7 +34,7 @@ Bullet.prototype.update = function(){
 		this.radius -= PLAYER_BULLET_SPEED;
 	else
 		this.radius += ENEMY_BULLET_SPEED;
-	this.scale = { x:this.radius / RADIUS * BULLET_ADJUST_SCALE.x, y: this.radius / RADIUS * BULLET_ADJUST_SCALE.y };
+	this.scale = { x:this.radius / RADIUS[0] * BULLET_ADJUST_SCALE.x, y: this.radius / RADIUS[0] * BULLET_ADJUST_SCALE.y };
 	this.updateSprite();
 }
 

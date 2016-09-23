@@ -2,8 +2,8 @@ var imageSet = [ { key: 'layer', src: 'images/Ring.png' },
 { key: 'player', src: 'images/Player01.png'},
 { key: 'playerbullet', src: 'images/PlayerBullet01.png'},
 { key: 'enemy1', src: 'images/Enemy01.png'},
-{ key: 'enemy2', src: 'images/Enemy01.png'},
-{ key: 'enemy3', src: 'images/Enemy01.png'},
+{ key: 'enemy2', src: 'images/Enemy2.png'},
+{ key: 'enemy3', src: 'images/Enemy3.png'},
 { key: 'enemybullet', src:'images/EnemyBullet01.png'},
 { key: 'playerExplosion', src:'images/PlayerExplosion.png'},
 { key: 'background', src: 'images/Tempest_Background.png' } ];
@@ -22,7 +22,15 @@ var levelFileSet = [
 
 // we should have one more value than the number of visible layers
 var layerScale = [0.725, 0.575, 0.455, 0.36, 0.285, 0.2275, 0.18, 0.15, 0.12];
+var RADIUS = [];
+RADIUS[0] = 430 * 0.8;
+for(var i = 1; i<layerScale.length; i++)
+{
+	RADIUS[i] = 430 *(layerScale[i - 1] + layerScale[i]) / 2;
+}
+var ANGLES = [-180, -135, -90, -45, 0, 45, 90, 135];
 
+var MAX_ANGLE_INDEX = ANGLES.length;
 function getRegularPolygonVertices(numVertices, circumRadius, startAngle) {
 	var vertices = new Array();
 	var deltaTheta = 2 * Math.PI / numVertices;
