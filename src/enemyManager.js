@@ -62,7 +62,8 @@ EnemyManager.prototype.updateEnemy = function(){
 		else
 		{
 			this.enemys[i].update();
-	
+			
+			// avoid collision between enemys
 			if(this.enemys[i].type == 2 )
 			{
 				for(var j=0;j<this.enemys.length;j++)
@@ -93,6 +94,13 @@ EnemyManager.prototype.hitEnemy = function(enemyIndex){
 	this.enemys[enemyIndex].health--;
 	if(this.enemys[enemyIndex].health == 0)
 		this.deleteEnemy(enemyIndex);
+	else if(this.enemys[enemyIndex].type == 3)
+	{
+		if(this.enemys[enemyIndex].health == 6)
+			this.enemys[enemyIndex].changeSprite('enemy4-2', 0x39c7ff);
+		else if(this.enemys[enemyIndex].health == 3)
+			this.enemys[enemyIndex].changeSprite('enemy4-3', 0x39c7ff);
+	}
 }
 
 EnemyManager.prototype.deleteEnemy = function(enemyIndex){

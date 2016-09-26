@@ -1,5 +1,5 @@
 var ENEMY_SPAWN_RADIUS = 10;
-var ENEMY_ADJUST_SCALE = [{ x:0.6, y:0.6 }, { x: 1.0, y: 0.3}, {x: 1.0, y: 0.3 }];
+var ENEMY_ADJUST_SCALE = [{ x:0.4, y:0.4 }, { x:0.45, y:0.35 }, { x: 0.8, y: 0.5}, {x: 0.9, y: 0.6}, {x: 1.0, y: 0.3 }];
 var ROTATE_INTERVAL = 50;
 var ROTATE_LASTING = 5;
 var SHOOT_INTERVAL = 80;
@@ -17,15 +17,23 @@ var Enemy = function(angleIndex, enemyType) {
 	switch(this.type)
 	{
 		case this.EnemyType.STRAIGHT_FORWARD:
-		case this.EnemyType.ROTATE_FORWARD:
 			this.sprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'enemy1');
+			this.sprite.tint = 0xf26a4d;
+			break;
+		case this.EnemyType.ROTATE_FORWARD:
+			this.sprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'enemy2');
+			this.sprite.tint = 0xfff265;
 			break;
 		case this.EnemyType.ROTATE_STABLE:
+			this.sprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'enemy3');
+			this.sprite.tint = 0x45ba84;
+			break;			
 		case this.EnemyType.BLOCK:
-			this.sprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'enemy2');
+			this.sprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'enemy4-1');
+			this.sprite.tint = 0x39c7ff;
 			break;
 		case this.EnemyType.GUN:
-			this.sprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'enemy3');
+			this.sprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'enemy5');
 		 	break;
 		 default:
 		 break;
@@ -42,7 +50,7 @@ var Enemy = function(angleIndex, enemyType) {
 	else
 		this.radius = RADIUS[this.layerIndex];
 	this.angle = ANGLES[this.angleIndex];
-	this.scale = { x:this.radius / RADIUS[0] * ENEMY_ADJUST_SCALE[Math.floor(this.type / 2)].x, y: this.radius / RADIUS[0] * ENEMY_ADJUST_SCALE[Math.floor(this.type / 2)].y };
+	this.scale = { x:this.radius / RADIUS[0] * ENEMY_ADJUST_SCALE[this.type].x, y: this.radius / RADIUS[0] * ENEMY_ADJUST_SCALE[this.type].y };
 	this.position = caculatePosition(this.radius, this.angle);
 	this.updateSprite();
 
@@ -203,11 +211,22 @@ Enemy.prototype.updateRotation = function(){
 }
 
 Enemy.prototype.updateSprite = function(){
-	this.scale = { x:this.radius / RADIUS[0] * ENEMY_ADJUST_SCALE[Math.floor(this.type / 2)].x, y: this.radius / RADIUS[0] * ENEMY_ADJUST_SCALE[Math.floor(this.type / 2)].y };
+	this.scale = { x:this.radius / RADIUS[0] * ENEMY_ADJUST_SCALE[this.type].x, y: this.radius / RADIUS[0] * ENEMY_ADJUST_SCALE[this.type].y };
 	this.sprite.scale = this.scale;
 	this.sprite.angle = -this.angle;
 	this.position = caculatePosition(this.radius, this.angle);
 	this.sprite.position = this.position;
+}
+
+Enemy.prototype.changeSprite = function(spriteName, color){
+	this.sprite.destroy();
+
+	// add sprite
+	this.sprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, spriteName);
+	this.sprite.anchor = { x: 0.5, y: 0.5 };
+	this.sprite.visible = true;
+	this.sprite.tint = color;
+	this.updateSprite()
 }
 
 Enemy.prototype.destroy = function(){

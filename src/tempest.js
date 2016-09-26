@@ -93,7 +93,7 @@ Tempest.prototype.init = function() {
 
 	this.initHUD();
 
-	createTestParticleSystem();
+	// createTestParticleSystem();
 
 	this.startGame();
 };
@@ -173,7 +173,7 @@ Tempest.prototype.playAgain = function() {
 
 	this.reset();
 
-	if (this.state == this.TempestState.GAME_PLAYER_DIED) {
+	if (this.state == this.TempestState.GAME_(this.enemyManager.enemys[i].type == 0 && Math.abs(this.player.angleIndex - this.enemyManager.enemys[i].angleIndex) <= 1) || PLAYER_DIED) {
 		// ask the layer manager to move all layers up
 		var wasMoveSuccessful = this.layerManager.moveUp();
 
