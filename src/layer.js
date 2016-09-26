@@ -61,22 +61,22 @@ Layer.prototype.startBlinking = function() {
 	// this.colorTimeEvents = new Array();
 
 	var duration = 0;
-	this.blinkTweens.push(Game.add.tween(this.sprite).to({ alpha: 0.5 }, 1000, Phaser.Easing.Linear.None, true, duration, 0, true));
+	this.blinkTweens.push(Game.add.tween(this.sprite).to({ alpha: 0.1 }, 1000, Phaser.Easing.Linear.None, true, duration, 0, true));
 	// this.setColorRed();
 	duration += 2000;
 	// this.colorTimeEvents.push(Game.time.events.add(duration, this.setColorOriginal, this));
 
-	this.blinkTweens.push(Game.add.tween(this.sprite).to({ alpha: 0.5 }, 500, Phaser.Easing.Linear.None, true, duration, 1, true));	
+	this.blinkTweens.push(Game.add.tween(this.sprite).to({ alpha: 0.1 }, 500, Phaser.Easing.Linear.None, true, duration, 1, true));	
 	// this.colorTimeEvents.push(Game.time.events.add(duration, this.setColorRed, this));
 	duration += 2000;
 	// this.colorTimeEvents.push(Game.time.events.add(duration, this.setColorOriginal, this));
 
-	this.blinkTweens.push(Game.add.tween(this.sprite).to({ alpha: 0.5 }, 250, Phaser.Easing.Linear.None, true, duration, 2, true));
+	this.blinkTweens.push(Game.add.tween(this.sprite).to({ alpha: 0.1 }, 250, Phaser.Easing.Linear.None, true, duration, 2, true));
 	// this.colorTimeEvents.push(Game.time.events.add(duration, this.setColorRed, this));
 	duration += 1500;
 	// this.colorTimeEvents.push(Game.time.events.add(duration, this.setColorOriginal, this));
 
-	this.blinkTweens.push(Game.add.tween(this.sprite).to({ alpha: 0.5 }, 125, Phaser.Easing.Linear.None, true, duration, 3, true));
+	this.blinkTweens.push(Game.add.tween(this.sprite).to({ alpha: 0.1 }, 125, Phaser.Easing.Linear.None, true, duration, 3, true));
 	// this.colorTimeEvents.push(Game.time.events.add(duration, this.setColorRed, this));
 	duration += 1000;
 	// this.colorTimeEvents.push(Game.time.events.add(duration, this.setColorOriginal, this));

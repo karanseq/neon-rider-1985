@@ -6,7 +6,7 @@ var SHOOT_INTERVAL = 80;
 var MOVE_SPEED = 1;
 var ACCELERATE_SPEED = 3;
 
-var BLOCK_HEALTH = 5;
+var BLOCK_HEALTH = 10;
 
 
 var Enemy = function(angleIndex, enemyType) {
@@ -94,7 +94,7 @@ Enemy.prototype.update = function(){
 		if(this.layerAnimationTimer > LAYER_ANIMATION_TIMER)
 		{
 			this.layerAnimationTimer++;
-			if(this.layerAnimationTimer >= PROTECT_LAYER_ANIMATION_TIMER)
+			if(this.layerAnimationTimer > PROTECT_LAYER_ANIMATION_TIMER)
 			{
 				this.layerAnimationTimer = 0;
 				this.layerIndex--;

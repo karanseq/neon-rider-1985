@@ -343,6 +343,7 @@ Tempest.prototype.handleKeySpace = function() {
 	}
 };
 
+// player's bullet collide with enemys' body or bullet
 Tempest.prototype.playerBulletCollide = function(){
 	for(var i = 0; i < this.player.bullets.length; i++)
 	{
@@ -375,6 +376,7 @@ Tempest.prototype.playerBulletCollide = function(){
 	}
 };
 
+// player's body collide with enemys' body or bullet
 Tempest.prototype.playerCollide = function(){
 	var mark = false;
 	for(var i = 0; i < this.enemyManager.bullets.length; i++)
@@ -395,7 +397,7 @@ Tempest.prototype.playerCollide = function(){
 	{
 		for(var i = 0; i < this.enemyManager.enemys.length; i++)
 		{	
-			if(this.player.angleIndex == this.enemyManager.enemys[i].angleIndex &&
+			if((this.player.angleIndex == this.enemyManager.enemys[i].angleIndex || (this.enemyManager.enemys[i].type == 0 && Math.abs(this.player.angleIndex - this.enemyManager.enemys[i].angleIndex) <= 1)) &&
 				Math.abs(this.player.radius - this.enemyManager.enemys[i].radius) < PLAYER_COLLISION_DISTANCE)
 			{
 				this.player.die();
