@@ -30,9 +30,10 @@ var Bullet = function(type, radius, angleIndex){
 	this.trail.spread = 20;
 
 	this.trail.baseScale = 0.5;
-	var back = backward(this.angle);
-	this.trail.minParticleSpeed = new Phaser.Point(back.x * this.radius - this.trail.spread, back.y * this.radius - this.trail.spread);
-	this.trail.maxParticleSpeed = new Phaser.Point(back.x * this.radius + this.trail.spread, back.y * this.radius + this.trail.spread);
+	var dir = (this.type == this.BulletType.PLAYER_BULLET ? backward(this.angle) : forward(this.angle));
+	//var back = backward(this.angle);
+	this.trail.minParticleSpeed = new Phaser.Point(dir.x * this.radius - this.trail.spread, dir.y * this.radius - this.trail.spread);
+	this.trail.maxParticleSpeed = new Phaser.Point(dir.x * this.radius + this.trail.spread, dir.y * this.radius + this.trail.spread);
 
 	this.trail.setAlpha(1, 0, this.trail.lifespan, undefined, false);
 	this.trail.setScale(0, this.trail.baseScale, 0, this.trail.baseScale, this.trail.lifespan, undefined, false);
