@@ -1,0 +1,142 @@
+{
+	"color": "0x3366ff",
+	"waitBeforeOuterLayerBreak": 3000,
+	"layers": [
+		{
+			"enemies": {
+				"min": 0,
+				"max": 0,
+				"types": []
+			},
+			"covers": []
+		},
+		{
+			"enemies": {
+				"min": 0,
+				"max": 0,
+				"types": []
+			},
+			"covers": []
+		},
+		{
+			"enemies": {
+				"min": 0,
+				"max": 0,
+				"types": []
+			},
+			"covers": []
+		},
+		{
+			"enemies": {
+				"min": 2,
+				"max": 4,
+				"types": [0,1,2,3]
+			},
+			"covers": []
+		},
+		{
+			"enemies": {
+				"min": 2,
+				"max": 6,
+				"types": [0, 1,2,3]
+			},
+			"covers": []
+		},
+		{
+			"enemies": {
+				"min": 2,
+				"max": 8,
+				"types": [0,1,2,3]
+			},
+			"covers": []
+		},
+		{
+			"enemies": {
+				"min": 3,
+				"max": 6,
+				"types": [0, 1,2,3]
+			},
+			"covers": []
+		},
+		{
+			"enemies": {
+				"min": 3,
+				"max": 6,
+				"types": [0, 1,2,3]
+			},
+			"covers": []
+		},
+		{
+			"enemies": {
+				"min": 3,
+				"max": 6,
+				"types": [0, 1, 2,3]
+			},
+			"covers": []
+		},
+		{
+			"enemies": {
+				"min": 3,
+				"max": 8,
+				"types": [0, 1, 2,3]
+			},
+			"covers": []
+		},
+		{
+			"enemies": {
+				"min": 5,
+				"max": 10,
+				"types": [0, 1, 2,3]
+			},
+			"covers": []
+		},
+		{
+			"enemies": {
+				"min": 5,
+				"max": 10,
+				"types": [0, 1, 2]
+			},
+			"covers": []
+		},
+		{
+			"enemies": {
+				"min": 6,
+				"max": 11,
+				"types": [0, 1, 2, 3]
+			},
+			"covers": []
+		},
+		{
+			"enemies": {
+				"min": 6,
+				"max": 11,
+				"types": [0, 1, 2, 3]
+			},
+			"covers": []
+		},
+		{
+			"enemies": {
+				"min": 7,
+				"max": 12,
+				"types": [0, 1, 2, 3]
+			},
+			"covers": []
+		},
+		{
+			"enemies": {
+				"min": 7,
+				"max": 12,
+				"types": [0, 1, 2, 3]
+			},
+			"covers": []
+		},
+		{
+			"enemies": {
+				"min": 7,
+				"max": 12,
+				"types": [0, 1, 2, 3]
+			},
+			"covers": []
+		}
+	]
+}
