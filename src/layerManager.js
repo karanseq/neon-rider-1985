@@ -12,6 +12,7 @@ var LayerManager = function() {
 
 	this.isAnimating = false;
 	this.mustKillPlayer = false;
+	this.isLevelComplete = false;
 	this.startShowingAlertEvent = null;
 	this.finishShowingAlertEvent = null;
 };
@@ -27,6 +28,7 @@ LayerManager.prototype.init = function(levelNumber) {
 	
 	this.isAnimating = false;
 	this.mustKillPlayer = false;
+	this.isLevelComplete = false;
 
 	this.startShowingAlertEvent = Game.time.events.add(this.layerData.waitBeforeOuterLayerBreak, this.startShowingAlert, this);
 };
@@ -63,11 +65,13 @@ LayerManager.prototype.resetAllAlertEvents = function() {
 	this.stopShowingAlert();
 
 	// reset the alpha on the outer most layer
-	this.layers[this.indexLayerFront].resetAlpha();
+	if (this.indexLayerFront < this.indexLayerBack) {
+		this.layers[this.indexLayerFront].resetAlpha();
+	}
 };
 
 LayerManager.prototype.loadLevel = function(levelNumber) {
-	this.layerData = Game.cache.getJSON('level_template');
+	this.layerData = Game.cache.getJSON('level_' + levelNumber);
 	this.numLayersInLevel = this.layerData.layers.length;
 };
 
@@ -100,7 +104,8 @@ LayerManager.prototype.moveUp = function() {
 	}
 
 	// bounds checking
-	if (this.indexLayerFront == this.indexLayerBack) {
+	if (this.indexLayerFront >= this.indexLayerBack) {
+		this.isLevelComplete = true;
 		return false;
 	}
 

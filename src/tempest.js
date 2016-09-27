@@ -3,12 +3,14 @@
 var GAME_WIDTH = 1280;
 var GAME_HEIGHT = 720;
 
+var MAX_LEVELS = 5;
+
 var BULLET_COLLISION_DISTANCE = 10;
 var ENEMY_COLLISION_DISTANCE = 30;
 var PLAYER_COLLISION_DISTANCE = 20;
 
 var BULLET_SCALE = {x:0.1, y:0.1};
-var PLAYER_SCALE = {x:0.3, y:0.3};
+var PLAYER_SCALE = {x:0.25, y:0.25};
 var PLAYER_EXPLOSION_SCALE = { x: 0.1, y: 0.1 };
 
 var MAX_PARTICLES = 1000;
@@ -27,14 +29,15 @@ var caculatePosition = function(radius, angle)
 var Tempest = function() {
 	this.state = null;
 
+	this.levelNumber = 1;
 	this.layerManager = null;
 	this.player = null;
 
 	this.hudGroup = null;
 	this.score = 0;
 	this.scoreText = null;
-	this.lifeSprites = null;
 	this.gameOverText = null;
+	this.levelCompleteText = null;
 
 	this.numParticles = 0;
 
@@ -51,7 +54,8 @@ Tempest.prototype.TempestState = {
 	GAME_RUNNING: 2,
 	GAME_PAUSED: 3,
 	GAME_PLAYER_DIED: 5,
-	GAME_OVER: 6
+	GAME_LEVEL_COMPLETE: 6,
+	GAME_OVER: 7
 };
 
 Tempest.prototype.preload = function() {
@@ -83,7 +87,7 @@ Tempest.prototype.init = function() {
 	this.state = this.TempestState.GAME_INIT;
 
 	this.layerManager = new LayerManager();
-	this.layerManager.init();
+	this.layerManager.init(4);
 
 	this.player = new Player();
 	this.player.init();
@@ -105,14 +109,6 @@ Tempest.prototype.initHUD = function() {
 	this.scoreText = Game.add.bitmapText(GAME_WIDTH * 0.025, GAME_HEIGHT * 0.05, 'carrier_command', 'Score:0', 24);
 	this.scoreText.anchor.set(0);
 	this.hudGroup.add(this.scoreText);
-
-	this.lifeSprites = new Array();
-	for (var i = 0; i < this.player.lives; ++i) {
-		var lifeSprite = this.hudGroup.create(GAME_WIDTH - 50 - (i * 50), GAME_HEIGHT * 0.05, 'player');
-		lifeSprite.anchor = { x: 0.5, y: 0.5 };
-		lifeSprite.scale = { x: 0.15, y: 0.15 };
-		this.lifeSprites.push(lifeSprite);
-	}
 };
 
 Tempest.prototype.createKeys = function() {
@@ -132,6 +128,11 @@ Tempest.prototype.reset = function() {
 		this.gameOverText.destroy();
 		this.gameOverText = null;
 	}
+
+	if (this.levelCompleteText != null) {
+		this.levelCompleteText.destroy();
+		this.levelCompleteText = null;
+	}
 };
 
 Tempest.prototype.removeKeys = function() {
@@ -147,7 +148,6 @@ Tempest.prototype.onPlayerDeath = function() {
 	if (this.state != this.TempestState.GAME_PLAYER_DIED) {
 		return;
 	}
-	console.log("Player died...lives left:" + this.player.lives);
 
 	// prevent the player from restarting immediately
 	this.restartWaitCounter = this.restartWait;
@@ -155,25 +155,22 @@ Tempest.prototype.onPlayerDeath = function() {
 	// stop any layer blink alerts that may be going on
 	this.layerManager.resetAllAlertEvents();
 
-	// remove life sprite
-	var lifeSprite = this.lifeSprites.pop();
-	lifeSprite.destroy();
-	lifeSprite = null;
-
 	// check if the player has any lives left
-	if (this.player.lives <= 0) {
+	if (this.player.health <= 0) {
 		this.endGame();
 	}
 };
 
 Tempest.prototype.playAgain = function() {
-	if (this.state != this.TempestState.GAME_PLAYER_DIED && this.state != this.TempestState.GAME_OVER) {
+	if (this.state != this.TempestState.GAME_PLAYER_DIED &&
+	 this.state != this.TempestState.GAME_OVER &&
+	 this.state != this.TempestState.GAME_LEVEL_COMPLETE) {
 		return;
 	}
 
 	this.reset();
 
-	if (this.state == this.TempestState.GAME_(this.enemyManager.enemys[i].type == 0 && Math.abs(this.player.angleIndex - this.enemyManager.enemys[i].angleIndex) <= 1) || PLAYER_DIED) {
+	if (this.state == this.TempestState.GAME_PLAYER_DIED) {
 		// ask the layer manager to move all layers up
 		var wasMoveSuccessful = this.layerManager.moveUp();
 
@@ -185,7 +182,11 @@ Tempest.prototype.playAgain = function() {
 		this.player.init();
 		this.startGame();
 	}
-	else if (this.state == this.TempestState.GAME_OVER) {
+	else {
+		if (this.state == this.TempestState.GAME_LEVEL_COMPLETE) {
+			this.levelNumber = (this.levelNumber + 1) > 5 ? 1 : this.levelNumber + 1;
+		}
+
 		// clear all layers
 		this.layerManager.reset();
 		this.layerManager = null;
@@ -210,10 +211,12 @@ Tempest.prototype.startGame = function() {
 };
 
 Tempest.prototype.endGame = function() {
+	if (this.state == this.TempestState.GAME_OVER) {
+		return;
+	}
 	this.state = this.TempestState.GAME_OVER;
 	console.log("Game over...");
 
-	// TODO: display game over text and player score here...
 	this.gameOverText = Game.add.bitmapText(GAME_WIDTH * 0.5, GAME_HEIGHT * 0.45, 'carrier_command', 'Game Over!', 34);
 	this.gameOverText.anchor.set(0.5);
 	this.hudGroup.add(this.gameOverText);
@@ -221,7 +224,23 @@ Tempest.prototype.endGame = function() {
 
 	this.scoreText.anchor.set(0.5);
 	this.scoreText.position = { x: GAME_WIDTH * 0.5, y: GAME_HEIGHT * 0.55 };
-}
+};
+
+Tempest.prototype.onLevelComplete = function() {
+	if (this.state == this.TempestState.GAME_LEVEL_COMPLETE) {
+		return;
+	}
+	this.state = this.TempestState.GAME_LEVEL_COMPLETE;
+	console.log("Level complete...");
+
+	this.levelCompleteText = Game.add.bitmapText(GAME_WIDTH * 0.5, GAME_HEIGHT * 0.45, 'carrier_command', 'Level Complete!', 34);
+	this.levelCompleteText.anchor.set(0.5);
+	this.hudGroup.add(this.levelCompleteText);
+	Game.world.bringToTop(this.hudGroup);
+
+	this.scoreText.anchor.set(0.5);
+	this.scoreText.position = { x: GAME_WIDTH * 0.5, y: GAME_HEIGHT * 0.55 };
+};
 
 Tempest.prototype.update = function() {
 	// Game.debug.text(Game.time.fps, GAME_WIDTH/2, GAME_HEIGHT/2, 0xffff22);
@@ -245,7 +264,11 @@ Tempest.prototype.update = function() {
 		this.enemyManager.update();
 		
 		this.playerBulletCollide();
-		this.playerCollide();
+
+		// player cannot collide when blinking
+		if (!this.player.isBlinking) {
+			this.playerCollide();
+		}
 
 		// ask the layer manager if the player must be killed
 		if (this.layerManager.mustKillPlayer) {
@@ -261,7 +284,7 @@ Tempest.prototype.update = function() {
      		--this.restartWaitCounter;
      	}
 
-     	this.player.updateExplosion();
+     	// this.player.updateExplosion();
      }
      this.player.updateSprite();
 };
@@ -310,17 +333,26 @@ Tempest.prototype.handleKeyUp = function() {
 		return;
 	}
 	
-	if(!this.layerAnimation)
-	{
+	if(!this.layerAnimation) {
+		// check if the player can move forward
+		if (this.player.numMoves <= 0) {
+			return;
+		}
+		this.player.moveForward();
+
 		// ask the layer manager to move all layers up
 		var wasMoveSuccessful = this.layerManager.moveUp();
 
 		// if the layers were moved successfully, add a new formation of enemies
 		if (wasMoveSuccessful) {
-			console.log("LayerManager said moveUp was successfull...");
 			this.enemyManager.createFormation(this.layerManager.getEnemiesForBottomLayer());		
 		}
-		this.layerAnimation = true;
+		this.layerAnimation = wasMoveSuccessful; //true;
+
+		// check if the level was completed
+		if (this.layerManager.isLevelComplete) {
+			this.onLevelComplete();
+		}
 	}
 };
 
@@ -336,6 +368,7 @@ Tempest.prototype.handleKeySpace = function() {
 
 		case this.TempestState.GAME_PLAYER_DIED:
 		case this.TempestState.GAME_OVER:
+		case this.TempestState.GAME_LEVEL_COMPLETE:
 			if (this.restartWaitCounter <= 0) {
 				this.playAgain();
 			}
@@ -384,11 +417,9 @@ Tempest.prototype.playerCollide = function(){
 		if(this.player.angleIndex == this.enemyManager.bullets[i].angleIndex &&
 			Math.abs(this.player.radius - this.enemyManager.bullets[i].radius) < PLAYER_COLLISION_DISTANCE)
 		{
-			this.player.die();
+			this.onPlayerCollision();
 			this.enemyManager.deleteBullet(i);
 			mark = true;
-			this.state = this.TempestState.GAME_PLAYER_DIED;
-			this.onPlayerDeath();
 			break;
 		}
 	}
@@ -400,13 +431,21 @@ Tempest.prototype.playerCollide = function(){
 			if((this.player.angleIndex == this.enemyManager.enemys[i].angleIndex || (this.enemyManager.enemys[i].type == 0 && Math.abs(this.player.angleIndex - this.enemyManager.enemys[i].angleIndex) <= 1)) &&
 				Math.abs(this.player.radius - this.enemyManager.enemys[i].radius) < PLAYER_COLLISION_DISTANCE)
 			{
-				this.player.die();
+				this.onPlayerCollision();
 				this.enemyManager.deleteEnemy(i);
-				this.state = this.TempestState.GAME_PLAYER_DIED;
-				this.onPlayerDeath();
 				break;
 			}
 		}
+	}
+};
+
+Tempest.prototype.onPlayerCollision = function() {
+	this.player.takeDamage();
+
+	// check if player died
+	if (this.player.health == 0) {
+		this.state = this.TempestState.GAME_PLAYER_DIED;
+		this.onPlayerDeath();
 	}
 };
 

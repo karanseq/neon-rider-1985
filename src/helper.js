@@ -1,5 +1,8 @@
 var imageSet = [ { key: 'layer', src: 'images/Ring.png' },
-{ key: 'player', src: 'images/Player01.png'},
+{ key: 'player', src: 'images/Player.png'},
+{ key: 'player_health_full', src: 'images/PlayerFullHealth.png'},
+{ key: 'player_health_med', src: 'images/PlayerMidHealth.png'},
+{ key: 'player_health_low', src: 'images/PlayerLowHealth.png'},
 { key: 'playerbullet', src: 'images/PlayerBullet01.png'},
 { key: 'enemy1', src: 'images/Enemy1.png'},
 { key: 'enemy2', src: 'images/Enemy2.png'},
@@ -21,7 +24,12 @@ var levelSet = [
 ];
 
 var levelFileSet = [
-	{ key: 'level_template', src: 'data/level_template.json' }
+	{ key: 'level_template', src: 'data/level_template.json' },
+	{ key: 'level_1', src: 'data/level_1.json' },
+	{ key: 'level_2', src: 'data/level_2.json' },
+	{ key: 'level_3', src: 'data/level_3.json' },
+	{ key: 'level_4', src: 'data/level_4.json' },
+	{ key: 'level_5', src: 'data/level_5.json' }
 ];
 
 // we should have one more value than the number of visible layers

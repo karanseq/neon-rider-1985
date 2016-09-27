@@ -6,6 +6,7 @@ var PLAYER_ROTATE_LASTING = 5;
 
 var Player = function() {
 	this.sprite = null;
+	this.healthSprite = null;
 	this.angleIndex = INIT_ANGLE_INDEX;
 	
 	this.radius = RADIUS[1];
@@ -17,7 +18,7 @@ var Player = function() {
 
 	this.bulletMoveSpeed = 5;
 	this.bulletScaleSpeed = 0.001;
-	this.fireRate = 7;
+	this.fireRate = 15;
 	this.fireRateCounter = 0;
 
 	this.isExplosionLarge = true;
@@ -29,7 +30,11 @@ var Player = function() {
 	this.previousAngle =0;
 	this.rotateTimer = 0;
 
-	this.lives = 3;
+	this.health = 3;
+	this.isBlinking = false;
+
+	this.numMoves = 3;
+	this.moveEvent = null;
 };
 
 Player.prototype.init = function() {
@@ -39,9 +44,16 @@ Player.prototype.init = function() {
 
 	// initialize player sprite
 	this.sprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'player');
+	this.sprite.tint = '0xeccd31';
 	this.sprite.anchor = { x: 0.5, y: 0.5 };
 	this.sprite.scale = PLAYER_SCALE;
 	this.sprite.visible = true;
+
+	// initialize health sprite
+	this.healthSprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'player_health_full');
+	this.healthSprite.anchor = { x: 0.5, y: 0.5 };
+	this.healthSprite.scale = PLAYER_SCALE;
+	this.healthSprite.visible = true;
 
 	// call update to set default position
 	this.updateSprite();
@@ -60,6 +72,35 @@ Player.prototype.reset = function() {
 	while (this.bullets.length > 0) {
 		var bullet = this.bullets.pop();
 		bullet.destroy();
+	}
+
+	// remove any finish move events
+	if (this.moveEvent != null) {
+		Game.time.events.remove(this.moveEvent);
+		this.moveEvent = null;
+	}
+};
+
+Player.prototype.moveForward = function() {
+	// can the player move forward?
+	if (this.numMoves <= 0) {
+		return;
+	}
+
+	// schedule an event to move forward
+	--this.numMoves;
+	this.moveEvent = Game.time.events.add(3000, this.finishMove, this);
+
+	console.log("Move forward numMoves:" + this.numMoves);
+
+	return;
+};
+
+Player.prototype.finishMove = function() {
+	if (this.numMoves < 3) {
+		++this.numMoves;
+
+		console.log("Finished moving forward numMoves:" + this.numMoves);
 	}
 };
 
@@ -142,8 +183,15 @@ Player.prototype.updateRotation = function(){
 Player.prototype.updateSprite = function(){
 	this.sprite.scale = this.scale;
 	this.sprite.angle = -this.angle;
+	
 	this.position = caculatePosition(this.radius, this.angle);
 	this.sprite.position = this.position;
+
+	if (this.healthSprite != null) {
+		this.healthSprite.scale = this.scale;
+		this.healthSprite.angle = -this.angle;
+		this.healthSprite.position = this.position;		
+	}
 
 	if (this.fireRateCounter > 0) {
 		--this.fireRateCounter;
@@ -152,18 +200,49 @@ Player.prototype.updateSprite = function(){
 
 Player.prototype.setVisible = function(visibility) {
 	this.sprite.visible = visibility;
+	this.healthSprite.visible = visibility;
 };
 
 Player.prototype.isVisible = function() {
-	return this.sprite.visible;
+	return this.sprite.visible || this.healthSprite.visible;
 };
 
-Player.prototype.destroy = function(){
+Player.prototype.destroy = function() {
 	this.sprite.destroy();
 	this.sprite = null;
+
+	if (this.healthSprite != null) {
+		this.healthSprite.destroy();
+		this.healthSprite = null;
+	}
 }
 
+Player.prototype.takeDamage = function() {
+	if (this.isBlinking) {
+		return;
+	}
+
+	// reduce health
+	--this.health;
+
+	if (this.health <= 0) {
+		this.die();
+	}
+	else {
+		this.startBlinking();
+
+		this.healthSprite.destroy();
+		this.healthSprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, this.health == 2 ? 'player_health_med' : 'player_health_low');
+		this.healthSprite.anchor = { x: 0.5, y: 0.5 };
+		this.healthSprite.scale = this.scale;
+		this.healthSprite.angle = -this.angle;
+		this.healthSprite.position = this.position;
+	}	
+};
+
 Player.prototype.die = function() {	
+	this.health = 0;
+
 	// remove old sprite
 	this.destroy();
 
@@ -173,9 +252,6 @@ Player.prototype.die = function() {
 	this.sprite.visible = true;
 	this.sprite.scale = PLAYER_EXPLOSION_SCALE;
 	this.scale = PLAYER_EXPLOSION_SCALE;
-
-	// reduce number of lives
-	--this.lives;
 };
 
 // player explosion animation
@@ -237,6 +313,24 @@ Player.prototype.updateExplosion = function(){
 		}
 	}
 }
+
+Player.prototype.startBlinking = function() {
+	if (this.isBlinking) {
+		return;
+	}
+	this.isBlinking = true;
+
+	var duration = 50;
+	var numBlinks = 15;
+	Game.add.tween(this.sprite).to({ alpha: 0.1 }, duration, Phaser.Easing.Linear.None, true, duration, numBlinks, true);
+	Game.add.tween(this.healthSprite).to({ alpha: 0.1 }, duration, Phaser.Easing.Linear.None, true, duration, numBlinks, true);
+
+	Game.time.events.add(duration * numBlinks * 2, this.finishBlinking, this);
+};
+
+Player.prototype.finishBlinking = function() {
+	this.isBlinking = false;
+};
 
 // Player.prototype.setAngleIndex = function(index)
 // {
