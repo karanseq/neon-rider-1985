@@ -87,7 +87,7 @@ Tempest.prototype.init = function() {
 	this.state = this.TempestState.GAME_INIT;
 
 	this.layerManager = new LayerManager();
-	this.layerManager.init(this.levelNumber);
+	this.layerManager.init(4);
 
 	this.player = new Player();
 	this.player.init();

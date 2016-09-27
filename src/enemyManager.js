@@ -204,8 +204,8 @@ EnemyManager.prototype.createFormation = function(enemies) {
 		return;
 	}
 
-	// pick an angle index
-	var angleIndex = Math.floor(Math.random() * ANGLES.length);
+	// pick an initial angle index
+	var initialAngleIndex = Math.floor(Math.random() * ANGLES.length);
 
 	// get the formation pattern
 	var formationPattern = this.getFormationPattern(enemies);
@@ -213,6 +213,7 @@ EnemyManager.prototype.createFormation = function(enemies) {
 
 	// create enemies and add them to a spawning list
 	for (var i = 0; i < formationPattern.length; ++i) {
+		var angleIndex = initialAngleIndex + i >= ANGLES.length ? 0 : initialAngleIndex + i;
 		var enemy = new Enemy(angleIndex, formationPattern[i]);
 		enemy.setVisible(false);
 		this.enemiesToSpawn.push(enemy);
