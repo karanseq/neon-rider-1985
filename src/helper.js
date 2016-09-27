@@ -14,15 +14,15 @@ var imageSet = [ { key: 'layer', src: 'images/Ring.png' },
 { key: 'enemy4-1', src: 'images/Enemy4-1.png'},
 { key: 'enemy4-2', src: 'images/Enemy4-2.png'},
 { key: 'enemy4-3', src: 'images/Enemy4-3.png'},
-{ key: 'enemy2_particle1', src: 'images/enemy2_particle1' },
-{ key: 'enemy2_particle2', src: 'images/enemy2_particle2' },
-{ key: 'enemy2_particle3', src: 'images/enemy2_particle3' },
-{ key: 'enemy2_particle4', src: 'images/enemy2_particle4' },
-{ key: 'enemy2_particle5', src: 'images/enemy2_particle5' },
-{ key: 'enemy2_particle6', src: 'images/enemy2_particle6' },
-{ key: 'glow_particle', src: 'images/glow_particle' },
-{ key: 'explosion', src: 'images/explosion' },
-{ key: 'barricade_particle', src: 'images/barricade_particle' },
+{ key: 'enemy2_particle1', src: 'images/enemy2_particle1.png' },
+{ key: 'enemy2_particle2', src: 'images/enemy2_particle2.png' },
+{ key: 'enemy2_particle3', src: 'images/enemy2_particle3.png' },
+{ key: 'enemy2_particle4', src: 'images/enemy2_particle4.png' },
+{ key: 'enemy2_particle5', src: 'images/enemy2_particle5.png' },
+{ key: 'enemy2_particle6', src: 'images/enemy2_particle6.png' },
+{ key: 'glow_particle', src: 'images/glow_particle.png' },
+{ key: 'explosion', src: 'images/explosion.png' },
+{ key: 'barricade_particle', src: 'images/barricade_particle.png' },
 { key: 'enemybullet', src:'images/EnemyBullet01.png'},
 { key: 'playerExplosion', src:'images/PlayerExplosion.png'},
 { key: 'background', src: 'images/Tempest_Background.png' } ];
@@ -65,4 +65,24 @@ function getRegularPolygonVertices(numVertices, circumRadius, startAngle) {
 	}
 	vertices.push(vertices[0]);
 	return vertices;
+}
+
+function forward(angle) {
+    var rad = angle * Math.PI / 180 + Math.PI / 2;
+    return { x: Math.cos(rad), y: -Math.sin(rad) };
+}
+
+function backward(angle) {
+    var rad = angle * Math.PI / 180 - Math.PI / 2;
+    return { x: Math.cos(rad), y: -Math.sin(rad) };
+}
+
+function right(angle) {
+    var rad = angle * Math.PI / 180;
+    return { x: Math.cos(rad), y: -Math.sin(rad) };
+}
+
+function left(angle) {
+    var rad = angle * Math.PI / 180 + Math.PI;
+    return { x: Math.cos(rad), y: -Math.sin(rad) };
 }
