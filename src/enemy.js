@@ -238,8 +238,10 @@ Enemy.prototype.changeSprite = function(spriteName, color){
 	this.updateSprite()
 }
 
-Enemy.prototype.destroy = function(){
-	this.sprite.destroy();
+Enemy.prototype.destroy = function () {
+
+    
+    this.sprite.destroy();
 }
 
 Enemy.prototype.setVisible = function(visibility) {

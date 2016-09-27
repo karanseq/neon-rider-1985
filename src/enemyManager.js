@@ -96,6 +96,12 @@ EnemyManager.prototype.hitEnemy = function(enemyIndex){
 		this.deleteEnemy(enemyIndex);
 	else if(this.enemys[enemyIndex].type == 3)
 	{
+	    // emit barricade hit particles
+	    barricadeHitEmitter.position = this.enemys[enemyIndex].position;
+	    var scaled = this.enemys[enemyIndex].scale.x * barricadeHitEmitter.baseScale;
+	    barricadeHitEmitter.setScale(scaled, 0, scaled, 0, barricadeHitEmitter.lifetime, undefined, false);
+	    barricadeHitEmitter.explode(barricadeHitEmitter.lifetime, 4);
+
 		if(this.enemys[enemyIndex].health == 6)
 			this.enemys[enemyIndex].changeSprite('enemy4-2', 0x39c7ff);
 		else if(this.enemys[enemyIndex].health == 3)
@@ -104,7 +110,30 @@ EnemyManager.prototype.hitEnemy = function(enemyIndex){
 }
 
 EnemyManager.prototype.deleteEnemy = function(enemyIndex){
-	var temp = this.enemys[enemyIndex];
+    var temp = this.enemys[enemyIndex];
+
+    // emit particles
+    switch (temp.type) {
+        case temp.EnemyType.STRAIGHT_FORWARD:
+            kamikazeDestructionEmitter.position = temp.position;
+            var scaled = temp.scale.x * kamikazeDestructionEmitter.baseScale;
+            kamikazeDestructionEmitter.setScale(scaled, 0, scaled, 0, kamikazeDestructionEmitter.lifetime, undefined, false);
+            kamikazeDestructionEmitter.explode(kamikazeDestructionEmitter.lifetime, 6);
+            break;
+        case temp.EnemyType.ROTATE_FORWARD:
+            gruntDestructionEmitter.position = temp.position;
+            var scaled = temp.scale.x * gruntDestructionEmitter.baseScale;
+            gruntDestructionEmitter.setScale(scaled, 0, scaled, 0, gruntDestructionEmitter.lifetime, undefined, false);
+            gruntDestructionEmitter.explode(gruntDestructionEmitter.lifetime, 6);
+            break;
+        case temp.EnemyType.BLOCK:
+            barricadeDestructionEmitter.position = temp.position;
+            var scaled = temp.scale.x * barricadeDestructionEmitter.baseScale;
+            barricadeDestructionEmitter.setScale(scaled, 0, scaled, 0, barricadeDestructionEmitter.lifetime, undefined, false);
+            barricadeDestructionEmitter.explode(barricadeDestructionEmitter.lifetime, 8);
+            break;
+    }
+
 	this.enemys[enemyIndex] = this.enemys[this.enemys.length - 1];
 	temp.destroy();
 	delete temp;
