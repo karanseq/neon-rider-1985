@@ -8,6 +8,7 @@ var PLAYER_MAX_HEALTH = 6;
 var Player = function() {
 	this.sprite = null;
 	this.healthSprite = null;
+	this.dashSprite = null;
 	this.angleIndex = INIT_ANGLE_INDEX;
 	
 	this.radius = RADIUS[1];
@@ -57,6 +58,14 @@ Player.prototype.init = function() {
 	this.healthSprite.scale = PLAYER_SCALE;
 	this.healthSprite.visible = true;
 
+	// initialize dash sprite
+	this.dashSprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'player_dash_' + this.numMoves);
+	this.dashSprite.anchor = { x: 0.5, y: 0.5 };
+	this.dashSprite.scale = PLAYER_SCALE;
+	// this.dashSprite.tint = '0xeccd31';
+	this.dashSprite.alpha = 0.75;
+	this.dashSprite.visible = true;
+
 	// call update to set default position
 	this.updateSprite();
 
@@ -91,6 +100,7 @@ Player.prototype.moveForward = function() {
 
 	// schedule an event to move forward
 	--this.numMoves;
+	this.refreshDashSprite();
 	this.moveEvent = Game.time.events.add(3000, this.finishMove, this);
 
 	console.log("Move forward numMoves:" + this.numMoves);
@@ -101,6 +111,7 @@ Player.prototype.moveForward = function() {
 Player.prototype.finishMove = function() {
 	if (this.numMoves < 3) {
 		++this.numMoves;
+		this.refreshDashSprite();
 
 		console.log("Finished moving forward numMoves:" + this.numMoves);
 	}
@@ -195,6 +206,12 @@ Player.prototype.updateSprite = function(){
 		this.healthSprite.position = this.position;		
 	}
 
+	if (this.dashSprite != null) {
+		this.dashSprite.scale = this.scale;
+		this.dashSprite.angle = -this.angle;
+		this.dashSprite.position = this.position;
+	}
+
 	if (this.fireRateCounter > 0) {
 		--this.fireRateCounter;
 	}
@@ -217,6 +234,11 @@ Player.prototype.destroy = function() {
 		this.healthSprite.destroy();
 		this.healthSprite = null;
 	}
+
+	if (this.dashSprite != null) {
+		this.dashSprite.destroy();
+		this.dashSprite = null;
+	}
 }
 
 Player.prototype.takeDamage = function() {
@@ -226,6 +248,7 @@ Player.prototype.takeDamage = function() {
 
 	// reduce health
 	--this.health;
+	console.log("Player takes damage...health:" + this.health);
 
 	if (this.health <= 0) {
 		this.die();
@@ -242,6 +265,7 @@ Player.prototype.gainHealth = function() {
 	if (this.health > PLAYER_MAX_HEALTH) {
 		this.health = PLAYER_MAX_HEALTH;
 	}
+	console.log("Player gains health...health:" + this.health);
 
 	this.refreshHealthSprite();
 };
@@ -266,6 +290,18 @@ Player.prototype.refreshHealthSprite = function() {
 	this.healthSprite.scale = this.scale;
 	this.healthSprite.angle = -this.angle;
 	this.healthSprite.position = this.position;
+};
+
+Player.prototype.refreshDashSprite = function() {
+	this.dashSprite.destroy();
+
+	this.dashSprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'player_dash_' + this.numMoves);
+	this.dashSprite.anchor = { x: 0.5, y: 0.5 };
+	this.dashSprite.scale = this.scale;
+	this.dashSprite.angle = -this.angle;
+	this.dashSprite.position = this.position;
+	this.dashSprite.alpha = 0.75;
+	// this.dashSprite.tint = '0xeccd31';
 };
 
 Player.prototype.die = function() {	
@@ -352,6 +388,7 @@ Player.prototype.startBlinking = function() {
 	var numBlinks = 15;
 	Game.add.tween(this.sprite).to({ alpha: 0.1 }, duration, Phaser.Easing.Linear.None, true, duration, numBlinks, true);
 	Game.add.tween(this.healthSprite).to({ alpha: 0.1 }, duration, Phaser.Easing.Linear.None, true, duration, numBlinks, true);
+	Game.add.tween(this.dashSprite).to({ alpha: 0.1 }, duration, Phaser.Easing.Linear.None, true, duration, numBlinks, true);
 
 	Game.time.events.add(duration * numBlinks * 2, this.finishBlinking, this);
 };
@@ -361,6 +398,9 @@ Player.prototype.finishBlinking = function() {
 	this.sprite.alpha = 1;
 	if (this.healthSprite != null) {
 		this.healthSprite.alpha = 1;
+	}
+	if (this.dashSprite != null) {
+		this.dashSprite.alpha = 0.75;
 	}
 };
 
