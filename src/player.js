@@ -134,11 +134,17 @@ Player.prototype.beginRotation = function(rotateLeft){
 
 
 
-Player.prototype.createBullet = function() {
+Player.prototype.createBullet = function () {
+
 	// this condition prevents multiple bullets from sticking together
 	if (this.fireRateCounter > 0) {
 		return;
 	}
+
+    // emit particles
+	playerShootEmitter.position = this.position;
+	playerShootEmitter.explode(playerShootEmitter.lifetime, 4);
+
 	this.fireRateCounter = this.fireRate;
 
 	var bullet = new Bullet(0, this.radius, this.angleIndex);

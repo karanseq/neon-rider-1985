@@ -68,7 +68,7 @@ EnemyManager.prototype.updateEnemy = function(){
 			{
 				for(var j=0;j<this.enemys.length;j++)
 				{
-					if((this.enemys[j].type == 3 || this.enemys[j].type == 4) && this.enemys[i].layerIndex == this.enemys[j].layerIndex)
+					if(this.enemys[j].type == 3 && this.enemys[i].layerIndex == this.enemys[j].layerIndex)
 					{
 						if(this.enemys[i].rotateLeft && (this.enemys[j].angleIndex + 1) % MAX_ANGLE_INDEX == this.enemys[i].angleIndex)
 							this.enemys[i].rotateLeft = false;
@@ -78,7 +78,7 @@ EnemyManager.prototype.updateEnemy = function(){
 				}
 			}
 			// shoot bullet
-			if(this.enemys[i].type == 4 && this.enemys[i].shootFlag)
+			if(this.enemys[i].type == 2 && this.enemys[i].shootFlag)
 			{
 				//enemy can not create bullet when they are roatating
 				if(!this.enemys[i].isRotate && this.enemys[i].radius < RADIUS[0] * 0.5)
@@ -96,6 +96,12 @@ EnemyManager.prototype.hitEnemy = function(enemyIndex){
 		this.deleteEnemy(enemyIndex);
 	else if(this.enemys[enemyIndex].type == 3)
 	{
+	    // emit barricade hit particles
+	    barricadeHitEmitter.position = this.enemys[enemyIndex].position;
+	    var scaled = this.enemys[enemyIndex].scale.x * barricadeHitEmitter.baseScale;
+	    barricadeHitEmitter.setScale(scaled, 0, scaled, 0, barricadeHitEmitter.lifetime, undefined, false);
+	    barricadeHitEmitter.explode(barricadeHitEmitter.lifetime, 4);
+
 		if(this.enemys[enemyIndex].health == 6)
 			this.enemys[enemyIndex].changeSprite('enemy4-2', 0x39c7ff);
 		else if(this.enemys[enemyIndex].health == 3)
@@ -104,7 +110,30 @@ EnemyManager.prototype.hitEnemy = function(enemyIndex){
 }
 
 EnemyManager.prototype.deleteEnemy = function(enemyIndex){
-	var temp = this.enemys[enemyIndex];
+    var temp = this.enemys[enemyIndex];
+
+    // emit particles
+    switch (temp.type) {
+        case temp.EnemyType.STRAIGHT_FORWARD:
+            kamikazeDestructionEmitter.position = temp.position;
+            var scaled = temp.scale.x * kamikazeDestructionEmitter.baseScale;
+            kamikazeDestructionEmitter.setScale(scaled, 0, scaled, 0, kamikazeDestructionEmitter.lifetime, undefined, false);
+            kamikazeDestructionEmitter.explode(kamikazeDestructionEmitter.lifetime, 6);
+            break;
+        case temp.EnemyType.ROTATE_FORWARD:
+            gruntDestructionEmitter.position = temp.position;
+            var scaled = temp.scale.x * gruntDestructionEmitter.baseScale;
+            gruntDestructionEmitter.setScale(scaled, 0, scaled, 0, gruntDestructionEmitter.lifetime, undefined, false);
+            gruntDestructionEmitter.explode(gruntDestructionEmitter.lifetime, 6);
+            break;
+        case temp.EnemyType.BLOCK:
+            barricadeDestructionEmitter.position = temp.position;
+            var scaled = temp.scale.x * barricadeDestructionEmitter.baseScale;
+            barricadeDestructionEmitter.setScale(scaled, 0, scaled, 0, barricadeDestructionEmitter.lifetime, undefined, false);
+            barricadeDestructionEmitter.explode(barricadeDestructionEmitter.lifetime, 8);
+            break;
+    }
+
 	this.enemys[enemyIndex] = this.enemys[this.enemys.length - 1];
 	temp.destroy();
 	delete temp;

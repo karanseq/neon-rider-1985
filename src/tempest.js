@@ -97,7 +97,12 @@ Tempest.prototype.init = function() {
 
 	this.initHUD();
 
-	// createTestParticleSystem();
+    // Create emitters
+	createGruntDestructionEmitter();
+	createkamikazeDestructionEmitter();
+	createPlayerShootEmitter();
+	createBarricadeDestructionEmitter();
+	createBarricadeHitEmitter();
 
 	this.startGame();
 };
