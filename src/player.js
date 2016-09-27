@@ -141,6 +141,9 @@ Player.prototype.createBullet = function() {
 	}
 	this.fireRateCounter = this.fireRate;
 
+	playerShootEmitter.position = this.position;
+	playerShootEmitter.explode(playerShootEmitter.lifespan, 4);
+
 	var bullet = new Bullet(0, this.radius, this.angleIndex);
 	bullet.updateSprite();
 	this.bullets.push(bullet);

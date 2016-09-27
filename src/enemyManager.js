@@ -99,8 +99,8 @@ EnemyManager.prototype.hitEnemy = function(enemyIndex){
 	    // emit barricade hit particles
 	    barricadeHitEmitter.position = this.enemys[enemyIndex].position;
 	    var scaled = this.enemys[enemyIndex].scale.x * barricadeHitEmitter.baseScale;
-	    barricadeHitEmitter.setScale(scaled, 0, scaled, 0, barricadeHitEmitter.lifetime, undefined, false);
-	    barricadeHitEmitter.explode(barricadeHitEmitter.lifetime, 4);
+	    barricadeHitEmitter.setScale(scaled, 0, scaled, 0, barricadeHitEmitter.lifespan, undefined, false);
+	    barricadeHitEmitter.explode(barricadeHitEmitter.lifespan, 4);
 
 		if(this.enemys[enemyIndex].health == 6)
 			this.enemys[enemyIndex].changeSprite('enemy4-2', 0x39c7ff);
@@ -116,21 +116,31 @@ EnemyManager.prototype.deleteEnemy = function(enemyIndex){
     switch (temp.type) {
         case temp.EnemyType.STRAIGHT_FORWARD:
             kamikazeDestructionEmitter.position = temp.position;
-            var scaled = temp.scale.x * kamikazeDestructionEmitter.baseScale;
-            kamikazeDestructionEmitter.setScale(scaled, 0, scaled, 0, kamikazeDestructionEmitter.lifetime, undefined, false);
-            kamikazeDestructionEmitter.explode(kamikazeDestructionEmitter.lifetime, 6);
+            kamikazeExplosionEmitter.position = temp.position;
+            var scaled1 = temp.scale.x * kamikazeDestructionEmitter.baseScale;
+            var scaled2 = temp.scale.x * kamikazeExplosionEmitter.baseScale;
+            kamikazeDestructionEmitter.setScale(scaled1, 0, scaled1, 0, kamikazeDestructionEmitter.lifespan, undefined, false);
+            kamikazeExplosionEmitter.setScale(scaled2, 0, scaled2, 0, kamikazeExplosionEmitter.lifespan, undefined, false);
+            kamikazeDestructionEmitter.explode(kamikazeDestructionEmitter.lifespan, 6);
+            kamikazeExplosionEmitter.explode(kamikazeExplosionEmitter.lifespan, 3);
             break;
         case temp.EnemyType.ROTATE_FORWARD:
             gruntDestructionEmitter.position = temp.position;
             var scaled = temp.scale.x * gruntDestructionEmitter.baseScale;
-            gruntDestructionEmitter.setScale(scaled, 0, scaled, 0, gruntDestructionEmitter.lifetime, undefined, false);
-            gruntDestructionEmitter.explode(gruntDestructionEmitter.lifetime, 6);
+            gruntDestructionEmitter.setScale(scaled, 0, scaled, 0, gruntDestructionEmitter.lifespan, undefined, false);
+            gruntDestructionEmitter.explode(gruntDestructionEmitter.lifespan, 6);
+            break;
+        case temp.EnemyType.GUN:
+            turretDestructionEmitter.position = temp.position;
+            var scaled = temp.scale.x * turretDestructionEmitter.baseScale;
+            turretDestructionEmitter.setScale(scaled, 0, scaled, 0, turretDestructionEmitter.lifespan, undefined, false);
+            turretDestructionEmitter.explode(turretDestructionEmitter.lifespan, 6);
             break;
         case temp.EnemyType.BLOCK:
             barricadeDestructionEmitter.position = temp.position;
             var scaled = temp.scale.x * barricadeDestructionEmitter.baseScale;
-            barricadeDestructionEmitter.setScale(scaled, 0, scaled, 0, barricadeDestructionEmitter.lifetime, undefined, false);
-            barricadeDestructionEmitter.explode(barricadeDestructionEmitter.lifetime, 8);
+            barricadeDestructionEmitter.setScale(scaled, 0, scaled, 0, barricadeDestructionEmitter.lifespan, undefined, false);
+            barricadeDestructionEmitter.explode(barricadeDestructionEmitter.lifespan, 8);
             break;
     }
 
