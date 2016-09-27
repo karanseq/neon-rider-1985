@@ -66,7 +66,7 @@ function createGruntDestructionEmitter() {
 
 var kamikazeDestructionEmitter;
 
-function createkamikazeDestructionEmitter() {
+function createKamikazeDestructionEmitter() {
 
     kamikazeDestructionEmitter = Game.add.emitter(0, 0, 8);
 
@@ -91,6 +91,58 @@ function createkamikazeDestructionEmitter() {
     });
 }
 
+// Turret Destruction Particle
+// (when turrets are killed)
+
+var turretDestructionEmitter;
+
+function createTurretDestructionEmitter() {
+
+    turretDestructionEmitter = Game.add.emitter(0, 0, 8);
+
+    turretDestructionEmitter.makeParticles(['enemy2_particle1', 'enemy2_particle2', 'enemy2_particle3', 'enemy2_particle4', 'enemy2_particle5', 'enemy2_particle6', 'glow_particle']);
+
+    turretDestructionEmitter.lifespan = 3000;
+
+    turretDestructionEmitter.frequency = 0;
+
+    turretDestructionEmitter.gravity = 0;
+
+    turretDestructionEmitter.autoScale = true;
+    turretDestructionEmitter.autoAlpha = true;
+
+    turretDestructionEmitter.baseScale = 1;
+
+    turretDestructionEmitter.setAlpha(1, 0, turretDestructionEmitter.lifespan, undefined, false);
+    turretDestructionEmitter.setScale(turretDestructionEmitter.baseScale, 0, turretDestructionEmitter.baseScale, 0, turretDestructionEmitter.lifespan, undefined, false);
+
+    turretDestructionEmitter.forEach(function (particle) {
+        particle.tint = 0x3df518;
+    });
+}
+
+var kamikazeExplosionEmitter;
+
+function createKamikazeExplosionEmitter() {
+    kamikazeExplosionEmitter = Game.add.emitter(0, 0, 3);
+
+    kamikazeExplosionEmitter.makeParticles(['explosion']);
+
+    kamikazeExplosionEmitter.lifespan = 2000;
+
+    kamikazeExplosionEmitter.frequency = 0;
+
+    kamikazeExplosionEmitter.gravity = 0;
+
+    kamikazeExplosionEmitter.autoScale = true;
+    kamikazeExplosionEmitter.autoAlpha = true;
+
+    kamikazeExplosionEmitter.baseScale = 10;
+
+    kamikazeExplosionEmitter.setAlpha(1, 0, kamikazeExplosionEmitter.lifespan, undefined, false);
+    kamikazeExplosionEmitter.setScale(0, kamikazeExplosionEmitter.baseScale, 0, kamikazeExplosionEmitter.baseScale, kamikazeExplosionEmitter.lifespan, undefined, false);
+}
+
 // Barricade Hit Particle
 // (when barricade are hit)
 
@@ -102,7 +154,7 @@ function createBarricadeHitEmitter() {
 
     barricadeHitEmitter.makeParticles(['barricade_particle', 'glow_particle']);
 
-    barricadeHitEmitter.lifespan = 3000;
+    barricadeHitEmitter.lifespan = 1500;
 
     barricadeHitEmitter.frequency = 0;
 
@@ -111,7 +163,7 @@ function createBarricadeHitEmitter() {
     barricadeHitEmitter.autoScale = true;
     barricadeHitEmitter.autoAlpha = true;
 
-    barricadeHitEmitter.baseScale = 1;
+    barricadeHitEmitter.baseScale = 0.9;
 
     barricadeHitEmitter.setAlpha(1, 0, barricadeHitEmitter.lifespan, undefined, false);
     barricadeHitEmitter.setScale(createBarricadeHitEmitter.baseScale, 0, createBarricadeHitEmitter.baseScale, 0, barricadeHitEmitter.lifespan, undefined, false);
@@ -132,7 +184,7 @@ function createBarricadeDestructionEmitter() {
 
     barricadeDestructionEmitter.makeParticles(['barricade_particle', 'glow_particle']);
 
-    barricadeDestructionEmitter.lifespan = 3000;
+    barricadeDestructionEmitter.lifespan = 2500;
 
     barricadeDestructionEmitter.frequency = 0;
 
@@ -141,7 +193,7 @@ function createBarricadeDestructionEmitter() {
     barricadeDestructionEmitter.autoScale = true;
     barricadeDestructionEmitter.autoAlpha = true;
 
-    barricadeDestructionEmitter.baseScale = 1;
+    barricadeDestructionEmitter.baseScale = 1.5;
 
     barricadeDestructionEmitter.setAlpha(1, 0, barricadeDestructionEmitter.lifespan, undefined, false);
     barricadeDestructionEmitter.setScale(barricadeDestructionEmitter.baseScale, 0, barricadeDestructionEmitter.baseScale, 0, barricadeDestructionEmitter.lifespan, undefined, false);

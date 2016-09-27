@@ -99,7 +99,9 @@ Tempest.prototype.init = function() {
 
     // Create emitters
 	createGruntDestructionEmitter();
-	createkamikazeDestructionEmitter();
+	createKamikazeDestructionEmitter();
+	createKamikazeExplosionEmitter();
+	createTurretDestructionEmitter();
 	createPlayerShootEmitter();
 	createBarricadeDestructionEmitter();
 	createBarricadeHitEmitter();
