@@ -3,7 +3,7 @@ var EXPLOSION_INTERVAL = 15;
 var EXPLOSION_REVERSE_COUNTER = 2;
 
 var PLAYER_ROTATE_LASTING = 5;
-var PLAYER_MAX_HEALTH = 6;
+var PLAYER_MAX_HEALTH = 9;
 
 var Player = function() {
 	this.sprite = null;
@@ -33,7 +33,7 @@ var Player = function() {
 	this.rotateTimer = 0;
 
 	this.health = PLAYER_MAX_HEALTH;
-	this.healthBars = 2;
+	this.healthBars = 3;
 	this.isBlinking = false;
 
 	this.numMoves = 3;
@@ -250,7 +250,7 @@ Player.prototype.takeDamage = function() {
 	}
 
 	// reduce health
-	--this.health;
+	this.health -= 3;
 	console.log("Player takes damage...health:" + this.health);
 
 	if (this.health <= 0) {
@@ -274,6 +274,10 @@ Player.prototype.gainHealth = function() {
 };
 
 Player.prototype.refreshHealthSprite = function() {
+	if (this.healthSprite == null) {
+		return;
+	}
+
 	this.healthSprite.destroy();
 
 	var spriteName = '';
@@ -296,6 +300,9 @@ Player.prototype.refreshHealthSprite = function() {
 };
 
 Player.prototype.refreshDashSprite = function() {
+	if (this.dashSprite == null) {
+		return;
+	}	
 	this.dashSprite.destroy();
 
 	this.dashSprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'player_dash_' + this.numMoves);
