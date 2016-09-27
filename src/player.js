@@ -3,6 +3,7 @@ var EXPLOSION_INTERVAL = 15;
 var EXPLOSION_REVERSE_COUNTER = 2;
 
 var PLAYER_ROTATE_LASTING = 5;
+var PLAYER_MAX_HEALTH = 6;
 
 var Player = function() {
 	this.sprite = null;
@@ -30,7 +31,8 @@ var Player = function() {
 	this.previousAngle =0;
 	this.rotateTimer = 0;
 
-	this.health = 3;
+	this.health = PLAYER_MAX_HEALTH;
+	this.healthBars = 2;
 	this.isBlinking = false;
 
 	this.numMoves = 3;
@@ -234,13 +236,39 @@ Player.prototype.takeDamage = function() {
 	else {
 		this.startBlinking();
 
-		this.healthSprite.destroy();
-		this.healthSprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, this.health == 2 ? 'player_health_med' : 'player_health_low');
-		this.healthSprite.anchor = { x: 0.5, y: 0.5 };
-		this.healthSprite.scale = this.scale;
-		this.healthSprite.angle = -this.angle;
-		this.healthSprite.position = this.position;
+		this.refreshHealthSprite();
 	}	
+};
+
+Player.prototype.gainHealth = function() {
+	++this.health;
+	if (this.health > PLAYER_MAX_HEALTH) {
+		this.health = PLAYER_MAX_HEALTH;
+	}
+
+	this.refreshHealthSprite();
+};
+
+Player.prototype.refreshHealthSprite = function() {
+	this.healthSprite.destroy();
+
+	var spriteName = '';
+	var healthBar = Math.ceil(this.health / this.healthBars);
+	if (healthBar < 2) {
+		spriteName = 'player_health_low';
+	}
+	else if (healthBar < 3) {
+		spriteName = 'player_health_med';
+	}
+	else {
+		spriteName = 'player_health_full';
+	}
+
+	this.healthSprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, spriteName);
+	this.healthSprite.anchor = { x: 0.5, y: 0.5 };
+	this.healthSprite.scale = this.scale;
+	this.healthSprite.angle = -this.angle;
+	this.healthSprite.position = this.position;
 };
 
 Player.prototype.die = function() {	
@@ -333,6 +361,10 @@ Player.prototype.startBlinking = function() {
 
 Player.prototype.finishBlinking = function() {
 	this.isBlinking = false;
+	this.sprite.alpha = 1;
+	if (this.healthSprite != null) {
+		this.healthSprite.alpha = 1;
+	}
 };
 
 // Player.prototype.setAngleIndex = function(index)

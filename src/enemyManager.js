@@ -17,8 +17,8 @@ EnemyManager.prototype.init = function() {
 	this.bullets = new Array();
 
 	this.enemiesToSpawn = new Array();
-	this.formationDelay = 75;
-	this.enemySpawnDelay = 50;
+	this.formationDelay = 15;
+	this.enemySpawnDelay = 1;
 };
 
 EnemyManager.prototype.reset = function() {
