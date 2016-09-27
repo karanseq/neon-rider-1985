@@ -87,7 +87,7 @@ Tempest.prototype.init = function() {
 	this.state = this.TempestState.GAME_INIT;
 
 	this.layerManager = new LayerManager();
-	this.layerManager.init(4);
+	this.layerManager.init(this.levelNumber);
 
 	this.player = new Player();
 	this.player.init();
@@ -389,17 +389,17 @@ Tempest.prototype.playerBulletCollide = function(){
 	for(var i = 0; i < this.player.bullets.length; i++)
 	{
 		var mark = false;
-		for(var j = 0; j< this.enemyManager.bullets.length; j++)
-		{
-			if(this.player.bullets[i].angleIndex == this.enemyManager.bullets[j].angleIndex &&
-				Math.abs(this.player.bullets[i].radius - this.enemyManager.bullets[j].radius) < BULLET_COLLISION_DISTANCE)
-			{
-				this.player.deleteBullet(i);
-				this.enemyManager.deleteBullet(j);
-				mark = true;
-				break;
-			}
-		}
+		// for(var j = 0; j< this.enemyManager.bullets.length; j++)
+		// {
+		// 	if(this.player.bullets[i].angleIndex == this.enemyManager.bullets[j].angleIndex &&
+		// 		Math.abs(this.player.bullets[i].radius - this.enemyManager.bullets[j].radius) < BULLET_COLLISION_DISTANCE)
+		// 	{
+		// 		this.player.deleteBullet(i);
+		// 		this.enemyManager.deleteBullet(j);
+		// 		mark = true;
+		// 		break;
+		// 	}
+		// }
 		if(!mark)
 		{
 			for(var j = 0; j < this.enemyManager.enemys.length; j++)
