@@ -8,17 +8,21 @@ function createPlayerShootEmitter() {
 
     playerShootEmitter.makeParticles(['glow_particle']);
 
-    playerShootEmitter.lifespan = 3000;
+    playerShootEmitter.lifespan = 1000;
 
     playerShootEmitter.frequency = 0;
 
     playerShootEmitter.gravity = 0;
 
+    playerShootEmitter.speed = 100;
+
     playerShootEmitter.autoScale = true;
     playerShootEmitter.autoAlpha = true;
 
+    playerShootEmitter.baseScale = 0.5;
+
     playerShootEmitter.setAlpha(1, 0, playerShootEmitter.lifespan, undefined, false);
-    playerShootEmitter.setScale(0.2, 0, 0.2, 0, playerShootEmitter.lifespan, undefined, false);
+    playerShootEmitter.setScale(0, playerShootEmitter.baseScale, 0, playerShootEmitter.baseScale, playerShootEmitter.lifespan, undefined, false);
 
     //playerShootEmitter.forEach(function (particle) {
     //    particle.tint = 0xfff265;
@@ -201,4 +205,29 @@ function createBarricadeDestructionEmitter() {
     barricadeDestructionEmitter.forEach(function (particle) {
         particle.tint = 0x39c7ff;
     });
+}
+
+var playerBoostEmitter;
+
+function createPlayerBoostEmitter() {
+
+    playerBoostEmitter = Game.add.emitter(0, 0, 16);
+
+    playerBoostEmitter.makeParticles(['glow_particle']);
+
+    playerBoostEmitter.lifespan = 1000;
+
+    playerBoostEmitter.frequency = 0;
+
+    playerBoostEmitter.gravity = 0;
+
+    playerBoostEmitter.speed = 200;
+
+    playerBoostEmitter.autoScale = true;
+    playerBoostEmitter.autoAlpha = true;
+
+    playerBoostEmitter.baseScale = 1.5;
+
+    playerBoostEmitter.setAlpha(1, 0, playerBoostEmitter.lifespan, undefined, false);
+    playerBoostEmitter.setScale(0, playerBoostEmitter.baseScale, 0, playerBoostEmitter.baseScale, playerBoostEmitter.lifespan, undefined, false);
 }

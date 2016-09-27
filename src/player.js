@@ -16,12 +16,16 @@ var Player = function() {
 	this.position = caculatePosition(this.radius, this.angle);
 	this.scale = PLAYER_SCALE;
 
+	this.backVector = null;
+	this.frontVector = null;
+
 	this.bullets = null;
 
 	this.bulletMoveSpeed = 5;
 	this.bulletScaleSpeed = 0.001;
 	this.fireRate = 10;
 	this.fireRateCounter = 0;
+	this.muzzleFlashSpread = 120;
 
 	this.isExplosionLarge = true;
 	this.explosionTimer = 0;
@@ -38,6 +42,7 @@ var Player = function() {
 
 	this.numMoves = 3;
 	this.moveEvent = null;
+	this.boostFlashSpread = 75;
 };
 
 Player.prototype.init = function() {
@@ -73,6 +78,11 @@ Player.prototype.init = function() {
 
 	this.bullets = new Array();
 	this.fireRateCounter = 0;
+
+    // create emitters
+	createPlayerBoostEmitter();
+	createPlayerShootEmitter();
+	this.updateVectors();
 };
 
 Player.prototype.reset = function() {
@@ -102,6 +112,10 @@ Player.prototype.moveForward = function() {
 	--this.numMoves;
 	this.refreshDashSprite();
 	this.moveEvent = Game.time.events.add(3000, this.finishMove, this);
+
+    // emit dash particles
+	playerBoostEmitter.position = this.position;
+	playerBoostEmitter.explode(playerBoostEmitter.lifespan, 4);
 
 	console.log("Move forward numMoves:" + this.numMoves);
 
@@ -188,12 +202,26 @@ Player.prototype.updateRotation = function(){
 		{
 			this.angle = ANGLES[this.angleIndex];
 			this.isRotate = false;
+
+			this.updateVectors();
 		}
 		else
 		{
 			this.angle = this.previousAngle + (ANGLES[this.angleIndex] - this.previousAngle) * this.rotateTimer / ROTATE_LASTING;
 		}
 	}
+}
+
+Player.prototype.updateVectors = function () {
+    this.frontVector = forward(this.angle);
+    var muzzleFlashSpeed = playerShootEmitter.speed;
+    playerShootEmitter.minParticleSpeed = new Phaser.Point(this.frontVector.x * muzzleFlashSpeed - this.muzzleFlashSpread, this.frontVector.y * muzzleFlashSpeed - this.muzzleFlashSpread);
+    playerShootEmitter.maxParticleSpeed = new Phaser.Point(this.frontVector.x * muzzleFlashSpeed + this.muzzleFlashSpread, this.frontVector.y * muzzleFlashSpeed + this.muzzleFlashSpread);
+
+    this.backVector = backward(this.angle);
+    var boostSpeed = playerBoostEmitter.speed;
+    playerBoostEmitter.minParticleSpeed = new Phaser.Point(this.backVector.x * boostSpeed - this.boostFlashSpread, this.backVector.y * boostSpeed - this.boostFlashSpread);
+    playerBoostEmitter.maxParticleSpeed = new Phaser.Point(this.backVector.x * boostSpeed + this.boostFlashSpread, this.backVector.y * boostSpeed + this.boostFlashSpread);
 }
 
 Player.prototype.updateSprite = function(){

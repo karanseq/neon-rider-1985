@@ -18,6 +18,28 @@ var Bullet = function(type, radius, angleIndex){
 	this.angle = ANGLES[this.angleIndex];
 	this.scale = { x:this.radius / RADIUS[0] * BULLET_ADJUST_SCALE.x, y: this.radius / RADIUS[0] * BULLET_ADJUST_SCALE.y };
 	this.position = caculatePosition(this.radius, this.angle);
+
+	this.trail = Game.add.emitter(0, 0, 16);
+
+	this.trail.makeParticles(['glow_particle']);
+	this.trail.lifespan = 500;
+	this.trail.gravity = 0;
+	this.trail.frequency = 25;
+	this.trail.autoScale = true;
+	this.trail.autoAlpha = true;
+	this.trail.spread = 20;
+
+	this.trail.baseScale = 0.5;
+	var dir = (this.type == this.BulletType.PLAYER_BULLET ? backward(this.angle) : forward(this.angle));
+	//var back = backward(this.angle);
+	this.trail.minParticleSpeed = new Phaser.Point(dir.x * this.radius - this.trail.spread, dir.y * this.radius - this.trail.spread);
+	this.trail.maxParticleSpeed = new Phaser.Point(dir.x * this.radius + this.trail.spread, dir.y * this.radius + this.trail.spread);
+
+	this.trail.setAlpha(1, 0, this.trail.lifespan, undefined, false);
+	this.trail.setScale(0, this.trail.baseScale, 0, this.trail.baseScale, this.trail.lifespan, undefined, false);
+
+	this.trail.start(false, this.trail.lifespan, this.trail.frequency, 16, false);
+	this.trail.position = this.position;
 }
 
 Bullet.prototype.BulletType = {
@@ -26,7 +48,8 @@ Bullet.prototype.BulletType = {
 }
 
 Bullet.prototype.destroy = function(){
-	this.sprite.destroy();
+    this.sprite.destroy();
+    this.trail.destroy();
 }
 
 Bullet.prototype.update = function(){
@@ -36,6 +59,7 @@ Bullet.prototype.update = function(){
 		this.radius += ENEMY_BULLET_SPEED;
 	this.scale = { x:this.radius / RADIUS[0] * BULLET_ADJUST_SCALE.x, y: this.radius / RADIUS[0] * BULLET_ADJUST_SCALE.y };
 	this.updateSprite();
+	this.trail.position = this.position;
 }
 
 Bullet.prototype.updateSprite = function(){
