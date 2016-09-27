@@ -68,7 +68,7 @@ EnemyManager.prototype.updateEnemy = function(){
 			{
 				for(var j=0;j<this.enemys.length;j++)
 				{
-					if((this.enemys[j].type == 3 || this.enemys[j].type == 4) && this.enemys[i].layerIndex == this.enemys[j].layerIndex)
+					if(this.enemys[j].type == 3 && this.enemys[i].layerIndex == this.enemys[j].layerIndex)
 					{
 						if(this.enemys[i].rotateLeft && (this.enemys[j].angleIndex + 1) % MAX_ANGLE_INDEX == this.enemys[i].angleIndex)
 							this.enemys[i].rotateLeft = false;
@@ -78,7 +78,7 @@ EnemyManager.prototype.updateEnemy = function(){
 				}
 			}
 			// shoot bullet
-			if(this.enemys[i].type == 4 && this.enemys[i].shootFlag)
+			if(this.enemys[i].type == 2 && this.enemys[i].shootFlag)
 			{
 				//enemy can not create bullet when they are roatating
 				if(!this.enemys[i].isRotate && this.enemys[i].radius < RADIUS[0] * 0.5)

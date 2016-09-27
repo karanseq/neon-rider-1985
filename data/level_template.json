@@ -31,7 +31,7 @@
 			"enemies": {
 				"min": 2,
 				"max": 4,
-				"types": [0,1,2,3,4]
+				"types": [0,1,2,3]
 			},
 			"covers": []
 		},
@@ -39,7 +39,7 @@
 			"enemies": {
 				"min": 2,
 				"max": 6,
-				"types": [0, 1,2,3,4]
+				"types": [0, 1,2,3]
 			},
 			"covers": []
 		},
@@ -47,7 +47,7 @@
 			"enemies": {
 				"min": 2,
 				"max": 8,
-				"types": [0,1,2,3,4]
+				"types": [0,1,2,3]
 			},
 			"covers": []
 		},
@@ -55,7 +55,7 @@
 			"enemies": {
 				"min": 3,
 				"max": 6,
-				"types": [0, 1,2,3,4]
+				"types": [0, 1,2,3]
 			},
 			"covers": []
 		},
@@ -63,7 +63,7 @@
 			"enemies": {
 				"min": 3,
 				"max": 6,
-				"types": [0, 1,2,3,4]
+				"types": [0, 1,2,3]
 			},
 			"covers": []
 		},
@@ -71,7 +71,7 @@
 			"enemies": {
 				"min": 3,
 				"max": 6,
-				"types": [0, 1, 2,3,4]
+				"types": [0, 1, 2,3]
 			},
 			"covers": []
 		},
@@ -79,7 +79,7 @@
 			"enemies": {
 				"min": 3,
 				"max": 8,
-				"types": [0, 1, 2,3,4]
+				"types": [0, 1, 2,3]
 			},
 			"covers": []
 		},
@@ -87,7 +87,7 @@
 			"enemies": {
 				"min": 5,
 				"max": 10,
-				"types": [0, 1, 2,3,4]
+				"types": [0, 1, 2,3]
 			},
 			"covers": []
 		},
