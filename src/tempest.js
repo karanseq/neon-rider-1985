@@ -87,7 +87,7 @@ Tempest.prototype.init = function() {
 	this.state = this.TempestState.GAME_INIT;
 
 	this.layerManager = new LayerManager();
-	this.layerManager.init(4);
+	this.layerManager.init(this.levelNumber);
 
 	this.player = new Player();
 	this.player.init();
@@ -190,6 +190,9 @@ Tempest.prototype.playAgain = function() {
 	else {
 		if (this.state == this.TempestState.GAME_LEVEL_COMPLETE) {
 			this.levelNumber = (this.levelNumber + 1) > 5 ? 1 : this.levelNumber + 1;
+		}
+		else if (this.state == this.TempestState.GAME_OVER) {
+			this.levelNumber = 1;
 		}
 
 		// clear all layers
@@ -350,7 +353,7 @@ Tempest.prototype.handleKeyUp = function() {
 
 		// if the layers were moved successfully, add a new formation of enemies
 		if (wasMoveSuccessful) {
-			this.enemyManager.createFormation(this.layerManager.getEnemiesForBottomLayer());		
+			this.enemyManager.createFormation(this.layerManager.getEnemiesForBottomLayer());
 		}
 		this.layerAnimation = wasMoveSuccessful; //true;
 

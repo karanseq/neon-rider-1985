@@ -104,8 +104,7 @@ LayerManager.prototype.moveUp = function() {
 	}
 
 	// bounds checking
-	if (this.indexLayerFront >= this.indexLayerBack) {
-		this.isLevelComplete = true;
+	if (this.indexLayerFront == this.indexLayerBack) {
 		return false;
 	}
 
@@ -125,6 +124,11 @@ LayerManager.prototype.moveUp = function() {
 	// check if there are any more layers to add
 	if (this.indexLayerBack < this.numLayersInLevel) {
 		this.layers[this.indexLayerBack++].spawn(this.indexLayerBack - this.indexLayerFront - 1);
+	}
+
+	// check if the level has completed
+	if (this.indexLayerFront == this.indexLayerBack) {
+		this.isLevelComplete = true;
 	}
 
 	Game.time.events.add(LAYER_SCALE_DURATION, this.onAnimationFinished, this);
