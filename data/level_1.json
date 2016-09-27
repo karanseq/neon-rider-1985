@@ -76,9 +76,9 @@
 		},
 		{
 			"enemies": {
-				"min": 0,
-				"max": 0,
-				"types": []
+				"min": 8,
+				"max": 8,
+				"types": [3]
 			},
 			"covers": []
 		},

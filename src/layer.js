@@ -1,9 +1,14 @@
 var LAYER_SCALE_DURATION = 500;
 
+var LAYER_BLINK_DURATION = [500, 250, 125, 60];
+
 var Layer = function() {
 	this.sprite = null;
 	this.lanes = 0;
 	this.blinkTweens = null;
+
+	this.isBlinking = false;
+	this.blinkTweenTimer = 0;
 	// this.colorTimeEvents = null;
 	this.color = null;
 };
@@ -98,6 +103,20 @@ Layer.prototype.stopBlinking = function() {
 	}
 	this.blinkTweens = null;
 };
+
+// Layer.prototype.startBlinking = function() {
+// 	// don't blink if we're already blinking
+// 	if (this.isBlinking) {
+// 		return;
+// 	}
+// 	this.isBlinking = true;
+
+// 	var duration = 0;
+// };
+
+// Layer.prototype.stopBlinking = function() {
+	
+// };
 
 Layer.prototype.setVisible = function(visibility) {
 	this.sprite.visible = visibility;
