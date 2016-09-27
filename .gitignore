@@ -1,6 +1,4 @@
 # Ignore images & audio
-images/
 audio/
-*.png
 *.xml
 */desktop.ini
