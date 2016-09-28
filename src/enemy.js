@@ -1,9 +1,11 @@
 var ENEMY_SPAWN_RADIUS = 10;
 var ENEMY_ADJUST_SCALE = [{ x:0.3, y:0.3 }, { x:0.4, y:0.4 }, {x: 0.9, y: 0.9 }, {x: 0.9, y: 0.9} ];
-var ROTATE_INTERVAL = 50;
-var ROTATE_LASTING = 5;
+var ROTATE_INTERVAL = 60;
+var ROTATE_LASTING = 10;
 var SHOOT_INTERVAL = 80;
+
 var MOVE_SPEED = 1;
+
 var MOVE_LASTING = 60;
 var ACCELERATE_SPEED = 3;
 
@@ -58,6 +60,7 @@ var Enemy = function(angleIndex, enemyType) {
 	this.updateSprite();
 
 	this.moveTimer = 0;
+	this.isMove = false;
 
 	if(Math.random() < 0.5)
 		this.rotateLeft = true;
@@ -112,7 +115,8 @@ Enemy.prototype.update = function(){
 			if(this.layerAnimationTimer > PROTECT_LAYER_ANIMATION_TIMER)
 			{
 				this.layerAnimationTimer = 0;
-				this.layerIndex--;
+				if(this.type == 2 || this.type == 3)
+					this.layerIndex--;
 			}
 		}
 		else if(LAYER_IS_ANIMATION)
@@ -149,17 +153,19 @@ Enemy.prototype.updateMove = function(){
 	// 	this.radius += ACCELERATE_SPEED;
 	// else	
 	// 	this.radius += MOVE_SPEED;
-	this.moveTimer++;
-	if(this.layerAnimation)
-		this.moveTimer++;
-	if(this.moveTimer >= MOVE_LASTING)
-	{
-		this.layerIndex--;
-		this.moveTimer -= MOVE_LASTING;
-	}
-	this.radius = RADIUS[this.layerIndex] + (RADIUS[this.layerIndex - 1] - RADIUS[this.layerIndex]) * this.moveTimer / MOVE_LASTING;
 
-	// this.scale = { x:this.scale.x + SCALE_SPEED, y:this.scale.y + SCALE_SPEED};
+	this.moveTimer++;
+
+		if(this.layerAnimation)
+			this.moveTimer += 2;
+		if(this.moveTimer >= MOVE_LASTING)
+		{
+			this.layerIndex--;
+			this.moveTimer -= MOVE_LASTING;
+		}
+		else
+			this.radius = RADIUS[this.layerIndex] + (RADIUS[this.layerIndex - 1] - RADIUS[this.layerIndex]) * this.moveTimer / MOVE_LASTING;
+
 }
 
 Enemy.prototype.updateShooting = function(){

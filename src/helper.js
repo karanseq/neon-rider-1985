@@ -1,3 +1,15 @@
+var titleImageSet =[ 
+ { key: 'title', src: 'images/title.png' },
+ { key: 'titleBackground', src: 'images/bg.png' }, 
+ { key: 'startMenu', src: 'images/StartMenu.png' }
+]
+
+var titleAudioSet = [
+ { key: 'titleBackgroundMusic', src: 'audio/Theme.ogg' },
+  
+]
+
+
 var imageSet = [ { key: 'layer', src: 'images/Ring.png' },
 { key: 'player', src: 'images/Player.png'},
 { key: 'player_health_full', src: 'images/PlayerFullHealth.png'},
@@ -34,7 +46,9 @@ var audioSet = [
     { key: 'player_death', src: 'audio/player_death.ogg' },
     { key: 'player_dash', src: 'audio/player_dash.ogg' },
     { key: 'player_shoot', src: 'audio/player_shoot.ogg' },
-    { key: 'player_move', src: 'audio/player_move.ogg' }
+    { key: 'player_move', src: 'audio/player_move.ogg' },
+    { key: 'mainBackgroundMusic1', src: 'audio/Action1.ogg' },
+    { key: 'mainBackgroundMusic2', src: 'audio/Action2.ogg' }
 ];
 
 var levelSet = [
@@ -63,6 +77,34 @@ for(var i = 1; i<layerScale.length; i++)
 var ANGLES = [-180, -135, -90, -45, 0, 45, 90, 135];
 
 var MAX_ANGLE_INDEX = ANGLES.length;
+
+
+var GAME_WIDTH = 1280;
+var GAME_HEIGHT = 720;
+
+var MAX_LEVELS = 5;
+
+var BULLET_COLLISION_DISTANCE = 10;
+var ENEMY_COLLISION_DISTANCE = 20;
+var PLAYER_COLLISION_DISTANCE = 20;
+
+var BULLET_SCALE = {x:0.1, y:0.1};
+var PLAYER_SCALE = {x:0.25, y:0.25};
+var PLAYER_EXPLOSION_SCALE = { x: 0.1, y: 0.1 };
+
+var MAX_PARTICLES = 1000;
+
+var LAYER_IS_ANIMATION = false;
+
+var LAYER_ANIMATION_TIMER = 30;
+var PROTECT_LAYER_ANIMATION_TIMER = 31;
+
+var caculatePosition = function(radius, angle)
+{
+	var pos = {x: GAME_WIDTH / 2 + radius * Math.sin(angle / 180 * Math.PI), y: GAME_HEIGHT / 2 + radius * Math.cos(angle / 180 * Math.PI)};
+	return pos;
+}
+
 function getRegularPolygonVertices(numVertices, circumRadius, startAngle) {
 	var vertices = new Array();
 	var deltaTheta = 2 * Math.PI / numVertices;

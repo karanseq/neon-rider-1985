@@ -12,23 +12,39 @@
     <script type="text/javascript" src="src/particles.js"></script>
 
 	<script type="text/javascript" src="src/tempest.js"></script>
+	<script type="text/javascript" src="src/titleScreen.js"></script>
 	
 </head>
 <body>
 	<script type="text/javascript">
-		var Tempest = new Tempest();
+		var ScreenIndex = 0;
+
 		var Game = new Phaser.Game(GAME_WIDTH, GAME_HEIGHT, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
+		var tempest = new Tempest();
+
+		var TitleScreen = new TitleScreen(); 
+
 		function preload() {
-			Tempest.preload();
+			tempest.preload();
+			TitleScreen.preload();
 		}
 
 		function create() {
-			Tempest.create();
+			// tempest.create();
+			// tempest = new Tempest();
+			TitleScreen.create();
 		}
 
 		function update() {
-			Tempest.update();
+			if(ScreenIndex == 0)
+			{
+				TitleScreen.update();
+			}
+			else if(ScreenIndex == 1)
+			{
+				tempest.update();
+			}
 		}
 	</script>
 </body>
