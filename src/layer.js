@@ -1,5 +1,3 @@
-var LAYER_SCALE_DURATION = 500;
-
 var Layer = function() {
 	this.sprite = null;
 	this.lanes = 0;
@@ -41,8 +39,8 @@ Layer.prototype.spawn = function(layerIndex) {
 	this.sprite.alpha = 0;
 
 	var newScale = { x: layerScale[layerIndex], y: layerScale[layerIndex] };
-	Game.add.tween(this.sprite.scale).to(newScale, LAYER_SCALE_DURATION, Phaser.Easing.Linear.None, true);
-	this.fadeTween(this.sprite, 1, LAYER_SCALE_DURATION);
+	Game.add.tween(this.sprite.scale).to(newScale, CONFIG.LAYER_SCALE_DURATION, Phaser.Easing.Linear.None, true);
+	this.fadeTween(this.sprite, 1, CONFIG.LAYER_SCALE_DURATION);
 };
 
 Layer.prototype.scaleUp = function(layerIndex, duration) {
