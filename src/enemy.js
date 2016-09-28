@@ -85,6 +85,7 @@ Enemy.prototype.EnemyType = {
 
 Enemy.prototype.createBullet = function(){
 	var bullet = new Bullet(1, this.radius, this.angleIndex);
+	bullet.sprite.tint = '0xff0000';
 	bullet.updateSprite();
 	return bullet;
 }

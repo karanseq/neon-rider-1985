@@ -173,6 +173,7 @@ Player.prototype.createBullet = function() {
 
 	var bullet = new Bullet(0, this.radius, this.angleIndex);
 	bullet.updateSprite();
+	bullet.sprite.tint = '0x00ff00';
 	this.bullets.push(bullet);
 }
 

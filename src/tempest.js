@@ -408,7 +408,10 @@ Tempest.prototype.playerBulletCollide = function(){
 				if(this.player.bullets[i].angleIndex == this.enemyManager.enemys[j].angleIndex &&
 				Math.abs(this.player.bullets[i].radius - this.enemyManager.enemys[j].radius) < ENEMY_COLLISION_DISTANCE)
 				{
-					this.player.gainHealth();
+					if (this.enemyManager.enemys[j].type != 3) {
+						this.player.gainHealth();
+					}
+
 					this.player.deleteBullet(i);
 					this.enemyManager.hitEnemy(j);
 					this.updateScore(150);
