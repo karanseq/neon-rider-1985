@@ -118,6 +118,7 @@ Player.prototype.moveForward = function() {
 	playerBoostEmitter.position = this.position;
 	playerBoostEmitter.explode(playerBoostEmitter.lifespan, 4);
 
+	Game.sound.play('player_dash');
 	console.log("Move forward numMoves:" + this.numMoves);
 
 	return;
@@ -154,7 +155,7 @@ Player.prototype.beginRotation = function(rotateLeft){
 				this.previousAngle = ANGLES[0] + 360;
 			}
 		}
-
+		Game.sound.play('player_move');
 		this.isRotate = true;
 		this.rotateTimer = 0;
 	}
@@ -168,7 +169,7 @@ Player.prototype.createBullet = function() {
 		return;
 	}
 	this.fireRateCounter = this.fireRate;
-
+	Game.sound.play('player_shoot');
 	playerShootEmitter.position = this.position;
 	playerShootEmitter.explode(playerShootEmitter.lifespan, 4);
 
@@ -272,6 +273,8 @@ Player.prototype.destroy = function() {
 		this.dashSprite.destroy();
 		this.dashSprite = null;
 	}
+
+	Game.sound.play('player_death');
 }
 
 Player.prototype.takeDamage = function() {
