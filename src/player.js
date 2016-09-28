@@ -117,6 +117,7 @@ Player.prototype.moveForward = function() {
 	playerBoostEmitter.position = this.position;
 	playerBoostEmitter.explode(playerBoostEmitter.lifespan, 4);
 
+	Game.sound.play('player_dash');
 	console.log("Move forward numMoves:" + this.numMoves);
 
 	return;
@@ -153,7 +154,7 @@ Player.prototype.beginRotation = function(rotateLeft){
 				this.previousAngle = ANGLES[0] + 360;
 			}
 		}
-
+		Game.sound.play('player_move');
 		this.isRotate = true;
 		this.rotateTimer = 0;
 	}

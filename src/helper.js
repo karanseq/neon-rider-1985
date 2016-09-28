@@ -30,7 +30,9 @@ var imageSet = [ { key: 'layer', src: 'images/Ring.png' },
 var fontSet = [{ key: 'carrier_command', img: 'fonts/carrier_command.png', data: 'fonts/carrier_command.xml' }];
 
 var audioSet = [
-    { key: 'player_death', src: 'audio/player_death.ogg' }
+    { key: 'player_death', src: 'audio/player_death.ogg' },
+    { key: 'player_dash', src: 'audio/player_dash.ogg' },
+    { key: 'player_move', src: 'audio/player_move.ogg' }
 ];
 
 var levelSet = [
