@@ -228,13 +228,21 @@ Tempest.prototype.onLevelComplete = function() {
 	this.state = this.TempestState.GAME_LEVEL_COMPLETE;
 	console.log("Level complete...");
 
-	this.levelCompleteText = Game.add.bitmapText(GAME_WIDTH * 0.5, GAME_HEIGHT * 0.45, 'carrier_command', 'Level Complete!', 34);
+	// this.layerManager.moveToEnd();
+	this.layerManager.resetAllAlertEvents();
+	this.player.goThroughLevel();
+
+	this.levelCompleteText = Game.add.sprite(GAME_WIDTH * 0.5, GAME_HEIGHT * 0.45, 'level_finish');
 	this.levelCompleteText.anchor.set(0.5);
+	this.levelCompleteText.scale = { x: 0, y: 0 };
 	this.hudGroup.add(this.levelCompleteText);
 	Game.world.bringToTop(this.hudGroup);
+	Game.add.tween(this.levelCompleteText.scale).to({ x: 1, y: 1 }, 750, Phaser.Easing.Linear.NONE, true, 500);
 
 	this.scoreText.anchor.set(0.5);
-	this.scoreText.position = { x: GAME_WIDTH * 0.5, y: GAME_HEIGHT * 0.55 };
+	this.scoreText.position = { x: GAME_WIDTH * 0.5, y: GAME_HEIGHT * 0.85 };
+	this.scoreText.alpha = 0;
+	Game.add.tween(this.scoreText).to({ alpha: 1 }, 750, Phaser.Easing.Linear.NONE, true, 500);
 };
 
 Tempest.prototype.update = function() {

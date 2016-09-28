@@ -115,11 +115,11 @@ LayerManager.prototype.moveUp = function() {
 	// scale up all the visible layers
 	for (var i = this.indexLayerFront; i < this.indexLayerBack; ++i) {
 		var layer = this.layers[i];
-		layer.scaleUp(i - this.indexLayerFront - 1);
+		layer.scaleUp(i - this.indexLayerFront - 1, LAYER_SCALE_DURATION);
 	}
 
 	// fade out the outer-most layer
-	this.layers[this.indexLayerFront++].die();
+	this.layers[this.indexLayerFront++].die(LAYER_SCALE_DURATION);
 
 	// check if there are any more layers to add
 	if (this.indexLayerBack < this.numLayersInLevel) {
@@ -136,6 +136,15 @@ LayerManager.prototype.moveUp = function() {
 
 	console.log("LayerManager moveUp says front=" + this.indexLayerFront + " & back=" + this.indexLayerBack);
 	return true;
+};
+
+LayerManager.prototype.moveToEnd = function() {
+	this.resetAllAlertEvents();
+
+	// scale up all the visible layers
+	for (var i = this.indexLayerFront; i < this.indexLayerBack; ++i) {
+		this.layers[i].die(LAYER_SCALE_DURATION * (i+1) * 0.25);
+	}
 };
 
 LayerManager.prototype.startShowingAlert = function() {

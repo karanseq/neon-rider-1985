@@ -44,6 +44,8 @@ var Player = function() {
 	this.numMoves = 3;
 	this.moveEvent = null;
 	this.boostFlashSpread = 75;
+
+	this.isGoingThroughLevel = false;
 };
 
 Player.prototype.init = function() {
@@ -227,7 +229,16 @@ Player.prototype.updateVectors = function () {
     playerBoostEmitter.maxParticleSpeed = new Phaser.Point(this.backVector.x * boostSpeed + this.boostFlashSpread, this.backVector.y * boostSpeed + this.boostFlashSpread);
 }
 
-Player.prototype.updateSprite = function(){
+Player.prototype.updateSprite = function() {
+	// check if player is going through level
+	if (this.isGoingThroughLevel) {
+		this.radius -= 5;
+		this.scale = { x: this.scale.x - 0.005, y: this.scale.y - 0.005 };
+		if (this.scale.x <= 0 || this.scale.y <= 0 || this.radius <= 0) {
+			this.isGoingThroughLevel = false;
+		}
+	}
+
 	this.sprite.scale = this.scale;
 	this.sprite.angle = -this.angle;
 	
@@ -304,6 +315,13 @@ Player.prototype.gainHealth = function() {
 	console.log("Player gains health...health:" + this.health);
 
 	this.refreshHealthSprite();
+};
+
+Player.prototype.goThroughLevel = function() {
+	if (this.isGoingThroughLevel) {
+		return;
+	}
+	this.isGoingThroughLevel = true;
 };
 
 Player.prototype.refreshHealthSprite = function() {
@@ -428,7 +446,7 @@ Player.prototype.startBlinking = function() {
 	this.isBlinking = true;
 
 	var duration = 50;
-	var numBlinks = 15;
+	var numBlinks = 5;
 	Game.add.tween(this.sprite).to({ alpha: 0.1 }, duration, Phaser.Easing.Linear.None, true, duration, numBlinks, true);
 	Game.add.tween(this.healthSprite).to({ alpha: 0.1 }, duration, Phaser.Easing.Linear.None, true, duration, numBlinks, true);
 	Game.add.tween(this.dashSprite).to({ alpha: 0.1 }, duration, Phaser.Easing.Linear.None, true, duration, numBlinks, true);
