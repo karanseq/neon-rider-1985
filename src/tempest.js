@@ -1,31 +1,4 @@
 // URL: http://localhost/projects/team-10-tempest
-
-var GAME_WIDTH = 1280;
-var GAME_HEIGHT = 720;
-
-var MAX_LEVELS = 5;
-
-var BULLET_COLLISION_DISTANCE = 10;
-var ENEMY_COLLISION_DISTANCE = 30;
-var PLAYER_COLLISION_DISTANCE = 20;
-
-var BULLET_SCALE = {x:0.1, y:0.1};
-var PLAYER_SCALE = {x:0.25, y:0.25};
-var PLAYER_EXPLOSION_SCALE = { x: 0.1, y: 0.1 };
-
-var MAX_PARTICLES = 1000;
-
-var LAYER_IS_ANIMATION = false;
-
-var LAYER_ANIMATION_TIMER = 30;
-var PROTECT_LAYER_ANIMATION_TIMER = 31;
-
-var caculatePosition = function(radius, angle)
-{
-	var pos = {x: GAME_WIDTH / 2 + radius * Math.sin(angle / 180 * Math.PI), y: GAME_HEIGHT / 2 + radius * Math.cos(angle / 180 * Math.PI)};
-	return pos;
-}
-
 var Tempest = function() {
 	this.state = null;
 
@@ -46,6 +19,7 @@ var Tempest = function() {
 
 	this.layerAnimation = false;
 	this.layerAnimationTimer = 0;
+	// this.preload();
 };
 
 Tempest.prototype.TempestState = {
@@ -57,6 +31,8 @@ Tempest.prototype.TempestState = {
 	GAME_LEVEL_COMPLETE: 6,
 	GAME_OVER: 7
 };
+
+
 
 Tempest.prototype.preload = function() {
 	// load all images
@@ -78,6 +54,7 @@ Tempest.prototype.preload = function() {
 	for (var i = 0; i < levelFileSet.length; ++i) {
 		Game.load.json(levelFileSet[i].key, levelFileSet[i].src);
 	}
+	// this.create();
 };
 
 Tempest.prototype.create = function() {
@@ -85,6 +62,10 @@ Tempest.prototype.create = function() {
 	background.anchor = { x: 0.5, y: 0.5 };
 	background.scale = { x: 0.66667, y: 0.66667 };
 
+	music1 = Game.add.audio('mainBackgroundMusic1');
+	music2 = Game.add.audio('mainBackgroundMusic2');
+    music1.play();
+    
 	this.init();
 };
 
@@ -392,9 +373,11 @@ Tempest.prototype.handleKeySpace = function() {
 
 // player's bullet collide with enemys' body or bullet
 Tempest.prototype.playerBulletCollide = function(){
+	// player's bullet collide
 	for(var i = 0; i < this.player.bullets.length; i++)
 	{
 		var mark = false;
+		// player's bullet collide with enemy's bullet
 		// for(var j = 0; j< this.enemyManager.bullets.length; j++)
 		// {
 		// 	if(this.player.bullets[i].angleIndex == this.enemyManager.bullets[j].angleIndex &&
@@ -406,6 +389,7 @@ Tempest.prototype.playerBulletCollide = function(){
 		// 		break;
 		// 	}
 		// }
+		// player's bullet collide with enemys
 		if(!mark)
 		{
 			for(var j = 0; j < this.enemyManager.enemys.length; j++)
@@ -423,6 +407,23 @@ Tempest.prototype.playerBulletCollide = function(){
 					break;
 				}
 			}
+		}
+	}
+
+	//enemy's bullet collide with cover
+	for(var i = 0; i < this.enemyManager.bullets.length; i++)
+	{
+		for(var j = 0; j < this.enemyManager.enemys.length; j++)
+		{
+			if(this.enemyManager.enemys[j].type == 3 && this.enemyManager.bullets[i].angleIndex == this.enemyManager.enemys[j].angleIndex &&
+			Math.abs(this.enemyManager.bullets[i].radius - this.enemyManager.enemys[j].radius) < BULLET_COLLISION_DISTANCE)
+			{
+				this.enemyManager.deleteBullet(i);
+				this.enemyManager.hitEnemy(j);
+				this.updateScore(150);
+				break;
+			}
+			
 		}
 	}
 };
@@ -456,6 +457,7 @@ Tempest.prototype.playerCollide = function(){
 		}
 	}
 };
+
 
 Tempest.prototype.onPlayerCollision = function() {
 	this.player.takeDamage();
