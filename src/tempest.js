@@ -349,7 +349,7 @@ Tempest.prototype.handleKeyUp = function() {
 		}
 		this.player.moveForward();
 
-		// ask the layer manager to move all layers up
+		// ask the layersayer manager to move all layers up
 		var wasMoveSuccessful = this.layerManager.moveUp();
 
 		// if the layers were moved successfully, add a new formation of enemies
@@ -411,13 +411,15 @@ Tempest.prototype.playerBulletCollide = function(){
 				if(this.player.bullets[i].angleIndex == this.enemyManager.enemys[j].angleIndex &&
 				Math.abs(this.player.bullets[i].radius - this.enemyManager.enemys[j].radius) < ENEMY_COLLISION_DISTANCE)
 				{
-					if (this.enemyManager.enemys[j].type != 3) {
+					this.player.deleteBullet(i);
+					var enemyType = this.enemyManager.enemys[j].type;
+					var score = this.enemyManager.hitEnemy(j);
+
+					// only update score and player health when an enemy (not a block) has been killed
+					if (enemyType != 3 && score != 0) {
 						this.player.gainHealth();
 					}
-
-					this.player.deleteBullet(i);
-					this.enemyManager.hitEnemy(j);
-					this.updateScore(150);
+					this.updateScore(score);
 					break;
 				}
 			}

@@ -92,8 +92,12 @@ EnemyManager.prototype.updateEnemy = function(){
 
 EnemyManager.prototype.hitEnemy = function(enemyIndex){
 	this.enemys[enemyIndex].health--;
-	if(this.enemys[enemyIndex].health == 0)
+	var enemyScore = 0;
+
+	if(this.enemys[enemyIndex].health == 0) {
+		enemyScore = this.enemys[enemyIndex].score;
 		this.deleteEnemy(enemyIndex);
+	}
 	else if(this.enemys[enemyIndex].type == 3)
 	{
 	    // emit barricade hit particles
@@ -107,6 +111,8 @@ EnemyManager.prototype.hitEnemy = function(enemyIndex){
 		else if(this.enemys[enemyIndex].health == 3)
 			this.enemys[enemyIndex].changeSprite('enemy4-3', 0x39c7ff);
 	}
+
+	return enemyScore;
 }
 
 EnemyManager.prototype.deleteEnemy = function(enemyIndex){
