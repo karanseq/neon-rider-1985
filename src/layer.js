@@ -45,14 +45,14 @@ Layer.prototype.spawn = function(layerIndex) {
 	this.fadeTween(this.sprite, 1, LAYER_SCALE_DURATION);
 };
 
-Layer.prototype.scaleUp = function(layerIndex) {
+Layer.prototype.scaleUp = function(layerIndex, duration) {
 	var newScale = { x: layerScale[layerIndex], y: layerScale[layerIndex] };
-	Game.add.tween(this.sprite.scale).to(newScale, LAYER_SCALE_DURATION, Phaser.Easing.Linear.None, true);
+	Game.add.tween(this.sprite.scale).to(newScale, duration, Phaser.Easing.Linear.None, true);
 };
 
-Layer.prototype.die = function() {
-	Game.add.tween(this.sprite.scale).to({x: 0.9, y: 0.9}, LAYER_SCALE_DURATION, Phaser.Easing.Linear.None, true);
-	this.fadeTween(this.sprite, 0, LAYER_SCALE_DURATION);
+Layer.prototype.die = function(duration) {
+	Game.add.tween(this.sprite.scale).to({x: 0.9, y: 0.9}, duration, Phaser.Easing.Linear.None, true);
+	this.fadeTween(this.sprite, 0, duration);
 };
 
 Layer.prototype.startBlinking = function() {
