@@ -11,12 +11,16 @@ var ACCELERATE_SPEED = 3;
 
 var GUN_HEALTH = 2;
 var BLOCK_HEALTH = 10;
-
+var ENEMY_TYPE_SCORE_MAP = { 0: 20, 	// this.EnemyType.STRAIGHT_FORWARD
+	1: 30,								// this.EnemyType.ROTATE_FORWARD
+	2: 40,								// this.EnemyType.GUN
+	3: 10 };							// this.EnemyType.BLOCK
 
 var Enemy = function(angleIndex, enemyType) {
 	this.angleIndex = angleIndex;
 
 	this.type = enemyType;
+	this.score = ENEMY_TYPE_SCORE_MAP[this.type];
 
 	switch(this.type)
 	{

@@ -12,7 +12,7 @@ var LayerManager = function() {
 
 	this.isAnimating = false;
 	this.mustKillPlayer = false;
-	this.isLevelComplete = false;
+	this.haveAllLayersSpawned = false;
 	this.startShowingAlertEvent = null;
 	this.finishShowingAlertEvent = null;
 };
@@ -28,7 +28,7 @@ LayerManager.prototype.init = function(levelNumber) {
 	
 	this.isAnimating = false;
 	this.mustKillPlayer = false;
-	this.isLevelComplete = false;
+	this.haveAllLayersSpawned = false;
 
 	this.startShowingAlertEvent = Game.time.events.add(this.layerData.waitBeforeOuterLayerBreak, this.startShowingAlert, this);
 };
@@ -126,9 +126,9 @@ LayerManager.prototype.moveUp = function() {
 		this.layers[this.indexLayerBack++].spawn(this.indexLayerBack - this.indexLayerFront - 1);
 	}
 
-	// check if the level has completed
-	if (this.indexLayerFront == this.indexLayerBack) {
-		this.isLevelComplete = true;
+	// check if all layers have finished spawning
+	if (this.indexLayerBack >= this.numLayersInLevel) {
+		this.haveAllLayersSpawned = true;
 	}
 
 	Game.time.events.add(LAYER_SCALE_DURATION, this.onAnimationFinished, this);

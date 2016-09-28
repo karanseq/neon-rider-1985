@@ -4,6 +4,7 @@ var EXPLOSION_REVERSE_COUNTER = 2;
 
 var PLAYER_ROTATE_LASTING = 10;
 var PLAYER_MAX_HEALTH = 9;
+var PLAYER_MOVE_COOLDOWN = 5000;
 
 var Player = function() {
 	this.sprite = null;
@@ -111,7 +112,7 @@ Player.prototype.moveForward = function() {
 	// schedule an event to move forward
 	--this.numMoves;
 	this.refreshDashSprite();
-	this.moveEvent = Game.time.events.add(3000, this.finishMove, this);
+	this.moveEvent = Game.time.events.add(PLAYER_MOVE_COOLDOWN, this.finishMove, this);
 
     // emit dash particles
 	playerBoostEmitter.position = this.position;
