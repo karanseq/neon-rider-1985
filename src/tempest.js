@@ -359,8 +359,11 @@ Tempest.prototype.handleKeyUp = function() {
 		this.layerAnimation = wasMoveSuccessful; //true;
 
 		// check if the level was completed
-		if (this.layerManager.isLevelComplete) {
+		if (this.layerManager.haveAllLayersSpawned && this.enemyManager.enemys.length == 0 && this.enemyManager.enemiesToSpawn.length == 0) {
 			this.onLevelComplete();
+		}
+		else {
+			console.log("EnemiesLeft:" + this.enemyManager.enemys.length + " EnemiesLeftToSpawn:" + this.enemyManager.enemiesToSpawn.length);
 		}
 	}
 };
