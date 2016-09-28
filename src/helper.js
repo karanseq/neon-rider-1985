@@ -25,9 +25,13 @@ var imageSet = [ { key: 'layer', src: 'images/Ring.png' },
 { key: 'barricade_particle', src: 'images/barricade_particle.png' },
 { key: 'enemybullet', src:'images/EnemyBullet01.png'},
 { key: 'playerExplosion', src:'images/PlayerExplosion.png'},
-{ key: 'background', src: 'images/Tempest_Background.png' } ];
+{ key: 'background', src: 'images/Tempest_Background.png' }];
 
-var fontSet = [ { key: 'carrier_command', img: 'fonts/carrier_command.png', data: 'fonts/carrier_command.xml' } ];
+var fontSet = [{ key: 'carrier_command', img: 'fonts/carrier_command.png', data: 'fonts/carrier_command.xml' }];
+
+var audioSet = [
+    { key: 'player_death', src: 'audio/player_death.ogg' }
+];
 
 var levelSet = [
 { enemyTypes: [0, 1, 2, 3, 4], minEnemiesInFormation: 2, maxEnemiesInFormation: 5 },

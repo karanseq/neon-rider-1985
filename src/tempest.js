@@ -69,6 +69,11 @@ Tempest.prototype.preload = function() {
 		Game.load.bitmapFont(fontSet[i].key, fontSet[i].img, fontSet[i].data);
 	}
 
+    // load sounds
+	for (var i = 0; i < audioSet.length; ++i) {
+	    Game.load.audio(audioSet[i].key, audioSet[i].src);
+	}
+
 	// load levels
 	for (var i = 0; i < levelFileSet.length; ++i) {
 		Game.load.json(levelFileSet[i].key, levelFileSet[i].src);

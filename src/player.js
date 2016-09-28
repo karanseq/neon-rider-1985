@@ -270,6 +270,8 @@ Player.prototype.destroy = function() {
 		this.dashSprite.destroy();
 		this.dashSprite = null;
 	}
+
+	Game.sound.play('player_death');
 }
 
 Player.prototype.takeDamage = function() {
