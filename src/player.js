@@ -168,7 +168,7 @@ Player.prototype.createBullet = function() {
 		return;
 	}
 	this.fireRateCounter = this.fireRate;
-
+	Game.sound.play('player_shoot');
 	playerShootEmitter.position = this.position;
 	playerShootEmitter.explode(playerShootEmitter.lifespan, 4);
 

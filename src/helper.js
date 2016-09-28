@@ -32,6 +32,7 @@ var fontSet = [{ key: 'carrier_command', img: 'fonts/carrier_command.png', data:
 var audioSet = [
     { key: 'player_death', src: 'audio/player_death.ogg' },
     { key: 'player_dash', src: 'audio/player_dash.ogg' },
+    { key: 'player_shoot', src: 'audio/player_shoot.ogg' },
     { key: 'player_move', src: 'audio/player_move.ogg' }
 ];
 
