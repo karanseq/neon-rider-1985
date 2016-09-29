@@ -127,10 +127,16 @@ EnemyManager.prototype.hitEnemy = function(enemyIndex){
 	    sparkEmitter.y = this.enemys[enemyIndex].position.y;
 	    sparkEmitter.explode(sparkEmitter.lifespan, 8);
 
-		if(this.enemys[enemyIndex].health == 6)
-			this.enemys[enemyIndex].changeSprite('enemy4-2', 0x39c7ff);
-		else if(this.enemys[enemyIndex].health == 3)
+		var healthFactor = Math.ceil(this.enemys[enemyIndex].health / (CONFIG.COVER_HEALTH / 3));
+		if (healthFactor < 2) {
 			this.enemys[enemyIndex].changeSprite('enemy4-3', 0x39c7ff);
+		}
+		else if (healthFactor < 3) {
+			this.enemys[enemyIndex].changeSprite('enemy4-2', 0x39c7ff);
+		}
+		else {
+			this.enemys[enemyIndex].changeSprite('enemy4-1', 0x39c7ff);
+		}
 	}
 
 	return enemyScore;
