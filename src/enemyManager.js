@@ -57,6 +57,10 @@ EnemyManager.prototype.updateEnemy = function(){
 	{
 		if(this.enemys[i].radius > RADIUS[1] - 5 || this.enemys[i].layerIndex < 0)
 		{
+			if(this.enemys[i].type == 2 || this.enemys[i].type == 3);
+				//Game.sound.play('enemy_hit');
+
+	
 			this.deleteEnemy(i);
 		}
 		else
@@ -95,11 +99,17 @@ EnemyManager.prototype.hitEnemy = function(enemyIndex){
 	var enemyScore = 0;
 
 	if(this.enemys[enemyIndex].health == 0) {
+		
 		enemyScore = this.enemys[enemyIndex].score;
 		this.deleteEnemy(enemyIndex);
 	}
+	else if(this.enemys[enemyIndex].type ==2)
+	{
+		Game.sound.play('enemy_hit');
+	}
 	else if(this.enemys[enemyIndex].type == 3)
 	{
+		Game.sound.play('cover_hit');  
 	    // emit barricade hit particles
 	    barricadeHitEmitter.x = this.enemys[enemyIndex].position.x;
 	    barricadeHitEmitter.y = this.enemys[enemyIndex].position.y;
