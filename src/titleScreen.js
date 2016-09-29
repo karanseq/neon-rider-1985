@@ -90,7 +90,7 @@ TitleScreen.prototype.update = function(){
 }
 
 TitleScreen.prototype.updateKeys = function() {
-	if (this.spaceKey.isDown) {
+	if (this.startState == false && this.spaceKey.isDown) {
 		this.startState = true;
 		this.music.stop();
 	}
