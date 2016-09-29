@@ -15,7 +15,7 @@ var Tempest = function() {
 
 	this.numParticles = 0;
 
-	this.restartWait = 75;
+	this.restartWait = 150;
 	this.restartWaitCounter = 0;
 
 	this.layerAnimation = false;
@@ -224,13 +224,12 @@ Tempest.prototype.endGame = function() {
 	this.state = this.TempestState.GAME_OVER;
 	console.log("Game over...");
 
-	this.gameOverText = Game.add.bitmapText(GAME_WIDTH * 0.5, GAME_HEIGHT * 0.45, 'carrier_command', 'Game Over!', 34);
+	this.gameOverText = Game.add.sprite(GAME_WIDTH * 0.5, GAME_HEIGHT * 0.5, 'game_over');
 	this.gameOverText.anchor.set(0.5);
+	this.gameOverText.scale = { x: 0, y: 0 };
 	this.hudGroup.add(this.gameOverText);
 	Game.world.bringToTop(this.hudGroup);
-
-	this.scoreText.anchor.set(0.5);
-	this.scoreText.position = { x: GAME_WIDTH * 0.5, y: GAME_HEIGHT * 0.55 };
+	Game.add.tween(this.gameOverText.scale).to({ x: 1, y: 1 }, 750, Phaser.Easing.Linear.NONE, true, 500);
 };
 
 Tempest.prototype.onLevelComplete = function() {
@@ -241,23 +240,18 @@ Tempest.prototype.onLevelComplete = function() {
 	console.log("Level complete...");
 
 	// prevent the player from restarting immediately
-	this.restartWaitCounter = this.restartWait * 2;
+	this.restartWaitCounter = this.restartWait;
 
 	// this.layerManager.moveToEnd();
 	this.layerManager.resetAllAlertEvents();
 	this.player.goThroughLevel();
 
-	this.levelCompleteText = Game.add.sprite(GAME_WIDTH * 0.5, GAME_HEIGHT * 0.45, 'level_finish');
+	this.levelCompleteText = Game.add.sprite(GAME_WIDTH * 0.5, GAME_HEIGHT * 0.5, 'level_finish');
 	this.levelCompleteText.anchor.set(0.5);
 	this.levelCompleteText.scale = { x: 0, y: 0 };
 	this.hudGroup.add(this.levelCompleteText);
 	Game.world.bringToTop(this.hudGroup);
 	Game.add.tween(this.levelCompleteText.scale).to({ x: 1, y: 1 }, 750, Phaser.Easing.Linear.NONE, true, 500);
-
-	this.scoreText.anchor.set(0.5);
-	this.scoreText.position = { x: GAME_WIDTH * 0.5, y: GAME_HEIGHT * 0.85 };
-	this.scoreText.alpha = 0;
-	Game.add.tween(this.scoreText).to({ alpha: 1 }, 750, Phaser.Easing.Linear.NONE, true, 500);
 };
 
 Tempest.prototype.update = function() {
