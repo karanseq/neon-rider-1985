@@ -333,6 +333,7 @@ Tempest.prototype.update = function () {
 
         // ask the enemy manager if an enemy died at the boundary
         if (this.enemyManager.enemyDiedAtBoundary > 0) {
+        	this.layerManager.flashAllLayers();
             this.player.takeDamage(CONFIG.PLAYER_HEALTH_LOSS_ENEMY_BOUNDARY * this.enemyManager.enemyDiedAtBoundary);
             this.enemyManager.enemyDiedAtBoundary = 0;
         }

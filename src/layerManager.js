@@ -180,6 +180,12 @@ LayerManager.prototype.finishedShowingAlert = function() {
 	this.mustKillPlayer = true;
 };
 
+LayerManager.prototype.flashAllLayers = function() {
+	for (var i = this.indexLayerFront; i < this.indexLayerBack; ++i) {
+		this.layers[i].flashRedOnce();
+	}
+};
+
 LayerManager.prototype.getEnemiesForBottomLayer = function() {
 	if (this.indexLayerBack < this.numLayersInLevel) {
 		return this.layerData.layers[this.indexLayerBack].enemies;

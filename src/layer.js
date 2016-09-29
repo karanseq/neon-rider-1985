@@ -1,6 +1,6 @@
 var Layer = function() {
 	this.sprite = null;
-	this.lanes = 0;
+
 	this.blinkTweens = null;
 	this.doBlinkEvent = null;
 	this.finishBlinkEvent = null;
@@ -105,6 +105,11 @@ Layer.prototype.stopBlinking = function() {
 	}
 	
 	this.blinkTweens = null;
+};
+
+Layer.prototype.flashRedOnce = function() {
+	this.setColorRed();
+	Game.time.events.add(250, this.setColorOriginal, this);
 };
 
 Layer.prototype.setVisible = function(visibility) {
