@@ -342,7 +342,8 @@ Player.prototype.refreshHealthSprite = function() {
 	}
 
 	// calculate new health bar
-	var healthBar = Math.ceil(this.health / CONFIG.PLAYER_HEALTH_BARS);
+	var healthBar = Math.ceil(this.health / (CONFIG.PLAYER_MAX_HEALTH / CONFIG.PLAYER_HEALTH_BARS));
+
 	// only refresh health sprite if the bar has changed
 	if (this.currentHealthBar == healthBar) {
 		return;
