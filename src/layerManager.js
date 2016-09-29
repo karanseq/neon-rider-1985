@@ -71,6 +71,8 @@ LayerManager.prototype.resetAllAlertEvents = function() {
 LayerManager.prototype.loadLevel = function(levelNumber) {
 	this.layerData = Game.cache.getJSON('level_' + levelNumber);
 	this.numLayersInLevel = this.layerData.layers.length;
+	console.log(this.layerData.color);
+	setParticleTint(ringEmitter, this.layerData.color, true);
 };
 
 LayerManager.prototype.createLayers = function() {
@@ -171,6 +173,10 @@ LayerManager.prototype.stopShowingAlert = function() {
 LayerManager.prototype.finishedShowingAlert = function() {
 	console.log("Finished showing alert...kill layer and player!");
 	this.finishShowingAlertEvent = null;
+
+	// hide the last ring
+	this.layers[this.indexLayerFront].setVisible(false);
+
 	this.mustKillPlayer = true;
 };
 

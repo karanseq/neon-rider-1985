@@ -1,6 +1,6 @@
 var INIT_ANGLE_INDEX = 4;
-var EXPLOSION_INTERVAL = 15;
-var EXPLOSION_REVERSE_COUNTER = 2;
+//var EXPLOSION_INTERVAL = 15;
+//var EXPLOSION_REVERSE_COUNTER = 2;
 
 var PLAYER_ROTATE_LASTING = 10;
 
@@ -26,17 +26,17 @@ var Player = function() {
 	this.fireRateCounter = 0;
 	this.muzzleFlashSpread = 120;
 
-	this.isExplosionLarge = true;
-	this.explosionTimer = 0;
-	this.explosionReverseCounter = 0;
-	this.explosionScaleChange = 0.1;
+	//this.isExplosionLarge = true;
+	//this.explosionTimer = 0;
+	//this.explosionReverseCounter = 0;
+	//this.explosionScaleChange = 0.1;
 
 	this.isRotate = false;
 	this.previousAngle = 0;
 	this.rotateTimer = 0;
 
 	this.health = CONFIG.PLAYER_MAX_HEALTH;
-	this.healthBars = CONFIG.PLAYER_HEALTH_BARS;
+	this.currentHealthBar = CONFIG.PLAYER_HEALTH_BARS;
 	this.isBlinking = false;
 
 	this.numMoves = 3;
@@ -81,8 +81,10 @@ Player.prototype.init = function() {
 	this.fireRateCounter = 0;
 
     // create emitters
+	createPlayerDestructionEmitter();
 	createPlayerBoostEmitter();
 	createPlayerShootEmitter();
+	createWarpEmitter();
 	this.updateVectors();
 };
 
@@ -115,7 +117,8 @@ Player.prototype.moveForward = function() {
 	this.moveEvent = Game.time.events.add(CONFIG.PLAYER_MOVE_COOLDOWN, this.finishMove, this);
 
     // emit dash particles
-	playerBoostEmitter.position = this.position;
+	playerBoostEmitter.x = this.position.x;
+	playerBoostEmitter.y = this.position.y;
 	playerBoostEmitter.explode(playerBoostEmitter.lifespan, 4);
 
 	Game.sound.play('player_dash');
@@ -176,6 +179,7 @@ Player.prototype.createBullet = function() {
 	var bullet = new Bullet(0, this.radius, this.angleIndex);
 	bullet.updateSprite();
 	bullet.sprite.tint = '0x00ff00';
+	setParticleTint(bullet.trail, '0x00ff00', true);
 	this.bullets.push(bullet);
 }
 
@@ -235,13 +239,17 @@ Player.prototype.updateSprite = function() {
 		if (this.scale.x <= 0 || this.scale.y <= 0 || this.radius <= 0) {
 			this.isGoingThroughLevel = false;
 		}
+		warpEmitter.x = this.position.x;
+		warpEmitter.y = this.position.y;
 	}
 
-	this.sprite.scale = this.scale;
-	this.sprite.angle = -this.angle;
-	
 	this.position = caculatePosition(this.radius, this.angle);
-	this.sprite.position = this.position;
+	
+	if (this.sprite != null) {
+		this.sprite.scale = this.scale;
+		this.sprite.angle = -this.angle;	
+		this.sprite.position = this.position;
+	}
 
 	if (this.healthSprite != null) {
 		this.healthSprite.scale = this.scale;
@@ -270,7 +278,7 @@ Player.prototype.isVisible = function() {
 };
 
 Player.prototype.destroy = function() {
-	this.sprite.destroy();
+	if (this.sprite != null) this.sprite.destroy();
 	this.sprite = null;
 
 	if (this.healthSprite != null) {
@@ -284,21 +292,25 @@ Player.prototype.destroy = function() {
 	}
 }
 
-Player.prototype.takeDamage = function() {
+Player.prototype.takeDamage = function(damage) {
+	if (damage <= 0) {
+		return;
+	}
+
 	if (this.isBlinking) {
 		return;
 	}
 
 	// reduce health
-	this.health -= CONFIG.PLAYER_HEALTH_LOSS_RATE;
-	console.log("Player takes damage...health:" + this.health);
+	this.health -= damage;
+	console.log("Player takes " + damage + " damage...health:" + this.health);
 
 	if (this.health <= 0) {
+		this.health = 0;
 		this.die();
 	}
 	else {
 		this.startBlinking();
-
 		this.refreshHealthSprite();
 	}	
 };
@@ -311,16 +323,17 @@ Player.prototype.gainHealth = function() {
 	if (this.health > CONFIG.PLAYER_MAX_HEALTH) {
 		this.health = CONFIG.PLAYER_MAX_HEALTH;
 	}
-	console.log("Player gains health...health:" + this.health);
+	console.log("Player gains " + CONFIG.PLAYER_HEALTH_GAIN_RATE + " health...health:" + this.health);
 
 	this.refreshHealthSprite();
 };
 
 Player.prototype.goThroughLevel = function() {
-	if (this.isGoingThroughLevel) {
+    if (this.isGoingThroughLevel) {
 		return;
 	}
 	this.isGoingThroughLevel = true;
+	warpEmitter.start(false, warpEmitter.lifespan, warpEmitter.frequency, 84, false);
 };
 
 Player.prototype.refreshHealthSprite = function() {
@@ -328,14 +341,30 @@ Player.prototype.refreshHealthSprite = function() {
 		return;
 	}
 
+	// calculate new health bar
+	var healthBar = Math.ceil(this.health / CONFIG.PLAYER_HEALTH_BARS);
+	// only refresh health sprite if the bar has changed
+	if (this.currentHealthBar == healthBar) {
+		return;
+	}
+
+	if (healthBar < this.currentHealthBar) {
+		// gained health
+		Game.sound.play('player_heal');
+	}
+	else {
+		// lost health
+		Game.sound.play('player_hurt');
+	}
+	this.currentHealthBar = healthBar;
+
 	this.healthSprite.destroy();
 
 	var spriteName = '';
-	var healthBar = Math.ceil(this.health / this.healthBars);
-	if (healthBar < 2) {
+	if (this.currentHealthBar < 2) {
 		spriteName = 'player_health_low';
 	}
-	else if (healthBar < 3) {
+	else if (this.currentHealthBar < 3) {
 		spriteName = 'player_health_med';
 	}
 	else {
@@ -371,74 +400,87 @@ Player.prototype.die = function() {
 	this.destroy();
 
 	// add explosion
-	this.sprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'playerExplosion');
-	this.sprite.anchor = { x: 0.5, y: 0.5 };
-	this.sprite.visible = true;
-	this.sprite.scale = PLAYER_EXPLOSION_SCALE;
-	this.scale = PLAYER_EXPLOSION_SCALE;
+	//this.sprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'playerExplosion');
+	//this.sprite.anchor = { x: 0.5, y: 0.5 };
+	//this.sprite.visible = true;
+	//this.sprite.scale = PLAYER_EXPLOSION_SCALE;
+    //this.scale = PLAYER_EXPLOSION_SCALE;
+
+	playerDestructionEmitter.position = this.position;
+	playerDestructionEmitter.explode(playerDestructionEmitter.lifespan, 5);
+
+	sparkEmitter.x = this.position.x;
+	sparkEmitter.y = this.position.y;
+	setParticleTint(sparkEmitter, '0x00ff00');
+	setParticleSpeed(sparkEmitter, 1000);
+	sparkEmitter.explode(sparkEmitter.lifespan, 128);
+
+	kamikazeExplosionEmitter.x = this.position.x;
+	kamikazeExplosionEmitter.y = this.position.y;
+	kamikazeExplosionEmitter.explode(kamikazeExplosionEmitter.lifespan, 2);
 
 	Game.sound.play('player_death');
 };
 
 // player explosion animation
-Player.prototype.updateExplosion = function(){
-	this.explosionTimer++;
-	// if(this.isExplosionLarge)
-	// {
-	// 	if(this.explosionTimer >= EXPLOSION_INTERVAL)
-	// 	{
-	// 		this.explosionReverseCounter++;
-	// 		this.scale = {x: this.scale.x + this.explosionScaleChange, y: this.scale.y + this.explosionScaleChange};
-	// 		this.explosionTimer = 0;
-	// 	}
-	// 	if(this.explosionReverseCounter >= EXPLOSION_REVERSE_COUNTER)
-	// 	{
-	// 		this.isExplosionLarge = false;
-	// 		this.explosionReverseCounter = 0;
-	// 	}
-	// }
-	// else
-	// {
-	// 	if(this.explosionTimer >= EXPLOSION_INTERVAL)
-	// 	{
-	// 		this.explosionReverseCounter++;
-	// 		this.scale = {x: this.scale.x - this.explosionScaleChange, y: this.scale.y - this.explosionScaleChange};
-	// 		this.explosionTimer = 0;
-	// 	}
-	// 	if(this.explosionReverseCounter >= EXPLOSION_REVERSE_COUNTER)
-	// 	{
-	// 		this.isExplosionLarge = true;
-	// 		this.explosionReverseCounter = 0;
-	// 	}
-	// }
+//Player.prototype.updateExplosion = function(){
+//	this.explosionTimer++;
+//	// if(this.isExplosionLarge)
+//	// {
+//	// 	if(this.explosionTimer >= EXPLOSION_INTERVAL)
+//	// 	{
+//	// 		this.explosionReverseCounter++;
+//	// 		this.scale = {x: this.scale.x + this.explosionScaleChange, y: this.scale.y + this.explosionScaleChange};
+//	// 		this.explosionTimer = 0;
+//	// 	}
+//	// 	if(this.explosionReverseCounter >= EXPLOSION_REVERSE_COUNTER)
+//	// 	{
+//	// 		this.isExplosionLarge = false;
+//	// 		this.explosionReverseCounter = 0;
+//	// 	}
+//	// }
+//	// else
+//	// {
+//	// 	if(this.explosionTimer >= EXPLOSION_INTERVAL)
+//	// 	{
+//	// 		this.explosionReverseCounter++;
+//	// 		this.scale = {x: this.scale.x - this.explosionScaleChange, y: this.scale.y - this.explosionScaleChange};
+//	// 		this.explosionTimer = 0;
+//	// 	}
+//	// 	if(this.explosionReverseCounter >= EXPLOSION_REVERSE_COUNTER)
+//	// 	{
+//	// 		this.isExplosionLarge = true;
+//	// 		this.explosionReverseCounter = 0;
+//	// 	}
+//	// }
 
 	
-	if(this.isExplosionLarge)
-	{
-		if(this.explosionTimer >= EXPLOSION_INTERVAL)
-		{
-			this.explosionReverseCounter++;
-			this.scale = {x: this.scale.x + this.explosionScaleChange, y: this.scale.y + this.explosionScaleChange};
-			this.explosionTimer = 0;
-		}
-		if(this.explosionReverseCounter >= EXPLOSION_REVERSE_COUNTER)
-		{
-			this.isExplosionLarge = false;
-			this.explosionReverseCounter = 0;
-		}
-	}
-	else
-	{
-		if(this.explosionTimer >= EXPLOSION_INTERVAL / 2)
-		{
+//	if(this.isExplosionLarge)
+//	{
+//		if(this.explosionTimer >= EXPLOSION_INTERVAL)
+//		{
+//			this.explosionReverseCounter++;
+//			this.scale = {x: this.scale.x + this.explosionScaleChange, y: this.scale.y + this.explosionScaleChange};
+//			this.explosionTimer = 0;
+//		}
+//		if(this.explosionReverseCounter >= EXPLOSION_REVERSE_COUNTER)
+//		{
+//			this.isExplosionLarge = false;
+//			this.explosionReverseCounter = 0;
+//		}
+//	}
+//	else
+//	{
+//		if(this.explosionTimer >= EXPLOSION_INTERVAL / 2)
+//		{
 			
-			this.scale = PLAYER_EXPLOSION_SCALE;
-			this.explosionTimer = 0;
+//			this.scale = PLAYER_EXPLOSION_SCALE;
+//			this.explosionTimer = 0;
 		
-			this.isExplosionLarge = true;
-		}
-	}
-}
+//			this.isExplosionLarge = true;
+//		}
+//	}
+//}
 
 Player.prototype.startBlinking = function() {
 	if (this.isBlinking) {

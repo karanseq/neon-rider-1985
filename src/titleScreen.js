@@ -5,7 +5,7 @@ var TitleScreen = function() {
 	this.menuIndex = this.MenuContent.MENU_START;
 	
 	this.startState = false;
-	this.startDelay = 70;
+	this.startDelay = 150;
 	this.blinkDelay = 32;
 	this.blinkDelay = this.startDelay - this.blinkDelay;
 	this.delayTimer = 0;
@@ -90,9 +90,10 @@ TitleScreen.prototype.update = function(){
 }
 
 TitleScreen.prototype.updateKeys = function() {
-	if (this.spaceKey.isDown) {
+	if (this.startState == false && this.spaceKey.isDown) {
 		this.startState = true;
 		this.music.stop();
+		Game.sound.play('start_up');
 	}
 };
 

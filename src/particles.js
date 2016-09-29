@@ -192,7 +192,7 @@ function createPlayerDestructionEmitter() {
     playerDestructionEmitter.autoScale = true;
     playerDestructionEmitter.autoAlpha = true;
     playerDestructionEmitter.baseScale = 0.35;
-    playerDestructionEmitter.baseSpeed = 45;
+    playerDestructionEmitter.baseSpeed = 60;
     playerDestructionEmitter.height = 192;
     playerDestructionEmitter.width = 192;
     playerDestructionEmitter.minParticleSpeed = new Phaser.Point(-playerDestructionEmitter.baseSpeed, -playerDestructionEmitter.baseSpeed);
@@ -222,6 +222,41 @@ function createSparkEmitter() {
     sparkEmitter.maxParticleSpeed = new Phaser.Point(sparkEmitter.speed, sparkEmitter.speed);
     sparkEmitter.setAlpha(1, 0, sparkEmitter.lifespan, undefined, false);
     sparkEmitter.setScale(sparkEmitter.baseScale, 0, sparkEmitter.baseScale, 0, sparkEmitter.lifespan, undefined, false);
+}
+
+var warpEmitter;
+
+function createWarpEmitter() {
+    warpEmitter = Game.add.emitter(0, 0, 256);
+    warpEmitter.makeParticles(['glow_particle']);
+    warpEmitter.lifespan = 1500;
+    warpEmitter.frequency = 4;
+    warpEmitter.autoScale = true;
+    warpEmitter.autoAlpha = true;
+    warpEmitter.baseScale = 0.6;
+    warpEmitter.speed = 50;
+    warpEmitter.minParticleSpeed = new Phaser.Point(-warpEmitter.speed, -warpEmitter.speed);
+    warpEmitter.maxParticleSpeed = new Phaser.Point(warpEmitter.speed, warpEmitter.speed);
+    warpEmitter.setAlpha(1, 0, warpEmitter.lifespan, undefined, false);
+    warpEmitter.setScale(warpEmitter.baseScale, 0, warpEmitter.baseScale, 0, warpEmitter.lifespan, undefined, false);
+    setParticleTint(warpEmitter, '0xFFFFFF');
+}
+
+var ringEmitter;
+function createRingEmitter() {
+    ringEmitter = Game.add.emitter(GAME_WIDTH / 2, GAME_HEIGHT / 2, 512);
+    ringEmitter.makeParticles(['glow_particle', 'ring_particle', 'glow_particle', 'glow_particle', 'glow_particle']);
+    ringEmitter.lifespan = 30000;
+    ringEmitter.frequency = 0;
+    ringEmitter.gravity = 0;
+    ringEmitter.autoScale = false;
+    ringEmitter.autoAlpha = true;
+    ringEmitter.baseScale = 0.8;
+    ringEmitter.speed = 125;
+    ringEmitter.minParticleSpeed = new Phaser.Point(-ringEmitter.speed, -ringEmitter.speed);
+    ringEmitter.maxParticleSpeed = new Phaser.Point(ringEmitter.speed, ringEmitter.speed);
+    ringEmitter.setAlpha(1, 0, ringEmitter.lifespan, undefined, false);
+    ringEmitter.setScale(ringEmitter.baseScale, ringEmitter.baseScale, ringEmitter.baseScale, ringEmitter.baseScale, ringEmitter.lifespan, undefined, false);
 }
 
 function setParticleTint(particleEmitter, colorHexCode, forceAll) {

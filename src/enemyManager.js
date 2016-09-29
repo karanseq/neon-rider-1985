@@ -10,6 +10,8 @@ var EnemyManager = function(){
 	this.enemySpawnDelay = 0;
 	this.enemySpawnDelayCounter = 0;
 	this.enemiesToSpawn = null;
+
+	this.enemyDiedAtBoundary = 0;
 };
 
 EnemyManager.prototype.init = function() {
@@ -19,6 +21,8 @@ EnemyManager.prototype.init = function() {
 	this.enemiesToSpawn = new Array();
 	this.formationDelay = 15;
 	this.enemySpawnDelay = 1;
+
+	this.enemyDiedAtBoundary = 0;
 };
 
 EnemyManager.prototype.reset = function() {
@@ -57,6 +61,10 @@ EnemyManager.prototype.updateEnemy = function(){
 	{
 		if(this.enemys[i].radius > RADIUS[1] - 5 || this.enemys[i].layerIndex < 0)
 		{
+			if (this.enemys[i].type != 3) {
+				++this.enemyDiedAtBoundary;
+			}
+
 			this.deleteEnemy(i);
 		}
 		else
@@ -95,11 +103,17 @@ EnemyManager.prototype.hitEnemy = function(enemyIndex){
 	var enemyScore = 0;
 
 	if(this.enemys[enemyIndex].health == 0) {
+		
 		enemyScore = this.enemys[enemyIndex].score;
 		this.deleteEnemy(enemyIndex);
 	}
+	else if(this.enemys[enemyIndex].type ==2)
+	{
+		//Game.sound.play('enemy_hit');
+	}
 	else if(this.enemys[enemyIndex].type == 3)
 	{
+		Game.sound.play('cover_hit');  
 	    // emit barricade hit particles
 	    barricadeHitEmitter.x = this.enemys[enemyIndex].position.x;
 	    barricadeHitEmitter.y = this.enemys[enemyIndex].position.y;
@@ -144,24 +158,34 @@ EnemyManager.prototype.deleteEnemy = function(enemyIndex){
             setParticleTint(sparkEmitter, 0xf26a4d);
             sparkEmitter.explode(sparkEmitter.lifespan, 8);
 
-            var speed = kamikazeExplosionEmitter.speed;
-
             // explode center
             kamikazeExplosionEmitter.minParticleSpeed = new Phaser.Point(-speed, -speed);
+            kamikazeExplosionEmitter.x = temp.position.x;
+            kamikazeExplosionEmitter.y = temp.position.y;
             kamikazeExplosionEmitter.maxParticleSpeed = new Phaser.Point(speed, speed);
-            kamikazeExplosionEmitter.explode(kamikazeExplosionEmitter.lifespan, 2);
+            kamikazeExplosionEmitter.explode(kamikazeExplosionEmitter.lifespan, 1);
+            
+            var speed = kamikazeExplosionEmitter.speed;
 
             // explode left
-            var l = left(temp.position);
-            kamikazeExplosionEmitter.minParticleSpeed = new Phaser.Point(l.x * speed / 2, l.y * speed / 2);
-            kamikazeExplosionEmitter.maxParticleSpeed = new Phaser.Point(l.x * speed, l.y * speed);
-            kamikazeExplosionEmitter.explode(kamikazeExplosionEmitter.lifespan, 2);
+            //var l = left(temp.angle);
+            var l_index = temp.angleIndex - 1;
+            if (l_index < 0) l_index = 7;
+            var l = caculatePosition(temp.radius, ANGLES[l_index]);
+            kamikazeExplosionEmitter.x = l.x;
+            kamikazeExplosionEmitter.y = l.y;
+            kamikazeExplosionEmitter.explode(kamikazeExplosionEmitter.lifespan, 1);
 
             // explode right
-            var r = right(temp.position);
-            kamikazeExplosionEmitter.minParticleSpeed = new Phaser.Point(r.x * speed / 2, r.y * speed / 2);
-            kamikazeExplosionEmitter.maxParticleSpeed = new Phaser.Point(r.x * speed, r.y * speed);
-            kamikazeExplosionEmitter.explode(kamikazeExplosionEmitter.lifespan, 2);
+           // var r = right(temp.angle);
+            var r_index = temp.angleIndex + 1;
+            if (r_index > 7) r_index = 0;
+            var r = caculatePosition(temp.radius, ANGLES[r_index]);
+            kamikazeExplosionEmitter.x = r.x;
+            kamikazeExplosionEmitter.y = r.y;
+            //kamikazeExplosionEmitter.minParticleSpeed = new Phaser.Point(r.x * speed / 2, r.y * speed / 2);
+            //kamikazeExplosionEmitter.maxParticleSpeed = new Phaser.Point(r.x * speed, r.y * speed);
+            kamikazeExplosionEmitter.explode(kamikazeExplosionEmitter.lifespan, 1);
             break;
 
         case temp.EnemyType.ROTATE_FORWARD:
