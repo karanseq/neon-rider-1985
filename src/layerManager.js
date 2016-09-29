@@ -71,6 +71,8 @@ LayerManager.prototype.resetAllAlertEvents = function() {
 LayerManager.prototype.loadLevel = function(levelNumber) {
 	this.layerData = Game.cache.getJSON('level_' + levelNumber);
 	this.numLayersInLevel = this.layerData.layers.length;
+	console.log(this.layerData.color);
+	setParticleTint(ringEmitter, this.layerData.color, true);
 };
 
 LayerManager.prototype.createLayers = function() {

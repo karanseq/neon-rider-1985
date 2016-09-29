@@ -105,7 +105,7 @@ EnemyManager.prototype.hitEnemy = function(enemyIndex){
 	}
 	else if(this.enemys[enemyIndex].type ==2)
 	{
-		Game.sound.play('enemy_hit');
+		//Game.sound.play('enemy_hit');
 	}
 	else if(this.enemys[enemyIndex].type == 3)
 	{
@@ -164,29 +164,23 @@ EnemyManager.prototype.deleteEnemy = function(enemyIndex){
             var speed = kamikazeExplosionEmitter.speed;
 
             // explode left
-            var l = left(temp.angle);
+            //var l = left(temp.angle);
             var l_index = temp.angleIndex - 1;
             if (l_index < 0) l_index = 7;
-            //var l = caculatePosition(temp.radius, ANGLES[l_index]);
-           // kamikazeExplosionEmitter.x = l.x;
-            //kamikazeExplosionEmitter.y = l.y;
-            var v1 = new Phaser.Point(l.x * speed / 2, l.y * speed / 2);
-            var v2 = new Phaser.Point(l.x * speed, l.y * speed);
-            kamikazeExplosionEmitter.minParticleSpeed = v1 < v2 ? v1 : v2;
-            kamikazeExplosionEmitter.maxParticleSpeed = v1 < v2 ? v2 : v1;
-            console.log(kamikazeExplosionEmitter.minParticleSpeed);
-            console.log(kamikazeExplosionEmitter.maxParticleSpeed);
+            var l = caculatePosition(temp.radius, ANGLES[l_index]);
+            kamikazeExplosionEmitter.x = l.x;
+            kamikazeExplosionEmitter.y = l.y;
             kamikazeExplosionEmitter.explode(kamikazeExplosionEmitter.lifespan, 1);
 
             // explode right
-            var r = right(temp.angle);
+           // var r = right(temp.angle);
             var r_index = temp.angleIndex + 1;
             if (r_index > 7) r_index = 0;
-            //var r = caculatePosition(temp.radius, ANGLES[r_index]);
-            //kamikazeExplosionEmitter.x = r.x;
-            //kamikazeExplosionEmitter.y = r.y;
-            kamikazeExplosionEmitter.minParticleSpeed = new Phaser.Point(r.x * speed / 2, r.y * speed / 2);
-            kamikazeExplosionEmitter.maxParticleSpeed = new Phaser.Point(r.x * speed, r.y * speed);
+            var r = caculatePosition(temp.radius, ANGLES[r_index]);
+            kamikazeExplosionEmitter.x = r.x;
+            kamikazeExplosionEmitter.y = r.y;
+            //kamikazeExplosionEmitter.minParticleSpeed = new Phaser.Point(r.x * speed / 2, r.y * speed / 2);
+            //kamikazeExplosionEmitter.maxParticleSpeed = new Phaser.Point(r.x * speed, r.y * speed);
             kamikazeExplosionEmitter.explode(kamikazeExplosionEmitter.lifespan, 1);
             break;
 

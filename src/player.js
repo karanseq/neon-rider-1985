@@ -239,6 +239,8 @@ Player.prototype.updateSprite = function() {
 		if (this.scale.x <= 0 || this.scale.y <= 0 || this.radius <= 0) {
 			this.isGoingThroughLevel = false;
 		}
+		warpEmitter.x = this.position.x;
+		warpEmitter.y = this.position.y;
 	}
 
 	this.sprite.scale = this.scale;
@@ -321,11 +323,11 @@ Player.prototype.gainHealth = function() {
 };
 
 Player.prototype.goThroughLevel = function() {
-	if (this.isGoingThroughLevel) {
+    if (this.isGoingThroughLevel) {
 		return;
 	}
 	this.isGoingThroughLevel = true;
-	warpEmitter.start(false, warpEmitter.lifespan, warpEmitter.frequency, 0, false);
+	warpEmitter.start(false, warpEmitter.lifespan, warpEmitter.frequency, 256, false);
 };
 
 Player.prototype.refreshHealthSprite = function() {
@@ -390,6 +392,16 @@ Player.prototype.die = function() {
 	setParticleTint(sparkEmitter, '0x00ff00');
 	setParticleSpeed(sparkEmitter, 1000);
 	sparkEmitter.explode(sparkEmitter.lifespan, 128);
+
+	var numRingPieces = 32;
+	ringEmitter.explode(ringEmitter.lifespan, numRingPieces);
+	var r = 250;
+	var i = 0;
+	ringEmitter.forEach(function (particle) {
+	    var angle = i++ / numRingPieces * 2 * Math.PI;
+	    particle.position = new Phaser.Point(GAME_WIDTH / 2 + r * Math.cos(angle), GAME_HEIGHT / 2 + r * Math.sin(angle));
+	    particle.rotation = angle;
+	});
 
 	kamikazeExplosionEmitter.x = this.position.x;
 	kamikazeExplosionEmitter.y = this.position.y;
