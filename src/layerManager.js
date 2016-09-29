@@ -171,6 +171,10 @@ LayerManager.prototype.stopShowingAlert = function() {
 LayerManager.prototype.finishedShowingAlert = function() {
 	console.log("Finished showing alert...kill layer and player!");
 	this.finishShowingAlertEvent = null;
+
+	// hide the last ring
+	this.layers[this.indexLayerFront].setVisible(false);
+
 	this.mustKillPlayer = true;
 };
 

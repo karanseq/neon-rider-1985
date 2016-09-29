@@ -316,6 +316,12 @@ Tempest.prototype.update = function() {
 			this.state = this.TempestState.GAME_PLAYER_DIED;
 			this.onPlayerDeath();
 		}
+
+		// ask the enemy manager if an enemy died at the boundary
+		if (this.enemyManager.enemyDiedAtBoundary > 0) {
+			this.player.takeDamage(CONFIG.PLAYER_HEALTH_LOSS_ENEMY_BOUNDARY * this.enemyManager.enemyDiedAtBoundary);
+			this.enemyManager.enemyDiedAtBoundary = 0;
+		}
 	}
       
      else if (this.state == this.TempestState.GAME_PLAYER_DIED || this.state == this.TempestState.GAME_OVER || this.state == this.TempestState.GAME_LEVEL_COMPLETE) {
@@ -507,7 +513,7 @@ Tempest.prototype.playerCollide = function(){
 
 
 Tempest.prototype.onPlayerCollision = function() {
-	this.player.takeDamage();
+	this.player.takeDamage(CONFIG.PLAYER_HEALTH_LOSS_ENEMY_HIT);
 
 	// check if player died
 	if (this.player.health == 0) {

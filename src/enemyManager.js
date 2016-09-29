@@ -10,6 +10,8 @@ var EnemyManager = function(){
 	this.enemySpawnDelay = 0;
 	this.enemySpawnDelayCounter = 0;
 	this.enemiesToSpawn = null;
+
+	this.enemyDiedAtBoundary = 0;
 };
 
 EnemyManager.prototype.init = function() {
@@ -19,6 +21,8 @@ EnemyManager.prototype.init = function() {
 	this.enemiesToSpawn = new Array();
 	this.formationDelay = 15;
 	this.enemySpawnDelay = 1;
+
+	this.enemyDiedAtBoundary = 0;
 };
 
 EnemyManager.prototype.reset = function() {
@@ -57,6 +61,9 @@ EnemyManager.prototype.updateEnemy = function(){
 	{
 		if(this.enemys[i].radius > RADIUS[1] - 5 || this.enemys[i].layerIndex < 0)
 		{
+			if (this.enemys[i].type != 3) {
+				++this.enemyDiedAtBoundary;
+			}
 			this.deleteEnemy(i);
 		}
 		else

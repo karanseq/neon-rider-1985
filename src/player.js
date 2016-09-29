@@ -240,11 +240,13 @@ Player.prototype.updateSprite = function() {
 		}
 	}
 
-	this.sprite.scale = this.scale;
-	this.sprite.angle = -this.angle;
-	
 	this.position = caculatePosition(this.radius, this.angle);
-	this.sprite.position = this.position;
+	
+	if (this.sprite != null) {
+		this.sprite.scale = this.scale;
+		this.sprite.angle = -this.angle;	
+		this.sprite.position = this.position;
+	}
 
 	if (this.healthSprite != null) {
 		this.healthSprite.scale = this.scale;
@@ -287,16 +289,21 @@ Player.prototype.destroy = function() {
 	}
 }
 
-Player.prototype.takeDamage = function() {
+Player.prototype.takeDamage = function(damage) {
+	if (damage <= 0) {
+		return;
+	}
+
 	if (this.isBlinking) {
 		return;
 	}
 
 	// reduce health
-	this.health -= CONFIG.PLAYER_HEALTH_LOSS_RATE;
-	console.log("Player takes damage...health:" + this.health);
+	this.health -= damage;
+	console.log("Player takes " + damage + " damage...health:" + this.health);
 
 	if (this.health <= 0) {
+		this.health = 0;
 		this.die();
 	}
 	else {
@@ -314,7 +321,7 @@ Player.prototype.gainHealth = function() {
 	if (this.health > CONFIG.PLAYER_MAX_HEALTH) {
 		this.health = CONFIG.PLAYER_MAX_HEALTH;
 	}
-	console.log("Player gains health...health:" + this.health);
+	console.log("Player gains " + CONFIG.PLAYER_HEALTH_GAIN_RATE + " health...health:" + this.health);
 
 	this.refreshHealthSprite();
 };
