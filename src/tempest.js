@@ -104,6 +104,7 @@ Tempest.prototype.init = function() {
 	createTurretDestructionEmitter();
 	createBarricadeDestructionEmitter();
 	createBarricadeHitEmitter();
+	createSparkEmitter();
 
 	this.startGame();
 };
@@ -260,6 +261,7 @@ Tempest.prototype.onLevelComplete = function() {
 	if (this.state == this.TempestState.GAME_LEVEL_COMPLETE) {
 		return;
 	}
+	Game.sound.play('level_transition');
 	this.state = this.TempestState.GAME_LEVEL_COMPLETE;
 	console.log("Level complete...");
 
@@ -314,7 +316,8 @@ Tempest.prototype.update = function() {
 			this.state = this.TempestState.GAME_PLAYER_DIED;
 			this.onPlayerDeath();
 		}
-     }
+	}
+      
      else if (this.state == this.TempestState.GAME_PLAYER_DIED || this.state == this.TempestState.GAME_OVER || this.state == this.TempestState.GAME_LEVEL_COMPLETE) {
      	if (this.restartWaitCounter > 0) {
      		--this.restartWaitCounter;
@@ -322,7 +325,9 @@ Tempest.prototype.update = function() {
 
      	// this.player.updateExplosion();
      }
-     this.player.updateSprite();
+     
+	if(this.state == this.TempestState.GAME_RUNNING || this.state == this.TempestState.GAME_LEVEL_COMPLETE)
+	    this.player.updateSprite();
 };
 
 Tempest.prototype.updateKeys = function() {

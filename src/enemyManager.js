@@ -101,10 +101,17 @@ EnemyManager.prototype.hitEnemy = function(enemyIndex){
 	else if(this.enemys[enemyIndex].type == 3)
 	{
 	    // emit barricade hit particles
-	    barricadeHitEmitter.position = this.enemys[enemyIndex].position;
+	    barricadeHitEmitter.x = this.enemys[enemyIndex].position.x;
+	    barricadeHitEmitter.y = this.enemys[enemyIndex].position.y;
 	    var scaled = this.enemys[enemyIndex].scale.x * barricadeHitEmitter.baseScale;
 	    barricadeHitEmitter.setScale(scaled, 0, scaled, 0, barricadeHitEmitter.lifespan, undefined, false);
 	    barricadeHitEmitter.explode(barricadeHitEmitter.lifespan, 4);
+
+	    setParticleTint(sparkEmitter, 0x39c7ff);
+	    setParticleSpeed(sparkEmitter, 100);
+	    sparkEmitter.x = this.enemys[enemyIndex].position.x;
+	    sparkEmitter.y = this.enemys[enemyIndex].position.y;
+	    sparkEmitter.explode(sparkEmitter.lifespan, 8);
 
 		if(this.enemys[enemyIndex].health == 6)
 			this.enemys[enemyIndex].changeSprite('enemy4-2', 0x39c7ff);
@@ -117,36 +124,74 @@ EnemyManager.prototype.hitEnemy = function(enemyIndex){
 
 EnemyManager.prototype.deleteEnemy = function(enemyIndex){
     var temp = this.enemys[enemyIndex];
+    sparkEmitter.x = temp.position.x;
+    sparkEmitter.y = temp.position.y;
+    setParticleSpeed(sparkEmitter, 100);
 
     // emit particles
     switch (temp.type) {
         case temp.EnemyType.STRAIGHT_FORWARD:
-            kamikazeDestructionEmitter.position = temp.position;
-            kamikazeExplosionEmitter.position = temp.position;
+            kamikazeDestructionEmitter.x = temp.position.x;
+            kamikazeDestructionEmitter.y = temp.position.y;
+            kamikazeExplosionEmitter.x = temp.position.x;
+            kamikazeExplosionEmitter.y = temp.position.y;
             var scaled1 = temp.scale.x * kamikazeDestructionEmitter.baseScale;
             var scaled2 = temp.scale.x * kamikazeExplosionEmitter.baseScale;
             kamikazeDestructionEmitter.setScale(scaled1, 0, scaled1, 0, kamikazeDestructionEmitter.lifespan, undefined, false);
             kamikazeExplosionEmitter.setScale(scaled2, 0, scaled2, 0, kamikazeExplosionEmitter.lifespan, undefined, false);
             kamikazeDestructionEmitter.explode(kamikazeDestructionEmitter.lifespan, 6);
-            kamikazeExplosionEmitter.explode(kamikazeExplosionEmitter.lifespan, 3);
+
+            setParticleTint(sparkEmitter, 0xf26a4d);
+            sparkEmitter.explode(sparkEmitter.lifespan, 8);
+
+            var speed = kamikazeExplosionEmitter.speed;
+
+            // explode center
+            kamikazeExplosionEmitter.minParticleSpeed = new Phaser.Point(-speed, -speed);
+            kamikazeExplosionEmitter.maxParticleSpeed = new Phaser.Point(speed, speed);
+            kamikazeExplosionEmitter.explode(kamikazeExplosionEmitter.lifespan, 2);
+
+            // explode left
+            var l = left(temp.position);
+            kamikazeExplosionEmitter.minParticleSpeed = new Phaser.Point(l.x * speed / 2, l.y * speed / 2);
+            kamikazeExplosionEmitter.maxParticleSpeed = new Phaser.Point(l.x * speed, l.y * speed);
+            kamikazeExplosionEmitter.explode(kamikazeExplosionEmitter.lifespan, 2);
+
+            // explode right
+            var r = right(temp.position);
+            kamikazeExplosionEmitter.minParticleSpeed = new Phaser.Point(r.x * speed / 2, r.y * speed / 2);
+            kamikazeExplosionEmitter.maxParticleSpeed = new Phaser.Point(r.x * speed, r.y * speed);
+            kamikazeExplosionEmitter.explode(kamikazeExplosionEmitter.lifespan, 2);
             break;
+
         case temp.EnemyType.ROTATE_FORWARD:
-            gruntDestructionEmitter.position = temp.position;
+            gruntDestructionEmitter.x = temp.position.x;
+            gruntDestructionEmitter.y = temp.position.y;
             var scaled = temp.scale.x * gruntDestructionEmitter.baseScale;
             gruntDestructionEmitter.setScale(scaled, 0, scaled, 0, gruntDestructionEmitter.lifespan, undefined, false);
             gruntDestructionEmitter.explode(gruntDestructionEmitter.lifespan, 6);
+            setParticleTint(sparkEmitter, 0xfff265);
+            sparkEmitter.explode(sparkEmitter.lifespan, 8);
             break;
+
         case temp.EnemyType.GUN:
-            turretDestructionEmitter.position = temp.position;
+            turretDestructionEmitter.x = temp.position.x;
+            turretDestructionEmitter.y = temp.position.y;
             var scaled = temp.scale.x * turretDestructionEmitter.baseScale;
             turretDestructionEmitter.setScale(scaled, 0, scaled, 0, turretDestructionEmitter.lifespan, undefined, false);
             turretDestructionEmitter.explode(turretDestructionEmitter.lifespan, 6);
+            setParticleTint(sparkEmitter, 0x3df518);
+            sparkEmitter.explode(sparkEmitter.lifespan, 8);
             break;
+
         case temp.EnemyType.BLOCK:
-            barricadeDestructionEmitter.position = temp.position;
+            barricadeDestructionEmitter.x = temp.position.x;
+            barricadeDestructionEmitter.y = temp.position.y;
             var scaled = temp.scale.x * barricadeDestructionEmitter.baseScale;
             barricadeDestructionEmitter.setScale(scaled, 0, scaled, 0, barricadeDestructionEmitter.lifespan, undefined, false);
             barricadeDestructionEmitter.explode(barricadeDestructionEmitter.lifespan, 8);
+            setParticleTint(sparkEmitter, 0x3df518);
+            sparkEmitter.explode(sparkEmitter.lifespan, 8);
             break;
     }
 
