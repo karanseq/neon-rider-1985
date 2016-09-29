@@ -93,6 +93,7 @@ TitleScreen.prototype.updateKeys = function() {
 	if (this.startState == false && this.spaceKey.isDown) {
 		this.startState = true;
 		this.music.stop();
+		Game.sound.play('start_up');
 	}
 };
 
