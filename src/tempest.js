@@ -8,6 +8,11 @@ var Tempest = function() {
 	this.player = null;
 
 	this.hudGroup = null;
+	
+	this.background1 = null;
+	this.background2 = null;
+	this.switchBackgroundEvent = null;
+
 	this.score = 0;
 	this.scoreText = null;
 	this.gameOverText = null;
@@ -61,13 +66,11 @@ Tempest.prototype.create = function() {
 	// fetch the configuration file
 	CONFIG = Game.cache.getJSON("config");
 
-	var background = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'background');
-	background.anchor = { x: 0.5, y: 0.5 };
-	background.scale = { x: 0.66667, y: 0.66667 };
-
 	music1 = Game.add.audio('mainBackgroundMusic1');
 	music2 = Game.add.audio('mainBackgroundMusic2');
     
+	this.initBackground();
+
 	this.init();
 };
 
@@ -113,6 +116,23 @@ Tempest.prototype.initHUD = function() {
 	this.hudGroup.add(this.scoreText);
 };
 
+Tempest.prototype.initBackground = function() {
+	this.background1 = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'background_1');
+	this.background1.anchor = { x: 0.5, y: 0.5 };
+	this.background1.scale = { x: 0.66667, y: 0.66667 };
+	this.background1.visible = true;
+
+	this.background2 = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'background_2');
+	this.background2.anchor = { x: 0.5, y: 0.5 };
+	this.background2.scale = { x: 0.66667, y: 0.66667 };
+	this.background2.visible = false;
+};
+
+Tempest.prototype.switchBackground = function() {
+	this.background1.visible = !this.background1.visible;
+	this.background2.visible = !this.background2.visible;
+};
+
 Tempest.prototype.createKeys = function() {
 	this.leftKey = Game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
 	this.rightKey = Game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
@@ -135,6 +155,8 @@ Tempest.prototype.reset = function() {
 		this.levelCompleteText.destroy();
 		this.levelCompleteText = null;
 	}
+
+	Game.time.events.remove(this.switchBackgroundEvent);
 };
 
 Tempest.prototype.removeKeys = function() {
@@ -215,6 +237,8 @@ Tempest.prototype.startGame = function() {
 	this.state = this.TempestState.GAME_RUNNING;
 
 	this.enemyManager.createFormation(this.layerManager.getEnemiesForBottomLayer());
+
+	this.switchBackgroundEvent = Game.time.events.loop(CONFIG.BACKGROUND_ANIMATION, this.switchBackground, this);
 };
 
 Tempest.prototype.endGame = function() {
