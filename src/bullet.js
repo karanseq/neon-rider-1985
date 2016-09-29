@@ -19,7 +19,7 @@ var Bullet = function(type, radius, angleIndex){
 	this.scale = { x:this.radius / RADIUS[0] * BULLET_ADJUST_SCALE.x, y: this.radius / RADIUS[0] * BULLET_ADJUST_SCALE.y };
 	this.position = caculatePosition(this.radius, this.angle);
 
-	this.trail = Game.add.emitter(0, 0, 16);
+	this.trail = Game.add.emitter(0, 0, 64);
 
 	this.trail.makeParticles(['glow_particle']);
 	this.trail.lifespan = 500;
