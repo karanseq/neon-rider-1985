@@ -402,7 +402,7 @@ Player.prototype.die = function() {
 
 	var numRingPieces = 32;
 	ringEmitter.explode(ringEmitter.lifespan, numRingPieces);
-	var r = 250;
+	var r = 300;
 	var i = 0;
 	ringEmitter.forEach(function (particle) {
 	    var angle = i++ / numRingPieces * 2 * Math.PI;
