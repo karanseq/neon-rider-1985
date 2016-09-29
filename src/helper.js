@@ -61,6 +61,7 @@ var audioSet = [
     { key: 'cover_hit', src: 'audio/cover_hit.ogg' },
     { key: 'player_hurt', src: 'audio/player_hurt.ogg' },
     { key: 'player_heal', src: 'audio/player_heal.ogg' },
+    { key: 'start_up', src: 'audio/start_up.ogg' },
     { key: 'level_transition', src: 'audio/level_transition.ogg' },
     { key: 'mainBackgroundMusic1', src: 'audio/Action1.ogg' },
     { key: 'mainBackgroundMusic2', src: 'audio/Action2.ogg' }
