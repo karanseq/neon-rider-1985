@@ -5,7 +5,7 @@ var TitleScreen = function() {
 	this.menuIndex = this.MenuContent.MENU_START;
 	
 	this.startState = false;
-	this.startDelay = 100;
+	this.startDelay = 150;
 	this.blinkDelay = 32;
 	this.blinkDelay = this.startDelay - this.blinkDelay;
 	this.delayTimer = 0;

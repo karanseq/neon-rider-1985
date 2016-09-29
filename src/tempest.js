@@ -285,60 +285,73 @@ Tempest.prototype.onLevelComplete = function() {
 	Game.add.tween(this.levelCompleteText.scale).to({ x: 1, y: 1 }, 750, Phaser.Easing.Linear.NONE, true, 500);
 };
 
-Tempest.prototype.update = function() {
-	// Game.debug.text(Game.time.fps, GAME_WIDTH/2, GAME_HEIGHT/2, 0xffff22);
+Tempest.prototype.update = function () {
+    // Game.debug.text(Game.time.fps, GAME_WIDTH/2, GAME_HEIGHT/2, 0xffff22);
 
-	if(this.layerAnimation)
-	{
-		this.layerAnimationTimer++;
-		if(this.layerAnimationTimer > PROTECT_LAYER_ANIMATION_TIMER)
-		{
-			this.layerAnimationTimer = 0;
-			this.layerAnimation = false;
-		}
-	}
-	this.updateKeys();
-	LAYER_IS_ANIMATION = this.layerManager.isAnimating;
+    if (this.layerAnimation) {
+        this.layerAnimationTimer++;
+        if (this.layerAnimationTimer > PROTECT_LAYER_ANIMATION_TIMER) {
+            this.layerAnimationTimer = 0;
+            this.layerAnimation = false;
+        }
+    }
+    this.updateKeys();
+    LAYER_IS_ANIMATION = this.layerManager.isAnimating;
 
-	if (this.state == this.TempestState.GAME_RUNNING) {
-		this.player.updateBullets();
-		this.player.updateRotation();
+    if (this.state == this.TempestState.GAME_RUNNING) {
+        this.player.updateBullets();
+        this.player.updateRotation();
 
-		this.enemyManager.update();
-		
-		this.playerBulletCollide();
+        this.enemyManager.update();
 
-		// player cannot collide when blinking
-		if (!this.player.isBlinking) {
-			this.playerCollide();
-		}
+        this.playerBulletCollide();
 
-		// ask the layer manager if the player must be killed
-		if (this.layerManager.mustKillPlayer) {
-			this.layerManager.mustKillPlayer = false;
+        // player cannot collide when blinking
+        if (!this.player.isBlinking) {
+            this.playerCollide();
+        }
 
-			this.player.die();
-			this.state = this.TempestState.GAME_PLAYER_DIED;
-			this.onPlayerDeath();
-		}
+        // ask the layer manager if the player must be killed
+        if (this.layerManager.mustKillPlayer) {
+            this.layerManager.mustKillPlayer = false;
 
-		// ask the enemy manager if an enemy died at the boundary
-		if (this.enemyManager.enemyDiedAtBoundary > 0) {
-			this.player.takeDamage(CONFIG.PLAYER_HEALTH_LOSS_ENEMY_BOUNDARY * this.enemyManager.enemyDiedAtBoundary);
-			this.enemyManager.enemyDiedAtBoundary = 0;
-		}
-	}
-      
-     else if (this.state == this.TempestState.GAME_PLAYER_DIED || this.state == this.TempestState.GAME_OVER || this.state == this.TempestState.GAME_LEVEL_COMPLETE) {
-     	if (this.restartWaitCounter > 0) {
-     		--this.restartWaitCounter;
-     	}
+            // ring shatter effect
+            var numRingPieces = 32;
+            ringEmitter.explode(ringEmitter.lifespan, numRingPieces);
+            var r = 300;
+            var i = 0;
+            ringEmitter.forEach(function (particle) {
+                var angle = i++ / numRingPieces * 2 * Math.PI;
+                particle.position = new Phaser.Point(GAME_WIDTH / 2 + r * Math.cos(angle), GAME_HEIGHT / 2 + r * Math.sin(angle));
+                particle.rotation = angle;
+            });
 
-     	// this.player.updateExplosion();
-     }
-     
-	if(this.state == this.TempestState.GAME_RUNNING || this.state == this.TempestState.GAME_LEVEL_COMPLETE)
-	    this.player.updateSprite();
+            this.player.die();
+            this.state = this.TempestState.GAME_PLAYER_DIED;
+            this.onPlayerDeath();
+        }
+
+        // ask the enemy manager if an enemy died at the boundary
+        if (this.enemyManager.enemyDiedAtBoundary > 0) {
+            this.player.takeDamage(CONFIG.PLAYER_HEALTH_LOSS_ENEMY_BOUNDARY * this.enemyManager.enemyDiedAtBoundary);
+            this.enemyManager.enemyDiedAtBoundary = 0;
+        }
+    }
+
+    else if (this.state == this.TempestState.GAME_PLAYER_DIED || this.state == this.TempestState.GAME_OVER || this.state == this.TempestState.GAME_LEVEL_COMPLETE) {
+        if (this.restartWaitCounter > 0) {
+            --this.restartWaitCounter;
+        }
+
+        // this.player.updateExplosion();
+    }
+    if (this.state == this.TempestState.GAME_LEVEL_COMPLETE) {
+        this.player.updateBullets();
+    }
+
+    if (this.state == this.TempestState.GAME_LEVEL_COMPLETE || this.state == this.TempestState.GAME_RUNNING) {
+        this.player.updateSprite();
+    }
 };
 
 Tempest.prototype.updateKeys = function() {

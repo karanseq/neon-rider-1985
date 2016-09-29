@@ -103,7 +103,7 @@ EnemyManager.prototype.hitEnemy = function(enemyIndex){
 	var enemyScore = 0;
 
 	if(this.enemys[enemyIndex].health == 0) {
-		
+		Game.sound.play('enemy_death');
 		enemyScore = this.enemys[enemyIndex].score;
 		this.deleteEnemy(enemyIndex);
 	}

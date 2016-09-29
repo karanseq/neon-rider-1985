@@ -333,7 +333,7 @@ Player.prototype.goThroughLevel = function() {
 		return;
 	}
 	this.isGoingThroughLevel = true;
-	warpEmitter.start(false, warpEmitter.lifespan, warpEmitter.frequency, 256, false);
+	warpEmitter.start(false, warpEmitter.lifespan, warpEmitter.frequency, 84, false);
 };
 
 Player.prototype.refreshHealthSprite = function() {
@@ -414,16 +414,6 @@ Player.prototype.die = function() {
 	setParticleTint(sparkEmitter, '0x00ff00');
 	setParticleSpeed(sparkEmitter, 1000);
 	sparkEmitter.explode(sparkEmitter.lifespan, 128);
-
-	var numRingPieces = 32;
-	ringEmitter.explode(ringEmitter.lifespan, numRingPieces);
-	var r = 300;
-	var i = 0;
-	ringEmitter.forEach(function (particle) {
-	    var angle = i++ / numRingPieces * 2 * Math.PI;
-	    particle.position = new Phaser.Point(GAME_WIDTH / 2 + r * Math.cos(angle), GAME_HEIGHT / 2 + r * Math.sin(angle));
-	    particle.rotation = angle;
-	});
 
 	kamikazeExplosionEmitter.x = this.position.x;
 	kamikazeExplosionEmitter.y = this.position.y;

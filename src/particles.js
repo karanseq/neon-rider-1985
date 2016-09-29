@@ -230,7 +230,7 @@ function createWarpEmitter() {
     warpEmitter = Game.add.emitter(0, 0, 256);
     warpEmitter.makeParticles(['glow_particle']);
     warpEmitter.lifespan = 1500;
-    warpEmitter.frequency = 10;
+    warpEmitter.frequency = 4;
     warpEmitter.autoScale = true;
     warpEmitter.autoAlpha = true;
     warpEmitter.baseScale = 0.6;

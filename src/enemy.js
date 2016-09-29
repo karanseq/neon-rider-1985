@@ -91,6 +91,7 @@ Enemy.prototype.createBullet = function(){
 	var bullet = new Bullet(1, this.radius, this.angleIndex);
 	bullet.sprite.tint = '0xff0000';
 	setParticleTint(bullet.trail, '0xff0000', true);
+	Game.sound.play('enemy_fire');
 	bullet.updateSprite();
 	return bullet;
 }
