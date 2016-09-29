@@ -36,7 +36,7 @@ var Player = function() {
 	this.rotateTimer = 0;
 
 	this.health = CONFIG.PLAYER_MAX_HEALTH;
-	this.healthBars = CONFIG.PLAYER_HEALTH_BARS;
+	this.currentHealthBar = CONFIG.PLAYER_HEALTH_BARS;
 	this.isBlinking = false;
 
 	this.numMoves = 3;
@@ -311,7 +311,6 @@ Player.prototype.takeDamage = function(damage) {
 	}
 	else {
 		this.startBlinking();
-		Game.sound.play('player_hurt');
 		this.refreshHealthSprite();
 	}	
 };
@@ -342,14 +341,30 @@ Player.prototype.refreshHealthSprite = function() {
 		return;
 	}
 
+	// calculate new health bar
+	var healthBar = Math.ceil(this.health / CONFIG.PLAYER_HEALTH_BARS);
+	// only refresh health sprite if the bar has changed
+	if (this.currentHealthBar == healthBar) {
+		return;
+	}
+
+	if (healthBar < this.currentHealthBar) {
+		// gained health
+		Game.sound.play('player_heal');
+	}
+	else {
+		// lost health
+		Game.sound.play('player_hurt');
+	}
+	this.currentHealthBar = healthBar;
+
 	this.healthSprite.destroy();
 
 	var spriteName = '';
-	var healthBar = Math.ceil(this.health / this.healthBars);
-	if (healthBar < 2) {
+	if (this.currentHealthBar < 2) {
 		spriteName = 'player_health_low';
 	}
-	else if (healthBar < 3) {
+	else if (this.currentHealthBar < 3) {
 		spriteName = 'player_health_med';
 	}
 	else {
