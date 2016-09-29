@@ -49,6 +49,7 @@ var audioSet = [
     { key: 'player_dash', src: 'audio/player_dash.ogg' },
     { key: 'player_shoot', src: 'audio/player_shoot.ogg' },
     { key: 'player_move', src: 'audio/player_move.ogg' },
+    { key: 'ring_blink', src: 'audio/ring_blink.ogg' },
     { key: 'mainBackgroundMusic1', src: 'audio/Action1.ogg' },
     { key: 'mainBackgroundMusic2', src: 'audio/Action2.ogg' }
 ];
