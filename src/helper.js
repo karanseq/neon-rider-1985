@@ -63,6 +63,7 @@ var audioSet = [
     { key: 'player_heal', src: 'audio/player_heal.ogg' },
     { key: 'start_up', src: 'audio/start_up.ogg' },
     { key: 'enemy_death', src: 'audio/enemy_death.ogg' },
+    { key: 'enemy_fire', src: 'audio/enemy_fire.ogg' },
     { key: 'level_transition', src: 'audio/level_transition.ogg' },
     { key: 'mainBackgroundMusic1', src: 'audio/Action1.ogg' },
     { key: 'mainBackgroundMusic2', src: 'audio/Action2.ogg' }
