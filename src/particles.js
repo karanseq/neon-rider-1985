@@ -246,17 +246,17 @@ var ringEmitter;
 function createRingEmitter() {
     ringEmitter = Game.add.emitter(GAME_WIDTH / 2, GAME_HEIGHT / 2, 512);
     ringEmitter.makeParticles(['glow_particle', 'ring_particle', 'glow_particle', 'glow_particle', 'glow_particle']);
-    ringEmitter.lifespan = 20000;
+    ringEmitter.lifespan = 30000;
     ringEmitter.frequency = 0;
     ringEmitter.gravity = 0;
     ringEmitter.autoScale = false;
     ringEmitter.autoAlpha = true;
-    ringEmitter.baseScale = 0.5;
-    ringEmitter.speed = 75;
+    ringEmitter.baseScale = 0.8;
+    ringEmitter.speed = 125;
     ringEmitter.minParticleSpeed = new Phaser.Point(-ringEmitter.speed, -ringEmitter.speed);
     ringEmitter.maxParticleSpeed = new Phaser.Point(ringEmitter.speed, ringEmitter.speed);
     ringEmitter.setAlpha(1, 0, ringEmitter.lifespan, undefined, false);
-    //ringEmitter.setScale(ringEmitter.baseScale, 0, ringEmitter.baseScale, 0, ringEmitter.lifespan, undefined, false);
+    ringEmitter.setScale(ringEmitter.baseScale, ringEmitter.baseScale, ringEmitter.baseScale, ringEmitter.baseScale, ringEmitter.lifespan, undefined, false);
 }
 
 function setParticleTint(particleEmitter, colorHexCode, forceAll) {
