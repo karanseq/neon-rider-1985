@@ -1,6 +1,6 @@
 var INIT_ANGLE_INDEX = 4;
-var EXPLOSION_INTERVAL = 15;
-var EXPLOSION_REVERSE_COUNTER = 2;
+//var EXPLOSION_INTERVAL = 15;
+//var EXPLOSION_REVERSE_COUNTER = 2;
 
 var PLAYER_ROTATE_LASTING = 10;
 
@@ -26,10 +26,10 @@ var Player = function() {
 	this.fireRateCounter = 0;
 	this.muzzleFlashSpread = 120;
 
-	this.isExplosionLarge = true;
-	this.explosionTimer = 0;
-	this.explosionReverseCounter = 0;
-	this.explosionScaleChange = 0.1;
+	//this.isExplosionLarge = true;
+	//this.explosionTimer = 0;
+	//this.explosionReverseCounter = 0;
+	//this.explosionScaleChange = 0.1;
 
 	this.isRotate = false;
 	this.previousAngle = 0;
@@ -81,6 +81,7 @@ Player.prototype.init = function() {
 	this.fireRateCounter = 0;
 
     // create emitters
+	createPlayerDestructionEmitter();
 	createPlayerBoostEmitter();
 	createPlayerShootEmitter();
 	this.updateVectors();
@@ -115,7 +116,8 @@ Player.prototype.moveForward = function() {
 	this.moveEvent = Game.time.events.add(CONFIG.PLAYER_MOVE_COOLDOWN, this.finishMove, this);
 
     // emit dash particles
-	playerBoostEmitter.position = this.position;
+	playerBoostEmitter.x = this.position.x;
+	playerBoostEmitter.y = this.position.y;
 	playerBoostEmitter.explode(playerBoostEmitter.lifespan, 4);
 
 	Game.sound.play('player_dash');
@@ -176,6 +178,7 @@ Player.prototype.createBullet = function() {
 	var bullet = new Bullet(0, this.radius, this.angleIndex);
 	bullet.updateSprite();
 	bullet.sprite.tint = '0x00ff00';
+	setParticleTint(bullet.trail, '0x00ff00', true);
 	this.bullets.push(bullet);
 }
 
@@ -270,7 +273,7 @@ Player.prototype.isVisible = function() {
 };
 
 Player.prototype.destroy = function() {
-	this.sprite.destroy();
+	if (this.sprite != null) this.sprite.destroy();
 	this.sprite = null;
 
 	if (this.healthSprite != null) {
@@ -371,74 +374,87 @@ Player.prototype.die = function() {
 	this.destroy();
 
 	// add explosion
-	this.sprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'playerExplosion');
-	this.sprite.anchor = { x: 0.5, y: 0.5 };
-	this.sprite.visible = true;
-	this.sprite.scale = PLAYER_EXPLOSION_SCALE;
-	this.scale = PLAYER_EXPLOSION_SCALE;
+	//this.sprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'playerExplosion');
+	//this.sprite.anchor = { x: 0.5, y: 0.5 };
+	//this.sprite.visible = true;
+	//this.sprite.scale = PLAYER_EXPLOSION_SCALE;
+    //this.scale = PLAYER_EXPLOSION_SCALE;
+
+	playerDestructionEmitter.position = this.position;
+	playerDestructionEmitter.explode(playerDestructionEmitter.lifespan, 5);
+
+	sparkEmitter.x = this.position.x;
+	sparkEmitter.y = this.position.y;
+	setParticleTint(sparkEmitter, '0xFFFFFF');
+	setParticleSpeed(sparkEmitter, 200);
+	sparkEmitter.explode(sparkEmitter.lifespan, 32);
+
+	kamikazeExplosionEmitter.x = this.position.x;
+	kamikazeExplosionEmitter.y = this.position.y;
+	kamikazeExplosionEmitter.explode(kamikazeExplosionEmitter.lifespan, 2);
 
 	Game.sound.play('player_death');
 };
 
 // player explosion animation
-Player.prototype.updateExplosion = function(){
-	this.explosionTimer++;
-	// if(this.isExplosionLarge)
-	// {
-	// 	if(this.explosionTimer >= EXPLOSION_INTERVAL)
-	// 	{
-	// 		this.explosionReverseCounter++;
-	// 		this.scale = {x: this.scale.x + this.explosionScaleChange, y: this.scale.y + this.explosionScaleChange};
-	// 		this.explosionTimer = 0;
-	// 	}
-	// 	if(this.explosionReverseCounter >= EXPLOSION_REVERSE_COUNTER)
-	// 	{
-	// 		this.isExplosionLarge = false;
-	// 		this.explosionReverseCounter = 0;
-	// 	}
-	// }
-	// else
-	// {
-	// 	if(this.explosionTimer >= EXPLOSION_INTERVAL)
-	// 	{
-	// 		this.explosionReverseCounter++;
-	// 		this.scale = {x: this.scale.x - this.explosionScaleChange, y: this.scale.y - this.explosionScaleChange};
-	// 		this.explosionTimer = 0;
-	// 	}
-	// 	if(this.explosionReverseCounter >= EXPLOSION_REVERSE_COUNTER)
-	// 	{
-	// 		this.isExplosionLarge = true;
-	// 		this.explosionReverseCounter = 0;
-	// 	}
-	// }
+//Player.prototype.updateExplosion = function(){
+//	this.explosionTimer++;
+//	// if(this.isExplosionLarge)
+//	// {
+//	// 	if(this.explosionTimer >= EXPLOSION_INTERVAL)
+//	// 	{
+//	// 		this.explosionReverseCounter++;
+//	// 		this.scale = {x: this.scale.x + this.explosionScaleChange, y: this.scale.y + this.explosionScaleChange};
+//	// 		this.explosionTimer = 0;
+//	// 	}
+//	// 	if(this.explosionReverseCounter >= EXPLOSION_REVERSE_COUNTER)
+//	// 	{
+//	// 		this.isExplosionLarge = false;
+//	// 		this.explosionReverseCounter = 0;
+//	// 	}
+//	// }
+//	// else
+//	// {
+//	// 	if(this.explosionTimer >= EXPLOSION_INTERVAL)
+//	// 	{
+//	// 		this.explosionReverseCounter++;
+//	// 		this.scale = {x: this.scale.x - this.explosionScaleChange, y: this.scale.y - this.explosionScaleChange};
+//	// 		this.explosionTimer = 0;
+//	// 	}
+//	// 	if(this.explosionReverseCounter >= EXPLOSION_REVERSE_COUNTER)
+//	// 	{
+//	// 		this.isExplosionLarge = true;
+//	// 		this.explosionReverseCounter = 0;
+//	// 	}
+//	// }
 
 	
-	if(this.isExplosionLarge)
-	{
-		if(this.explosionTimer >= EXPLOSION_INTERVAL)
-		{
-			this.explosionReverseCounter++;
-			this.scale = {x: this.scale.x + this.explosionScaleChange, y: this.scale.y + this.explosionScaleChange};
-			this.explosionTimer = 0;
-		}
-		if(this.explosionReverseCounter >= EXPLOSION_REVERSE_COUNTER)
-		{
-			this.isExplosionLarge = false;
-			this.explosionReverseCounter = 0;
-		}
-	}
-	else
-	{
-		if(this.explosionTimer >= EXPLOSION_INTERVAL / 2)
-		{
+//	if(this.isExplosionLarge)
+//	{
+//		if(this.explosionTimer >= EXPLOSION_INTERVAL)
+//		{
+//			this.explosionReverseCounter++;
+//			this.scale = {x: this.scale.x + this.explosionScaleChange, y: this.scale.y + this.explosionScaleChange};
+//			this.explosionTimer = 0;
+//		}
+//		if(this.explosionReverseCounter >= EXPLOSION_REVERSE_COUNTER)
+//		{
+//			this.isExplosionLarge = false;
+//			this.explosionReverseCounter = 0;
+//		}
+//	}
+//	else
+//	{
+//		if(this.explosionTimer >= EXPLOSION_INTERVAL / 2)
+//		{
 			
-			this.scale = PLAYER_EXPLOSION_SCALE;
-			this.explosionTimer = 0;
+//			this.scale = PLAYER_EXPLOSION_SCALE;
+//			this.explosionTimer = 0;
 		
-			this.isExplosionLarge = true;
-		}
-	}
-}
+//			this.isExplosionLarge = true;
+//		}
+//	}
+//}
 
 Player.prototype.startBlinking = function() {
 	if (this.isBlinking) {
