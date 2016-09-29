@@ -57,6 +57,8 @@ var audioSet = [
     { key: 'player_shoot', src: 'audio/player_shoot.ogg' },
     { key: 'player_move', src: 'audio/player_move.ogg' },
     { key: 'ring_blink', src: 'audio/ring_blink.ogg' },
+    { key: 'cover_hit', src: 'audio/cover_hit.ogg' },
+    { key: 'player_hurt', src: 'audio/player_hurt.ogg' },
     { key: 'level_transition', src: 'audio/level_transition.ogg' },
     { key: 'mainBackgroundMusic1', src: 'audio/Action1.ogg' },
     { key: 'mainBackgroundMusic2', src: 'audio/Action2.ogg' }

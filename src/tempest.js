@@ -468,6 +468,7 @@ Tempest.prototype.playerBulletCollide = function(){
 			{
 				this.enemyManager.deleteBullet(i);
 				this.enemyManager.hitEnemy(j);
+				
 				break;
 			}
 			

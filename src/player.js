@@ -301,7 +301,7 @@ Player.prototype.takeDamage = function() {
 	}
 	else {
 		this.startBlinking();
-
+		Game.sound.play('player_hurt');
 		this.refreshHealthSprite();
 	}	
 };
