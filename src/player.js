@@ -282,8 +282,6 @@ Player.prototype.destroy = function() {
 		this.dashSprite.destroy();
 		this.dashSprite = null;
 	}
-
-	Game.sound.play('player_death');
 }
 
 Player.prototype.takeDamage = function() {
@@ -378,6 +376,8 @@ Player.prototype.die = function() {
 	this.sprite.visible = true;
 	this.sprite.scale = PLAYER_EXPLOSION_SCALE;
 	this.scale = PLAYER_EXPLOSION_SCALE;
+
+	Game.sound.play('player_death');
 };
 
 // player explosion animation

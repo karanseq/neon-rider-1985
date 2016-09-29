@@ -108,8 +108,7 @@ Tempest.prototype.init = function() {
 Tempest.prototype.initHUD = function() {
 	this.hudGroup = Game.add.group();
 
-	this.score = 0;
-	this.scoreText = Game.add.bitmapText(GAME_WIDTH * 0.025, GAME_HEIGHT * 0.05, 'carrier_command', 'Score:0', 24);
+	this.scoreText = Game.add.bitmapText(GAME_WIDTH * 0.025, GAME_HEIGHT * 0.05, 'carrier_command', ('Score:' + this.score), 24);
 	this.scoreText.anchor.set(0);
 	this.hudGroup.add(this.scoreText);
 };
@@ -192,6 +191,7 @@ Tempest.prototype.playAgain = function() {
 		}
 		else if (this.state == this.TempestState.GAME_OVER) {
 			this.levelNumber = 1;
+			this.score = 0;
 		}
 
 		// clear all layers
@@ -439,7 +439,6 @@ Tempest.prototype.playerBulletCollide = function(){
 			{
 				this.enemyManager.deleteBullet(i);
 				this.enemyManager.hitEnemy(j);
-				this.updateScore(150);
 				break;
 			}
 			
