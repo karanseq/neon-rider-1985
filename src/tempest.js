@@ -261,6 +261,7 @@ Tempest.prototype.onLevelComplete = function() {
 	if (this.state == this.TempestState.GAME_LEVEL_COMPLETE) {
 		return;
 	}
+	Game.sound.play('level_transition');
 	this.state = this.TempestState.GAME_LEVEL_COMPLETE;
 	console.log("Level complete...");
 
