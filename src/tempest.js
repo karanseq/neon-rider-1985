@@ -84,11 +84,11 @@ Tempest.prototype.init = function() {
 
 	music1.stop();
 	music2.stop();
-	if ((this.levelNumber / 2) == 0) {
-		music1.play('', 0, 1, true);
+	if ((this.levelNumber % 2) == 0) {
+		music2.play('', 0, 1, true);
 	}
 	else {
-		music2.play('', 0, 1, true);
+		music1.play('', 0, 1, true);
 	}
 
 	this.player = new Player();

@@ -432,70 +432,12 @@ Player.prototype.die = function() {
 	Game.sound.play('player_death');
 };
 
-// player explosion animation
-//Player.prototype.updateExplosion = function(){
-//	this.explosionTimer++;
-//	// if(this.isExplosionLarge)
-//	// {
-//	// 	if(this.explosionTimer >= EXPLOSION_INTERVAL)
-//	// 	{
-//	// 		this.explosionReverseCounter++;
-//	// 		this.scale = {x: this.scale.x + this.explosionScaleChange, y: this.scale.y + this.explosionScaleChange};
-//	// 		this.explosionTimer = 0;
-//	// 	}
-//	// 	if(this.explosionReverseCounter >= EXPLOSION_REVERSE_COUNTER)
-//	// 	{
-//	// 		this.isExplosionLarge = false;
-//	// 		this.explosionReverseCounter = 0;
-//	// 	}
-//	// }
-//	// else
-//	// {
-//	// 	if(this.explosionTimer >= EXPLOSION_INTERVAL)
-//	// 	{
-//	// 		this.explosionReverseCounter++;
-//	// 		this.scale = {x: this.scale.x - this.explosionScaleChange, y: this.scale.y - this.explosionScaleChange};
-//	// 		this.explosionTimer = 0;
-//	// 	}
-//	// 	if(this.explosionReverseCounter >= EXPLOSION_REVERSE_COUNTER)
-//	// 	{
-//	// 		this.isExplosionLarge = true;
-//	// 		this.explosionReverseCounter = 0;
-//	// 	}
-//	// }
-
-	
-//	if(this.isExplosionLarge)
-//	{
-//		if(this.explosionTimer >= EXPLOSION_INTERVAL)
-//		{
-//			this.explosionReverseCounter++;
-//			this.scale = {x: this.scale.x + this.explosionScaleChange, y: this.scale.y + this.explosionScaleChange};
-//			this.explosionTimer = 0;
-//		}
-//		if(this.explosionReverseCounter >= EXPLOSION_REVERSE_COUNTER)
-//		{
-//			this.isExplosionLarge = false;
-//			this.explosionReverseCounter = 0;
-//		}
-//	}
-//	else
-//	{
-//		if(this.explosionTimer >= EXPLOSION_INTERVAL / 2)
-//		{
-			
-//			this.scale = PLAYER_EXPLOSION_SCALE;
-//			this.explosionTimer = 0;
-		
-//			this.isExplosionLarge = true;
-//		}
-//	}
-//}
-
 Player.prototype.startBlinking = function() {
 	if (this.isBlinking) {
 		return;
 	}
+	// console.log("Player started blinking...");
+
 	this.isBlinking = true;
 
 	var duration = 50;
@@ -508,6 +450,8 @@ Player.prototype.startBlinking = function() {
 };
 
 Player.prototype.finishBlinking = function() {
+	// console.log("Player finished blinking...");
+	
 	this.isBlinking = false;
 	this.sprite.alpha = 1;
 	if (this.healthSprite != null) {
