@@ -210,7 +210,8 @@ Tempest.prototype.playAgain = function() {
 	else {
 		if (this.state == this.TempestState.GAME_LEVEL_COMPLETE) {
 			// if the player finishes the last level, start from the beginning
-			this.levelNumber = (this.levelNumber + 1) > CONFIG.NUM_LEVELS ? 1 : this.levelNumber + 1;
+		    this.levelNumber = (this.levelNumber + 1) > CONFIG.NUM_LEVELS ? 1 : this.levelNumber + 1;
+		    warpEmitter.kill();
 		}
 		else if (this.state == this.TempestState.GAME_OVER) {
 			this.levelNumber = 1;

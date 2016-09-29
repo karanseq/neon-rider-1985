@@ -192,7 +192,7 @@ function createPlayerDestructionEmitter() {
     playerDestructionEmitter.autoScale = true;
     playerDestructionEmitter.autoAlpha = true;
     playerDestructionEmitter.baseScale = 0.35;
-    playerDestructionEmitter.baseSpeed = 45;
+    playerDestructionEmitter.baseSpeed = 60;
     playerDestructionEmitter.height = 192;
     playerDestructionEmitter.width = 192;
     playerDestructionEmitter.minParticleSpeed = new Phaser.Point(-playerDestructionEmitter.baseSpeed, -playerDestructionEmitter.baseSpeed);
@@ -222,6 +222,23 @@ function createSparkEmitter() {
     sparkEmitter.maxParticleSpeed = new Phaser.Point(sparkEmitter.speed, sparkEmitter.speed);
     sparkEmitter.setAlpha(1, 0, sparkEmitter.lifespan, undefined, false);
     sparkEmitter.setScale(sparkEmitter.baseScale, 0, sparkEmitter.baseScale, 0, sparkEmitter.lifespan, undefined, false);
+}
+
+var warpEmitter;
+
+function createWarpEmitter() {
+    warpEmitter = Game.add.emitter(0, 0, 256);
+    warpEmitter.makeParticles(['glow_particles']);
+    warpEmitter.lifespan = 1000;
+    warpEmitter.frequency = 10;
+    warpEmitter.autoScale = true;
+    warpEmitter.autoAlpha = true;
+    warpEmitter.baseScale = 0.2;
+    warpEmitter.speed = 1;
+    warpEmitter.minParticleSpeed = new Phaser.Point(-warpEmitter.speed, -warpEmitter.speed);
+    warpEmitter.maxParticleSpeed = new Phaser.Point(warpEmitter.speed, warpEmitter.speed);
+    warpEmitter.setAlpha(1, 0, warpEmitter.lifespan, undefined, false);
+    warpEmitter.setScale(warpEmitter.baseScale, 0, warpEmitter.baseScale, 0, warpEmitter.lifespan, undefined, false);
 }
 
 function setParticleTint(particleEmitter, colorHexCode, forceAll) {

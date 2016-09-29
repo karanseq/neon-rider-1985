@@ -84,6 +84,7 @@ Player.prototype.init = function() {
 	createPlayerDestructionEmitter();
 	createPlayerBoostEmitter();
 	createPlayerShootEmitter();
+	createWarpEmitter();
 	this.updateVectors();
 };
 
@@ -324,6 +325,7 @@ Player.prototype.goThroughLevel = function() {
 		return;
 	}
 	this.isGoingThroughLevel = true;
+	warpEmitter.start(false, warpEmitter.lifespan, warpEmitter.frequency, 0, false);
 };
 
 Player.prototype.refreshHealthSprite = function() {
@@ -385,9 +387,9 @@ Player.prototype.die = function() {
 
 	sparkEmitter.x = this.position.x;
 	sparkEmitter.y = this.position.y;
-	setParticleTint(sparkEmitter, '0xFFFFFF');
-	setParticleSpeed(sparkEmitter, 200);
-	sparkEmitter.explode(sparkEmitter.lifespan, 32);
+	setParticleTint(sparkEmitter, '0x00ff00');
+	setParticleSpeed(sparkEmitter, 1000);
+	sparkEmitter.explode(sparkEmitter.lifespan, 128);
 
 	kamikazeExplosionEmitter.x = this.position.x;
 	kamikazeExplosionEmitter.y = this.position.y;

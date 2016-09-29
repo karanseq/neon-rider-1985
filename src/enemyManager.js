@@ -144,24 +144,40 @@ EnemyManager.prototype.deleteEnemy = function(enemyIndex){
             setParticleTint(sparkEmitter, 0xf26a4d);
             sparkEmitter.explode(sparkEmitter.lifespan, 8);
 
-            var speed = kamikazeExplosionEmitter.speed;
-
             // explode center
             kamikazeExplosionEmitter.minParticleSpeed = new Phaser.Point(-speed, -speed);
+            kamikazeExplosionEmitter.x = temp.position.x;
+            kamikazeExplosionEmitter.y = temp.position.y;
             kamikazeExplosionEmitter.maxParticleSpeed = new Phaser.Point(speed, speed);
-            kamikazeExplosionEmitter.explode(kamikazeExplosionEmitter.lifespan, 2);
+            kamikazeExplosionEmitter.explode(kamikazeExplosionEmitter.lifespan, 1);
+            
+            var speed = kamikazeExplosionEmitter.speed;
 
             // explode left
-            var l = left(temp.position);
-            kamikazeExplosionEmitter.minParticleSpeed = new Phaser.Point(l.x * speed / 2, l.y * speed / 2);
-            kamikazeExplosionEmitter.maxParticleSpeed = new Phaser.Point(l.x * speed, l.y * speed);
-            kamikazeExplosionEmitter.explode(kamikazeExplosionEmitter.lifespan, 2);
+            var l = left(temp.angle);
+            var l_index = temp.angleIndex - 1;
+            if (l_index < 0) l_index = 7;
+            //var l = caculatePosition(temp.radius, ANGLES[l_index]);
+           // kamikazeExplosionEmitter.x = l.x;
+            //kamikazeExplosionEmitter.y = l.y;
+            var v1 = new Phaser.Point(l.x * speed / 2, l.y * speed / 2);
+            var v2 = new Phaser.Point(l.x * speed, l.y * speed);
+            kamikazeExplosionEmitter.minParticleSpeed = v1 < v2 ? v1 : v2;
+            kamikazeExplosionEmitter.maxParticleSpeed = v1 < v2 ? v2 : v1;
+            console.log(kamikazeExplosionEmitter.minParticleSpeed);
+            console.log(kamikazeExplosionEmitter.maxParticleSpeed);
+            kamikazeExplosionEmitter.explode(kamikazeExplosionEmitter.lifespan, 1);
 
             // explode right
-            var r = right(temp.position);
+            var r = right(temp.angle);
+            var r_index = temp.angleIndex + 1;
+            if (r_index > 7) r_index = 0;
+            //var r = caculatePosition(temp.radius, ANGLES[r_index]);
+            //kamikazeExplosionEmitter.x = r.x;
+            //kamikazeExplosionEmitter.y = r.y;
             kamikazeExplosionEmitter.minParticleSpeed = new Phaser.Point(r.x * speed / 2, r.y * speed / 2);
             kamikazeExplosionEmitter.maxParticleSpeed = new Phaser.Point(r.x * speed, r.y * speed);
-            kamikazeExplosionEmitter.explode(kamikazeExplosionEmitter.lifespan, 2);
+            kamikazeExplosionEmitter.explode(kamikazeExplosionEmitter.lifespan, 1);
             break;
 
         case temp.EnemyType.ROTATE_FORWARD:
