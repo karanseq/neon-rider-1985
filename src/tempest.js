@@ -218,7 +218,7 @@ Tempest.prototype.playAgain = function() {
 		    warpEmitter.kill();
 		}
 		else if (this.state == this.TempestState.GAME_OVER) {
-			this.levelNumber = 1;
+			// this.levelNumber = 1;
 			this.score = 0;
 		}
 
