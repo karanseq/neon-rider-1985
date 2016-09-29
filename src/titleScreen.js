@@ -40,11 +40,11 @@ TitleScreen.prototype.create = function() {
 	this.background.anchor = { x: 0.5, y: 0.5 };
 	this.background.scale = { x: 0.65, y: 0.65 };
 
-	this.background = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT * 0.35, 'title');
-	this.background.anchor = { x: 0.5, y: 0.5 };
-	this.background.scale = { x: 0.4, y: 0.4 };
+	this.title = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT * 0.4, 'title');
+	this.title.anchor = { x: 0.5, y: 0.5 };
+	this.title.scale = { x: 0.55, y: 0.55 };
 
-	this.startMenu = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT * 0.85, 'startMenu');;
+	this.startMenu = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT * 0.87, 'startMenu');;
 	this.startMenu.anchor = { x: 0.5, y: 0.5 };
 	this.startMenu.scale = { x: 1, y: 1 };
 	
@@ -98,7 +98,7 @@ TitleScreen.prototype.updateKeys = function() {
 
 TitleScreen.prototype.clearScreen = function() {
 	this.background.destroy();
-	this.background.destroy();;
+	this.title.destroy();;
 	this.startMenu.destroy();
     this.music.destroy();
 

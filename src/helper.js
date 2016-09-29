@@ -44,8 +44,10 @@ var imageSet = [ { key: 'layer', src: 'images/Ring.png' },
 { key: 'barricade_particle', src: 'images/barricade_particle.png' },
 { key: 'enemybullet', src:'images/EnemyBullet01.png'},
 { key: 'playerExplosion', src:'images/PlayerExplosion.png'},
-{ key: 'background', src: 'images/Tempest_Background.png' },
-{ key: 'level_finish', src: 'images/level_finish.png' }];
+{ key: 'background_1', src: 'images/Background1.png' },
+{ key: 'background_2', src: 'images/Background2.png' },
+{ key: 'level_finish', src: 'images/level_finish.png' },
+{ key: 'game_over', src: 'images/game_over.png' }];
 
 var fontSet = [{ key: 'carrier_command', img: 'fonts/carrier_command.png', data: 'fonts/carrier_command.xml' }];
 

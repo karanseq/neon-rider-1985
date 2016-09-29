@@ -8,6 +8,11 @@ var Tempest = function() {
 	this.player = null;
 
 	this.hudGroup = null;
+	
+	this.background1 = null;
+	this.background2 = null;
+	this.switchBackgroundEvent = null;
+
 	this.score = 0;
 	this.scoreText = null;
 	this.gameOverText = null;
@@ -15,7 +20,7 @@ var Tempest = function() {
 
 	this.numParticles = 0;
 
-	this.restartWait = 75;
+	this.restartWait = 150;
 	this.restartWaitCounter = 0;
 
 	this.layerAnimation = false;
@@ -61,13 +66,11 @@ Tempest.prototype.create = function() {
 	// fetch the configuration file
 	CONFIG = Game.cache.getJSON("config");
 
-	var background = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'background');
-	background.anchor = { x: 0.5, y: 0.5 };
-	background.scale = { x: 0.66667, y: 0.66667 };
-
 	music1 = Game.add.audio('mainBackgroundMusic1');
 	music2 = Game.add.audio('mainBackgroundMusic2');
     
+	this.initBackground();
+
 	this.init();
 };
 
@@ -109,10 +112,26 @@ Tempest.prototype.init = function() {
 Tempest.prototype.initHUD = function() {
 	this.hudGroup = Game.add.group();
 
-	this.score = 0;
-	this.scoreText = Game.add.bitmapText(GAME_WIDTH * 0.025, GAME_HEIGHT * 0.05, 'carrier_command', 'Score:0', 24);
+	this.scoreText = Game.add.bitmapText(GAME_WIDTH * 0.025, GAME_HEIGHT * 0.05, 'carrier_command', ('Score:' + this.score), 24);
 	this.scoreText.anchor.set(0);
 	this.hudGroup.add(this.scoreText);
+};
+
+Tempest.prototype.initBackground = function() {
+	this.background1 = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'background_1');
+	this.background1.anchor = { x: 0.5, y: 0.5 };
+	this.background1.scale = { x: 0.66667, y: 0.66667 };
+	this.background1.visible = true;
+
+	this.background2 = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'background_2');
+	this.background2.anchor = { x: 0.5, y: 0.5 };
+	this.background2.scale = { x: 0.66667, y: 0.66667 };
+	this.background2.visible = false;
+};
+
+Tempest.prototype.switchBackground = function() {
+	this.background1.visible = !this.background1.visible;
+	this.background2.visible = !this.background2.visible;
 };
 
 Tempest.prototype.createKeys = function() {
@@ -137,6 +156,8 @@ Tempest.prototype.reset = function() {
 		this.levelCompleteText.destroy();
 		this.levelCompleteText = null;
 	}
+
+	Game.time.events.remove(this.switchBackgroundEvent);
 };
 
 Tempest.prototype.removeKeys = function() {
@@ -193,6 +214,7 @@ Tempest.prototype.playAgain = function() {
 		}
 		else if (this.state == this.TempestState.GAME_OVER) {
 			this.levelNumber = 1;
+			this.score = 0;
 		}
 
 		// clear all layers
@@ -216,6 +238,8 @@ Tempest.prototype.startGame = function() {
 	this.state = this.TempestState.GAME_RUNNING;
 
 	this.enemyManager.createFormation(this.layerManager.getEnemiesForBottomLayer());
+
+	this.switchBackgroundEvent = Game.time.events.loop(CONFIG.BACKGROUND_ANIMATION, this.switchBackground, this);
 };
 
 Tempest.prototype.endGame = function() {
@@ -225,13 +249,12 @@ Tempest.prototype.endGame = function() {
 	this.state = this.TempestState.GAME_OVER;
 	console.log("Game over...");
 
-	this.gameOverText = Game.add.bitmapText(GAME_WIDTH * 0.5, GAME_HEIGHT * 0.45, 'carrier_command', 'Game Over!', 34);
+	this.gameOverText = Game.add.sprite(GAME_WIDTH * 0.5, GAME_HEIGHT * 0.5, 'game_over');
 	this.gameOverText.anchor.set(0.5);
+	this.gameOverText.scale = { x: 0, y: 0 };
 	this.hudGroup.add(this.gameOverText);
 	Game.world.bringToTop(this.hudGroup);
-
-	this.scoreText.anchor.set(0.5);
-	this.scoreText.position = { x: GAME_WIDTH * 0.5, y: GAME_HEIGHT * 0.55 };
+	Game.add.tween(this.gameOverText.scale).to({ x: 1, y: 1 }, 750, Phaser.Easing.Linear.NONE, true, 500);
 };
 
 Tempest.prototype.onLevelComplete = function() {
@@ -242,23 +265,18 @@ Tempest.prototype.onLevelComplete = function() {
 	console.log("Level complete...");
 
 	// prevent the player from restarting immediately
-	this.restartWaitCounter = this.restartWait * 2;
+	this.restartWaitCounter = this.restartWait;
 
 	// this.layerManager.moveToEnd();
 	this.layerManager.resetAllAlertEvents();
 	this.player.goThroughLevel();
 
-	this.levelCompleteText = Game.add.sprite(GAME_WIDTH * 0.5, GAME_HEIGHT * 0.45, 'level_finish');
+	this.levelCompleteText = Game.add.sprite(GAME_WIDTH * 0.5, GAME_HEIGHT * 0.5, 'level_finish');
 	this.levelCompleteText.anchor.set(0.5);
 	this.levelCompleteText.scale = { x: 0, y: 0 };
 	this.hudGroup.add(this.levelCompleteText);
 	Game.world.bringToTop(this.hudGroup);
 	Game.add.tween(this.levelCompleteText.scale).to({ x: 1, y: 1 }, 750, Phaser.Easing.Linear.NONE, true, 500);
-
-	this.scoreText.anchor.set(0.5);
-	this.scoreText.position = { x: GAME_WIDTH * 0.5, y: GAME_HEIGHT * 0.85 };
-	this.scoreText.alpha = 0;
-	Game.add.tween(this.scoreText).to({ alpha: 1 }, 750, Phaser.Easing.Linear.NONE, true, 500);
 };
 
 Tempest.prototype.update = function() {
@@ -449,7 +467,6 @@ Tempest.prototype.playerBulletCollide = function(){
 			{
 				this.enemyManager.deleteBullet(i);
 				this.enemyManager.hitEnemy(j);
-				this.updateScore(150);
 				break;
 			}
 			
