@@ -28,8 +28,8 @@
 		},
 		{
 			"enemies": {
-				"min": 2,
-				"max": 3,
+				"min": 3,
+				"max": 4,
 				"types": [1]
 			},
 			"covers": []
