@@ -77,6 +77,8 @@ Tempest.prototype.create = function() {
 Tempest.prototype.init = function() {
 	this.state = this.TempestState.GAME_INIT;
 
+	this.initParticles();
+
 	this.layerManager = new LayerManager();
 	this.layerManager.init(this.levelNumber);
 
@@ -97,15 +99,6 @@ Tempest.prototype.init = function() {
 
 	this.initHUD();
 
-    // Create emitters
-	createGruntDestructionEmitter();
-	createKamikazeDestructionEmitter();
-	createKamikazeExplosionEmitter();
-	createTurretDestructionEmitter();
-	createBarricadeDestructionEmitter();
-	createBarricadeHitEmitter();
-	createSparkEmitter();
-
 	this.startGame();
 };
 
@@ -116,6 +109,17 @@ Tempest.prototype.initHUD = function() {
 	this.scoreText.anchor.set(0);
 	this.hudGroup.add(this.scoreText);
 };
+
+Tempest.prototype.initParticles = function () {
+    createGruntDestructionEmitter();
+    createKamikazeDestructionEmitter();
+    createKamikazeExplosionEmitter();
+    createTurretDestructionEmitter();
+    createBarricadeDestructionEmitter();
+    createBarricadeHitEmitter();
+    createSparkEmitter();
+    createRingEmitter();
+}
 
 Tempest.prototype.initBackground = function() {
 	this.background1 = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'background_1');
@@ -210,7 +214,8 @@ Tempest.prototype.playAgain = function() {
 	else {
 		if (this.state == this.TempestState.GAME_LEVEL_COMPLETE) {
 			// if the player finishes the last level, start from the beginning
-			this.levelNumber = (this.levelNumber + 1) > CONFIG.NUM_LEVELS ? 1 : this.levelNumber + 1;
+		    this.levelNumber = (this.levelNumber + 1) > CONFIG.NUM_LEVELS ? 1 : this.levelNumber + 1;
+		    warpEmitter.kill();
 		}
 		else if (this.state == this.TempestState.GAME_OVER) {
 			this.levelNumber = 1;
@@ -474,6 +479,7 @@ Tempest.prototype.playerBulletCollide = function(){
 			{
 				this.enemyManager.deleteBullet(i);
 				this.enemyManager.hitEnemy(j);
+				
 				break;
 			}
 			
