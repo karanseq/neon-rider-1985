@@ -1,5 +1,3 @@
-var LAYER_SCALE_DURATION = 500;
-
 var Layer = function() {
 	this.sprite = null;
 	this.lanes = 0;
@@ -9,6 +7,8 @@ var Layer = function() {
 
 	this.blinkPhase = 0;
 	this.color = null;
+
+	this.blinkSound = null;
 };
 
 Layer.prototype.init = function(numSides, color) {
@@ -19,6 +19,8 @@ Layer.prototype.init = function(numSides, color) {
 	this.sprite.anchor = { x: 0.5, y: 0.5 };
 	this.sprite.visible = false;
 	this.setColorOriginal();
+
+	this.blinkSound = Game.add.audio('ring_blink');
 };
 
 Layer.prototype.destroy = function() {
@@ -41,8 +43,8 @@ Layer.prototype.spawn = function(layerIndex) {
 	this.sprite.alpha = 0;
 
 	var newScale = { x: layerScale[layerIndex], y: layerScale[layerIndex] };
-	Game.add.tween(this.sprite.scale).to(newScale, LAYER_SCALE_DURATION, Phaser.Easing.Linear.None, true);
-	this.fadeTween(this.sprite, 1, LAYER_SCALE_DURATION);
+	Game.add.tween(this.sprite.scale).to(newScale, CONFIG.LAYER_SCALE_DURATION, Phaser.Easing.Linear.None, true);
+	this.fadeTween(this.sprite, 1, CONFIG.LAYER_SCALE_DURATION);
 };
 
 Layer.prototype.scaleUp = function(layerIndex, duration) {
@@ -61,6 +63,8 @@ Layer.prototype.startBlinking = function() {
 		return;
 	}
 	this.blinkTweens = new Array();
+
+	this.blinkSound.play();
 
 	var duration = 0;
 	this.blinkTweens.push(Game.add.tween(this.sprite).to({ alpha: 0.1 }, 1000, Phaser.Easing.Linear.None, true, duration, 0, true));
@@ -88,11 +92,14 @@ Layer.prototype.stopBlinking = function() {
 		return;
 	}
 
+	this.blinkSound.stop();
+
 	// stop and clear all tweens
 	while (this.blinkTweens.length > 0) {
 		var tween = this.blinkTweens.pop();
 		tween.stop();
 	}
+	
 	this.blinkTweens = null;
 };
 

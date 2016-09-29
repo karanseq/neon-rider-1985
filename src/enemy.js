@@ -9,36 +9,33 @@ var MOVE_SPEED = 1;
 var MOVE_LASTING = 60;
 var ACCELERATE_SPEED = 3;
 
-var GUN_HEALTH = 2;
-var BLOCK_HEALTH = 10;
-var ENEMY_TYPE_SCORE_MAP = { 0: 20, 	// this.EnemyType.STRAIGHT_FORWARD
-	1: 30,								// this.EnemyType.ROTATE_FORWARD
-	2: 40,								// this.EnemyType.GUN
-	3: 10 };							// this.EnemyType.BLOCK
-
 var Enemy = function(angleIndex, enemyType) {
 	this.angleIndex = angleIndex;
 
 	this.type = enemyType;
-	this.score = ENEMY_TYPE_SCORE_MAP[this.type];
+	// this.score = ENEMY_TYPE_SCORE_MAP[this.type];
 
 	switch(this.type)
 	{
 		case this.EnemyType.STRAIGHT_FORWARD:
 			this.sprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'enemy1');
 			this.sprite.tint = 0xf26a4d;
+			this.score = CONFIG.ENEMY_SCORES.GRUNT;
 			break;
 		case this.EnemyType.ROTATE_FORWARD:
 			this.sprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'enemy2');
 			this.sprite.tint = 0xe97720;
+			this.score = CONFIG.ENEMY_SCORES.KAMIKAZE;
 			break;
 		case this.EnemyType.GUN:
 			this.sprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'enemy3');
 			this.sprite.tint = 0x3df518;
+			this.score = CONFIG.ENEMY_SCORES.TURRET;
 			break;			
 		case this.EnemyType.BLOCK:
 			this.sprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'enemy4-1');
 			this.sprite.tint = 0x6ac8f7;
+			this.score = CONFIG.ENEMY_SCORES.COVER;
 			break;
 		 default:
 		 	break;
@@ -75,12 +72,12 @@ var Enemy = function(angleIndex, enemyType) {
 	this.shootFlag = false;
 
 	this.health = 1;
-	if(this.type == this.EnemyType.GUN)
-		this.health = GUN_HEALTH;
-	if(this.type == this.EnemyType.BLOCK)
-		this.health = BLOCK_HEALTH;
-
-
+	if(this.type == this.EnemyType.GUN) {
+		this.health = CONFIG.TURRET_HEALTH;
+	}		
+	if(this.type == this.EnemyType.BLOCK) {
+		this.health = CONFIG.COVER_HEALTH;
+	}
 };
 
 Enemy.prototype.EnemyType = {

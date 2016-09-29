@@ -1,3 +1,6 @@
+var CONFIG = null;
+
+
 var titleImageSet =[ 
  { key: 'title', src: 'images/title.png' },
  { key: 'titleBackground', src: 'images/bg.png' }, 
@@ -8,7 +11,6 @@ var titleAudioSet = [
  { key: 'titleBackgroundMusic', src: 'audio/Theme.ogg' },
   
 ]
-
 
 var imageSet = [ { key: 'layer', src: 'images/Ring.png' },
 { key: 'player', src: 'images/Player.png'},
@@ -47,6 +49,7 @@ var audioSet = [
     { key: 'player_dash', src: 'audio/player_dash.ogg' },
     { key: 'player_shoot', src: 'audio/player_shoot.ogg' },
     { key: 'player_move', src: 'audio/player_move.ogg' },
+    { key: 'ring_blink', src: 'audio/ring_blink.ogg' },
     { key: 'mainBackgroundMusic1', src: 'audio/Action1.ogg' },
     { key: 'mainBackgroundMusic2', src: 'audio/Action2.ogg' }
 ];
@@ -68,6 +71,7 @@ var levelFileSet = [
 
 // we should have one more value than the number of visible layers
 var layerScale = [0.725, 0.575, 0.455, 0.36, 0.285, 0.2275, 0.18, 0.15, 0.12];
+
 var RADIUS = [];
 RADIUS[0] = 430 * 0.8;
 for(var i = 1; i<layerScale.length; i++)
@@ -81,8 +85,6 @@ var MAX_ANGLE_INDEX = ANGLES.length;
 
 var GAME_WIDTH = 1280;
 var GAME_HEIGHT = 720;
-
-var MAX_LEVELS = 5;
 
 var BULLET_COLLISION_DISTANCE = 10;
 var ENEMY_COLLISION_DISTANCE = 20;

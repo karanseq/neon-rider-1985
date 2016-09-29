@@ -14,12 +14,33 @@
 	<script type="text/javascript" src="src/tempest.js"></script>
 	<script type="text/javascript" src="src/titleScreen.js"></script>
 	
+	<style>
+	body {
+		background-color: #000000;
+	}
+	canvas {
+		padding: 0;
+		margin: auto;
+		display: block;
+		width: 1280px;
+		height: 800px;
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+	}
+	</style>
+
 </head>
 <body>
 	<script type="text/javascript">
 		var ScreenIndex = 0;
 
-		var Game = new Phaser.Game(GAME_WIDTH, GAME_HEIGHT, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+		var Game = new Phaser.Game(GAME_WIDTH, GAME_HEIGHT, Phaser.AUTO, 'container', { preload: preload, create: create, update: update });
+		// Game.game.scale.pageAlignHorizontally = true;
+		// Game.game.scale.pageAlignVertically = true;
+		// Game.game.scale.refresh();
 
 		var tempest = new Tempest();
 

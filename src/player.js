@@ -3,8 +3,6 @@ var EXPLOSION_INTERVAL = 15;
 var EXPLOSION_REVERSE_COUNTER = 2;
 
 var PLAYER_ROTATE_LASTING = 10;
-var PLAYER_MAX_HEALTH = 9;
-var PLAYER_MOVE_COOLDOWN = 5000;
 
 var Player = function() {
 	this.sprite = null;
@@ -34,11 +32,11 @@ var Player = function() {
 	this.explosionScaleChange = 0.1;
 
 	this.isRotate = false;
-	this.previousAngle =0;
+	this.previousAngle = 0;
 	this.rotateTimer = 0;
 
-	this.health = PLAYER_MAX_HEALTH;
-	this.healthBars = 3;
+	this.health = CONFIG.PLAYER_MAX_HEALTH;
+	this.healthBars = CONFIG.PLAYER_HEALTH_BARS;
 	this.isBlinking = false;
 
 	this.numMoves = 3;
@@ -114,7 +112,7 @@ Player.prototype.moveForward = function() {
 	// schedule an event to move forward
 	--this.numMoves;
 	this.refreshDashSprite();
-	this.moveEvent = Game.time.events.add(PLAYER_MOVE_COOLDOWN, this.finishMove, this);
+	this.moveEvent = Game.time.events.add(CONFIG.PLAYER_MOVE_COOLDOWN, this.finishMove, this);
 
     // emit dash particles
 	playerBoostEmitter.position = this.position;
@@ -184,7 +182,7 @@ Player.prototype.createBullet = function() {
 Player.prototype.updateBullets = function(){
 	for(var i=0;i<this.bullets.length;i++)
 	{	
-		if(this.bullets[i].radius < this.bulletMoveSpeed * 2)
+		if(this.bullets[i].radius < this.bulletMoveSpeed * 15)
 			this.deleteBullet(i);
 		else
 			this.bullets[i].update();
@@ -294,7 +292,7 @@ Player.prototype.takeDamage = function() {
 	}
 
 	// reduce health
-	this.health -= 3;
+	this.health -= CONFIG.PLAYER_HEALTH_LOSS_RATE;
 	console.log("Player takes damage...health:" + this.health);
 
 	if (this.health <= 0) {
@@ -308,9 +306,12 @@ Player.prototype.takeDamage = function() {
 };
 
 Player.prototype.gainHealth = function() {
-	++this.health;
-	if (this.health > PLAYER_MAX_HEALTH) {
-		this.health = PLAYER_MAX_HEALTH;
+	// increment health
+	this.health += CONFIG.PLAYER_HEALTH_GAIN_RATE;
+
+	// limit max health
+	if (this.health > CONFIG.PLAYER_MAX_HEALTH) {
+		this.health = CONFIG.PLAYER_MAX_HEALTH;
 	}
 	console.log("Player gains health...health:" + this.health);
 

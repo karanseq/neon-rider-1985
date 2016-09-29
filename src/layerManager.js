@@ -1,5 +1,3 @@
-var MAX_LAYER_SCALE = 0.725;
-
 var LayerManager = function() {
 	this.numLayersInLevel = 0;
 	this.numVisibleLayers = 0;
@@ -115,11 +113,11 @@ LayerManager.prototype.moveUp = function() {
 	// scale up all the visible layers
 	for (var i = this.indexLayerFront; i < this.indexLayerBack; ++i) {
 		var layer = this.layers[i];
-		layer.scaleUp(i - this.indexLayerFront - 1, LAYER_SCALE_DURATION);
+		layer.scaleUp(i - this.indexLayerFront - 1, CONFIG.LAYER_SCALE_DURATION);
 	}
 
 	// fade out the outer-most layer
-	this.layers[this.indexLayerFront++].die(LAYER_SCALE_DURATION);
+	this.layers[this.indexLayerFront++].die(CONFIG.LAYER_SCALE_DURATION);
 
 	// check if there are any more layers to add
 	if (this.indexLayerBack < this.numLayersInLevel) {
@@ -131,7 +129,7 @@ LayerManager.prototype.moveUp = function() {
 		this.haveAllLayersSpawned = true;
 	}
 
-	Game.time.events.add(LAYER_SCALE_DURATION, this.onAnimationFinished, this);
+	Game.time.events.add(CONFIG.LAYER_SCALE_DURATION, this.onAnimationFinished, this);
 	this.startShowingAlertEvent = Game.time.events.add(this.layerData.waitBeforeOuterLayerBreak, this.startShowingAlert, this);
 
 	console.log("LayerManager moveUp says front=" + this.indexLayerFront + " & back=" + this.indexLayerBack);
@@ -143,7 +141,7 @@ LayerManager.prototype.moveToEnd = function() {
 
 	// scale up all the visible layers
 	for (var i = this.indexLayerFront; i < this.indexLayerBack; ++i) {
-		this.layers[i].die(LAYER_SCALE_DURATION * (i+1) * 0.25);
+		this.layers[i].die(CONFIG.LAYER_SCALE_DURATION * (i+1) * 0.25);
 	}
 };
 

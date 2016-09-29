@@ -1,6 +1,7 @@
 // URL: http://localhost/projects/team-10-tempest
 var Tempest = function() {
 	this.state = null;
+	this.config = null;
 
 	this.levelNumber = 1;
 	this.layerManager = null;
@@ -32,8 +33,6 @@ Tempest.prototype.TempestState = {
 	GAME_OVER: 7
 };
 
-
-
 Tempest.prototype.preload = function() {
 	// load all images
 	for (var i = 0; i < imageSet.length; ++i) {
@@ -54,17 +53,20 @@ Tempest.prototype.preload = function() {
 	for (var i = 0; i < levelFileSet.length; ++i) {
 		Game.load.json(levelFileSet[i].key, levelFileSet[i].src);
 	}
-	// this.create();
+	
+	Game.load.json("config", "data/tempest_config.json");
 };
 
 Tempest.prototype.create = function() {
+	// fetch the configuration file
+	CONFIG = Game.cache.getJSON("config");
+
 	var background = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'background');
 	background.anchor = { x: 0.5, y: 0.5 };
 	background.scale = { x: 0.66667, y: 0.66667 };
 
 	music1 = Game.add.audio('mainBackgroundMusic1');
 	music2 = Game.add.audio('mainBackgroundMusic2');
-    music1.play();
     
 	this.init();
 };
@@ -74,6 +76,15 @@ Tempest.prototype.init = function() {
 
 	this.layerManager = new LayerManager();
 	this.layerManager.init(this.levelNumber);
+
+	music1.stop();
+	music2.stop();
+	if ((this.levelNumber / 2) == 0) {
+		music1.play('', 0, 1, true);
+	}
+	else {
+		music2.play('', 0, 1, true);
+	}
 
 	this.player = new Player();
 	this.player.init();
@@ -176,7 +187,8 @@ Tempest.prototype.playAgain = function() {
 	}
 	else {
 		if (this.state == this.TempestState.GAME_LEVEL_COMPLETE) {
-			this.levelNumber = (this.levelNumber + 1) > 5 ? 1 : this.levelNumber + 1;
+			// if the player finishes the last level, start from the beginning
+			this.levelNumber = (this.levelNumber + 1) > CONFIG.NUM_LEVELS ? 1 : this.levelNumber + 1;
 		}
 		else if (this.state == this.TempestState.GAME_OVER) {
 			this.levelNumber = 1;
@@ -227,6 +239,9 @@ Tempest.prototype.onLevelComplete = function() {
 	}
 	this.state = this.TempestState.GAME_LEVEL_COMPLETE;
 	console.log("Level complete...");
+
+	// prevent the player from restarting immediately
+	this.restartWaitCounter = this.restartWait * 2;
 
 	// this.layerManager.moveToEnd();
 	this.layerManager.resetAllAlertEvents();
@@ -282,7 +297,7 @@ Tempest.prototype.update = function() {
 			this.onPlayerDeath();
 		}
      }
-     else if (this.state == this.TempestState.GAME_PLAYER_DIED || this.state == this.TempestState.GAME_OVER) {
+     else if (this.state == this.TempestState.GAME_PLAYER_DIED || this.state == this.TempestState.GAME_OVER || this.state == this.TempestState.GAME_LEVEL_COMPLETE) {
      	if (this.restartWaitCounter > 0) {
      		--this.restartWaitCounter;
      	}
@@ -355,9 +370,6 @@ Tempest.prototype.handleKeyUp = function() {
 		// check if the level was completed
 		if (this.layerManager.haveAllLayersSpawned && this.enemyManager.enemys.length == 0 && this.enemyManager.enemiesToSpawn.length == 0) {
 			this.onLevelComplete();
-		}
-		else {
-			console.log("EnemiesLeft:" + this.enemyManager.enemys.length + " EnemiesLeftToSpawn:" + this.enemyManager.enemiesToSpawn.length);
 		}
 	}
 };
