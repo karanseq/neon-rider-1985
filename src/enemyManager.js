@@ -55,7 +55,7 @@ EnemyManager.prototype.update = function() {
 EnemyManager.prototype.updateEnemy = function(){
 	for(var i=0;i<this.enemys.length;i++)
 	{
-		if(this.enemys[i].radius > RADIUS[1] - 15 || this.enemys[i].layerIndex < 0)
+		if(this.enemys[i].radius > RADIUS[1] - 5 || this.enemys[i].layerIndex < 0)
 		{
 			this.deleteEnemy(i);
 		}
@@ -81,7 +81,7 @@ EnemyManager.prototype.updateEnemy = function(){
 			if(this.enemys[i].type == 2 && this.enemys[i].shootFlag)
 			{
 				//enemy can not create bullet when they are roatating
-				if(!this.enemys[i].isRotate && this.enemys[i].radius < RADIUS[0] * 0.5)
+				if(!this.enemys[i].isRotate)
 					this.createBullet(this.enemys[i]);
 				this.enemys[i].shootFlag = false;
 			}
@@ -164,7 +164,7 @@ EnemyManager.prototype.createBullet = function(enemy){
 EnemyManager.prototype.updateBullets = function(){
 	for(var i=0;i<this.bullets.length;i++)
 	{
-		if(this.bullets[i].radius > RADIUS[1] - 15)
+		if(this.bullets[i].radius > RADIUS[1] - 5)
 			this.deleteBullet(i);
 		else
 			this.bullets[i].update();
