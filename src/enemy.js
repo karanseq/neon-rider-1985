@@ -19,7 +19,7 @@ var Enemy = function(angleIndex, enemyType) {
 	{
 		case this.EnemyType.STRAIGHT_FORWARD:
 			this.sprite = Game.add.sprite(GAME_WIDTH / 2, GAME_HEIGHT / 2, 'enemy1');
-			this.sprite.tint = 0xff007f;
+			this.sprite.tint = 0x990000;
 			this.score = CONFIG.ENEMY_SCORES.GRUNT;
 			break;
 		case this.EnemyType.ROTATE_FORWARD:
